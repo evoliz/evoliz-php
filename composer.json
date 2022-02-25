@@ -1,10 +1,29 @@
 {
-    "require": {
-        "guzzlehttp/guzzle": "^7.4"
-    },
-    "autoload": {
-        "psr-4": {
-            "Evoliz\\Client\\": "lib/"
-        }
+  "name": "evoliz/evoliz-php",
+  "description": "Evoliz PHP Library",
+  "keywords": [
+    "evoliz",
+    "invoicing",
+    "api"
+  ],
+  "homepage": "https://evoliz.com/",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Evoliz and contributors",
+      "homepage": "https://github.com/evoliz/evoliz-php/contributors"
     }
+  ],
+  "require": {
+    "php": ">=7.0.0",
+    "ext-curl": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "guzzlehttp/guzzle": "^7.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Evoliz\\Client\\": "src/"
+    }
+  }
 }
