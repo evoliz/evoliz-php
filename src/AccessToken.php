@@ -17,10 +17,10 @@ class AccessToken
     /**
      * Setup the Access Token parameters
      * @param string $token
-     * @param \DateTime $expires_at
+     * @param string $expires_at
      * @throws \Exception
      */
-    public function __construct(string $token, \DateTime $expires_at)
+    public function __construct(string $token, string $expires_at)
     {
         $this->token = $token;
         $this->expires_at = new \DateTime($expires_at);
