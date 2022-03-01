@@ -36,9 +36,9 @@ class Config
 
     /**
      * @var string Resources default return type
-     * Possible values = 'Object, 'JSON' or 'XML"
+     * Possible values = 'OBJECT' or 'JSON'
      */
-    private $defaultReturnType = 'Object'; // @Todo: Check the different packages in order to see if we can't use an enum
+    private $defaultReturnType = 'OBJECT'; // @Todo: Check the different packages in order to see if we can't use an enum
 
     /**
      * Setup the configuration for API usage
@@ -63,6 +63,7 @@ class Config
         }
 
         $this->client = new Client([
+            'verify' => false, // @Todo : Remove that in production
             'base_uri' => self::BASE_URI,
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->accessToken->getToken(),
@@ -115,6 +116,7 @@ class Config
             $this->accessToken = new AccessToken($loginResponse['access_token'], $loginResponse['expires_at']);
 
             $this->client = new Client([
+                'verify' => false, // @Todo : Remove that in production
                 'base_uri' => self::BASE_URI,
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken->getToken(),
@@ -141,7 +143,7 @@ class Config
      */
     public function setObjectDefaultReturnType()
     {
-        $this->defaultReturnType = 'Object';
+        $this->defaultReturnType = 'OBJECT';
     }
 
     /**
@@ -154,15 +156,6 @@ class Config
     }
 
     /**
-     * Set resources default return type to JSON
-     * @return void
-     */
-    public function setXMLDefaultReturnType()
-    {
-        $this->defaultReturnType = 'XML';
-    }
-
-    /**
      * Login the user with given public and secret keys
      *
      * @return array login response
@@ -171,6 +164,7 @@ class Config
     {
         try {
             $client = new Client([
+                'verify' => false, // @Todo : Remove that in production
                 'base_uri' => self::BASE_URI,
                 'headers' => [
                     'Accept' => 'application/json',
@@ -222,7 +216,7 @@ class Config
     {
         return $this->hasValidCookieAccessToken()
             || (isset($this->accessToken)
-                && new \DateTime($this->accessToken->getExpiresAt())
+                && $this->accessToken->getExpiresAt()
                 > new \DateTime('now'));
     }
 
