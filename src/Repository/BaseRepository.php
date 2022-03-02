@@ -4,13 +4,13 @@ namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
 
-class BaseRepository
+abstract class BaseRepository
 {
     /**
      * @throws \Exception
      */
     public function __construct(Config $config)
     {
-        $config->checkAuthentication();
+        $config->authenticate();
     }
 }

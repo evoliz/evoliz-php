@@ -5,54 +5,22 @@ namespace Evoliz\Client\Model;
 class PayType
 {
     /**
-     * @var integer
+     * @var integer Payment type identifier
      */
-    private $paytypeid;
+    public $paytypeid;
 
     /**
-     * @var string
+     * @var string Payment type label
      */
-    private $label;
+    public $label;
 
     /**
      * @param array $data
      */
     public function __construct(array $data)
     {
-        $this->paytypeid = isset($data['paytypeid']) ? $data['paytypeid'] : null;
-        $this->label = isset($data['label']) ? $data['label'] : null;
-    }
-
-    /**
-     * @return int
-     */
-    public function getPayTypeId()
-    {
-        return $this->paytypeid;
-    }
-
-    /**
-     * @param int $paytypeid
-     */
-    public function setPayTypeId($paytypeid)
-    {
-        $this->paytypeid = $paytypeid;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $label
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
+        $this->paytypeid = $data['paytypeid'] ?? null;
+        $this->label = $data['label'] ?? null;
     }
 
 }

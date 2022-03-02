@@ -5,74 +5,74 @@ namespace Evoliz\Client\Model;
 class SellDocItem
 {
     /**
-     * @var integer
+     * @var integer Item id
      */
-    private $itemid;
+    public $itemid;
 
     /**
-     * @var integer
+     * @var integer Article unique identifier
      */
-    private $articleid = null;
+    public $articleid = null;
 
     /**
-     * @var string
+     * @var string Article reference with html
      */
-    private $reference;
+    public $reference;
 
     /**
-     * @var string
+     * @var string Article reference without html
      */
-    private $reference_clean;
+    public $reference_clean;
 
     /**
-     * @var string
+     * @var string Article designation with html
      */
-    private $designation;
+    public $designation;
 
     /**
-     * @var string
+     * @var string Article designation without html
      */
-    private $designation_clean;
+    public $designation_clean;
 
     /**
-     * @var float
+     * @var float Article quantity
      */
-    private $quantity;
+    public $quantity;
 
     /**
-     * @var string
+     * @var string Quantity unit
      */
-    private $unit;
+    public $unit;
 
     /**
-     * @var float
+     * @var float Article unit price excluding vat
      */
-    private $unit_price_vat_exclude;
+    public $unit_price_vat_exclude;
 
     /**
-     * @var float
+     * @var float Article unit price excluding vat in currency
      */
-    private $unit_price_vat_exclude_currency = null;
+    public $unit_price_vat_exclude_currency = null;
 
     /**
-     * @var float
+     * @var float Article VAT rate
      */
-    private $vat;
+    public $vat;
 
     /**
-     * @var ItemTotal
+     * @var ItemTotal Document total amounts
      */
-    private $total = null;
+    public $total = null;
 
     /**
-     * @var ItemTotal
+     * @var ItemTotal Document total amounts in currency
      */
-    private $currency_total = null;
+    public $currency_total = null;
 
     /**
-     * @var SaleClassification
+     * @var SaleClassification Item classification information
      */
-    private $sale_classification;
+    public $sale_classification;
 
     /**
      * @param array $data
@@ -94,232 +94,5 @@ class SellDocItem
         $this->currency_total = isset($data['currency_total']) ? new ItemTotal($data['currency_total']) : null;
         $this->sale_classification = isset($data['sale_classification']) ? new SaleClassification($data['sale_classification']) : null;
     }
-
-    /**
-     * @return int
-     */
-    public function getItemid()
-    {
-        return $this->itemid;
-    }
-
-    /**
-     * @param int $itemid
-     */
-    public function setItemid($itemid)
-    {
-        $this->itemid = $itemid;
-    }
-
-    /**
-     * @return int
-     */
-    public function getArticleid()
-    {
-        return $this->articleid;
-    }
-
-    /**
-     * @param int $articleid
-     */
-    public function setArticleid($articleid)
-    {
-        $this->articleid = $articleid;
-    }
-
-    /**
-     * @return string
-     */
-    public function getReference()
-    {
-        return $this->reference;
-    }
-
-    /**
-     * @param string $reference
-     */
-    public function setReference($reference)
-    {
-        $this->reference = $reference;
-    }
-
-    /**
-     * @return string
-     */
-    public function getReferenceClean()
-    {
-        return $this->reference_clean;
-    }
-
-    /**
-     * @param string $reference_clean
-     */
-    public function setReferenceClean($reference_clean)
-    {
-        $this->reference_clean = $reference_clean;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDesignation()
-    {
-        return $this->designation;
-    }
-
-    /**
-     * @param string $designation
-     */
-    public function setDesignation($designation)
-    {
-        $this->designation = $designation;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDesignationClean()
-    {
-        return $this->designation_clean;
-    }
-
-    /**
-     * @param string $designation_clean
-     */
-    public function setDesignationClean($designation_clean)
-    {
-        $this->designation_clean = $designation_clean;
-    }
-
-    /**
-     * @return float
-     */
-    public function getQuantity()
-    {
-        return $this->quantity;
-    }
-
-    /**
-     * @param float $quantity
-     */
-    public function setQuantity($quantity)
-    {
-        $this->quantity = $quantity;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUnit()
-    {
-        return $this->unit;
-    }
-
-    /**
-     * @param string $unit
-     */
-    public function setUnit($unit)
-    {
-        $this->unit = $unit;
-    }
-
-    /**
-     * @return float
-     */
-    public function getUnitPriceVatExclude()
-    {
-        return $this->unit_price_vat_exclude;
-    }
-
-    /**
-     * @param float $unit_price_vat_exclude
-     */
-    public function setUnitPriceVatExclude($unit_price_vat_exclude)
-    {
-        $this->unit_price_vat_exclude = $unit_price_vat_exclude;
-    }
-
-    /**
-     * @return float
-     */
-    public function getUnitPriceVatExcludeCurrency()
-    {
-        return $this->unit_price_vat_exclude_currency;
-    }
-
-    /**
-     * @param float $unit_price_vat_exclude_currency
-     */
-    public function setUnitPriceVatExcludeCurrency($unit_price_vat_exclude_currency)
-    {
-        $this->unit_price_vat_exclude_currency = $unit_price_vat_exclude_currency;
-    }
-
-    /**
-     * @return float
-     */
-    public function getVat()
-    {
-        return $this->vat;
-    }
-
-    /**
-     * @param float $vat
-     */
-    public function setVat($vat)
-    {
-        $this->vat = $vat;
-    }
-
-    /**
-     * @return ItemTotal
-     */
-    public function getTotal(): ItemTotal
-    {
-        return $this->total;
-    }
-
-    /**
-     * @param ItemTotal $total
-     */
-    public function setTotal(ItemTotal $total)
-    {
-        $this->total = $total;
-    }
-
-    /**
-     * @return ItemTotal
-     */
-    public function getCurrencyTotal(): ItemTotal
-    {
-        return $this->currency_total;
-    }
-
-    /**
-     * @param ItemTotal $currency_total
-     */
-    public function setCurrencyTotal(ItemTotal $currency_total)
-    {
-        $this->currency_total = $currency_total;
-    }
-
-    /**
-     * @return SaleClassification
-     */
-    public function getSaleClassification(): SaleClassification
-    {
-        return $this->sale_classification;
-    }
-
-    /**
-     * @param SaleClassification $sale_classification
-     */
-    public function setSaleClassification(SaleClassification $sale_classification)
-    {
-        $this->sale_classification = $sale_classification;
-    }
-
-
-
 
 }

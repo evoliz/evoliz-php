@@ -5,154 +5,154 @@ namespace Evoliz\Client\Model;
 class Invoice
 {
     /**
-     * @var integer
+     * @var integer Object unique identifier
      */
-    private $invoiceid;
+    public $invoiceid;
 
     /**
-     * @var string
+     * @var string Invoice's type
      */
-    private $typedoc;
+    public $typedoc;
 
     /**
-     * @var string
+     * @var string Document number
      */
-    private $document_number;
+    public $document_number;
 
     /**
-     * @var integer
+     * @var integer Document’s creator ID
      */
-    private $userid;
+    public $userid;
 
     /**
-     * @var LinkedClient
+     * @var LinkedClient Linked client informations
      */
-    private $client;
+    public $client;
 
     /**
-     * @var Currency
+     * @var Currency Company default currency
      */
-    private $default_currency;
+    public $default_currency;
 
     /**
-     * @var Currency
+     * @var Currency Document currency
      */
-    private $document_currency = null;
+    public $document_currency = null;
 
     /**
-     * @var SellDocTotal
+     * @var SellDocTotal Document total amounts
      */
-    private $total;
+    public $total;
 
     /**
-     * @var SellDocTotal
+     * @var SellDocTotal Document total amounts in currency
      */
-    private $currency_total = null;
+    public $currency_total = null;
 
     /**
-     * @var integer
+     * @var integer Document status code
      */
-    private $status_code;
+    public $status_code;
 
     /**
-     * @var string
+     * @var string Document status
      */
-    private $status;
+    public $status;
 
     /**
-     * @var StatusDates
+     * @var StatusDates Document status dates
      */
-    private $status_dates;
+    public $status_dates;
 
     /**
-     * @var boolean
+     * @var boolean True if locked and false otherwise
      */
-    private $locked = null;
+    public $locked = null;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Document lock date
      */
-    private $lockdate = null;
+    public $lockdate = null;
 
     /**
-     * @var string
+     * @var string object on the document
      */
-    private $object;
+    public $object;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Document date
      */
-    private $documentdate;
+    public $documentdate;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Due date of the document
      */
-    private $duedate;
+    public $duedate;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Execution date of payment terms
      */
-    private $execdate;
+    public $execdate;
 
     /**
-     * @var Term
+     * @var Term Document condition informations
      */
-    private $term;
+    public $term;
 
     /**
-     * @var string
+     * @var string Comments on the document with html
      */
-    private $comment;
+    public $comment;
 
     /**
-     * @var string
+     * @var string Comments on the document without html
      */
-    private $comment_clean;
+    public $comment_clean;
 
     /**
-     * @var string
+     * @var string External Document number
      */
-    private $external_document_number;
+    public $external_document_number;
 
     /**
-     * @var boolean
+     * @var boolean Determines if the document is active
      */
-    private $enabled;
+    public $enabled;
 
     /**
-     * @var Analytic
+     * @var Analytic analytic axis of document
      */
-    private $analytic = null;
+    public $analytic = null;
 
     /**
-     * @var string
+     * @var string Link of document file
      */
-    private $file;
+    public $file;
 
     /**
-     * @var string
+     * @var string Link of linked documents list
      */
-    private $links;
+    public $links;
 
     /**
-     * @var string
+     * @var string Webdocument link
      */
-    private $webdoc = null;
+    public $webdoc = null;
 
     /**
-     * @var integer
+     * @var integer Number of recoveries sent for the current invoice
      */
-    private $recovery_number;
+    public $recovery_number;
 
     /**
-     * @var Retention
+     * @var Retention Document retention information
      */
-    private $retention = null;
+    public $retention = null;
 
     /**
-     * @var array of SellDocItems
+     * @var array Document item
      */
-    private $items = [];
+    public $items = [];
 
     /**
      * @param array $data
@@ -195,486 +195,5 @@ class Invoice
             }
         }
     }
-
-    /**
-     * @return int
-     */
-    public function getInvoiceId()
-    {
-        return $this->invoiceid;
-    }
-
-    /**
-     * @param int $invoiceid
-     */
-    public function setInvoiceId(int $invoiceid)
-    {
-        $this->invoiceid = $invoiceid;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTypedoc()
-    {
-        return $this->typedoc;
-    }
-
-    /**
-     * @param string $typedoc
-     */
-    public function setTypedoc(string $typedoc)
-    {
-        $this->typedoc = $typedoc;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDocumentNumber()
-    {
-        return $this->document_number;
-    }
-
-    /**
-     * @param string $document_number
-     */
-    public function setDocumentNumber(string $document_number)
-    {
-        $this->document_number = $document_number;
-    }
-
-    /**
-     * @return integer
-     */
-    public function getUserId()
-    {
-        return $this->userid;
-    }
-
-    /**
-     * @param integer $userid
-     */
-    public function setUserId(int $userid)
-    {
-        $this->userid = $userid;
-    }
-
-    /**
-     * @return LinkedClient
-     */
-    public function getClient()
-    {
-        return $this->client;
-    }
-
-    /**
-     * @param LinkedClient $client
-     */
-    public function setClient(LinkedClient $client)
-    {
-        $this->client = $client;
-    }
-
-    /**
-     * @return Currency
-     */
-    public function getDefaultCurrency()
-    {
-        return $this->default_currency;
-    }
-
-    /**
-     * @param Currency $default_currency
-     */
-    public function setDefaultCurrency(Currency $default_currency)
-    {
-        $this->default_currency = $default_currency;
-    }
-
-    /**
-     * @return Currency
-     */
-    public function getDocumentCurrency()
-    {
-        return $this->document_currency;
-    }
-
-    /**
-     * @param Currency $document_currency
-     */
-    public function setDocumentCurrency(Currency $document_currency)
-    {
-        $this->document_currency = $document_currency;
-    }
-
-    /**
-     * @return SellDocTotal
-     */
-    public function getTotal()
-    {
-        return $this->total;
-    }
-
-    /**
-     * @param SellDocTotal $total
-     */
-    public function setTotal(SellDocTotal $total)
-    {
-        $this->total = $total;
-    }
-
-    /**
-     * @return SellDocTotal
-     */
-    public function getCurrencyTotal()
-    {
-        return $this->currency_total;
-    }
-
-    /**
-     * @param SellDocTotal $currency_total
-     */
-    public function setCurrencyTotal(SellDocTotal $currency_total)
-    {
-        $this->currency_total = $currency_total;
-    }
-
-    /**
-     * @return int
-     */
-    public function getStatusCode()
-    {
-        return $this->status_code;
-    }
-
-    /**
-     * @param int $status_code
-     */
-    public function setStatusCode(int $status_code)
-    {
-        $this->status_code = $status_code;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStatus()
-    {
-        return $this->status;
-    }
-
-    /**
-     * @param string $status
-     */
-    public function setStatus(string $status)
-    {
-        $this->status = $status;
-    }
-
-    /**
-     * @return StatusDates
-     */
-    public function getStatusDates()
-    {
-        return $this->status_dates;
-    }
-
-    /**
-     * @param StatusDates $status_dates
-     */
-    public function setStatusDates(StatusDates $status_dates)
-    {
-        $this->status_dates = $status_dates;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLocked()
-    {
-        return $this->locked;
-    }
-
-    /**
-     * @param bool $locked
-     */
-    public function setLocked(bool $locked)
-    {
-        $this->locked = $locked;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getLockdate()
-    {
-        return $this->lockdate;
-    }
-
-    /**
-     * @param \DateTime $lockdate
-     */
-    public function setLockdate(\DateTime $lockdate)
-    {
-        $this->lockdate = $lockdate;
-    }
-
-    /**
-     * @return string
-     */
-    public function getObject()
-    {
-        return $this->object;
-    }
-
-    /**
-     * @param string $object
-     */
-    public function setObject(string $object)
-    {
-        $this->object = $object;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getDocumentdate()
-    {
-        return $this->documentdate;
-    }
-
-    /**
-     * @param \DateTime $documentdate
-     */
-    public function setDocumentdate(\DateTime $documentdate)
-    {
-        $this->documentdate = $documentdate;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getDuedate()
-    {
-        return $this->duedate;
-    }
-
-    /**
-     * @param \DateTime $duedate
-     */
-    public function setDuedate(\DateTime $duedate)
-    {
-        $this->duedate = $duedate;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getExecdate()
-    {
-        return $this->execdate;
-    }
-
-    /**
-     * @param \DateTime $execdate
-     */
-    public function setExecdate(\DateTime $execdate)
-    {
-        $this->execdate = $execdate;
-    }
-
-    /**
-     * @return Term
-     */
-    public function getTerm()
-    {
-        return $this->term;
-    }
-
-    /**
-     * @param Term $term
-     */
-    public function setTerm(Term $term)
-    {
-        $this->term = $term;
-    }
-
-    /**
-     * @return string
-     */
-    public function getComment()
-    {
-        return $this->comment;
-    }
-
-    /**
-     * @param string $comment
-     */
-    public function setComment(string $comment)
-    {
-        $this->comment = $comment;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCommentClean()
-    {
-        return $this->comment_clean;
-    }
-
-    /**
-     * @param string $comment_clean
-     */
-    public function setCommentClean(string $comment_clean)
-    {
-        $this->comment_clean = $comment_clean;
-    }
-
-    /**
-     * @return string
-     */
-    public function getExternalDocumentNumber()
-    {
-        return $this->external_document_number;
-    }
-
-    /**
-     * @param string $external_document_number
-     */
-    public function setExternalDocumentNumber(string $external_document_number)
-    {
-        $this->external_document_number = $external_document_number;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled(bool $enabled)
-    {
-        $this->enabled = $enabled;
-    }
-
-    /**
-     * @return Analytic
-     */
-    public function getAnalytic()
-    {
-        return $this->analytic;
-    }
-
-    /**
-     * @param Analytic $analytic
-     */
-    public function setAnalytic(Analytic $analytic)
-    {
-        $this->analytic = $analytic;
-    }
-
-    /**
-     * @return string
-     */
-    public function getFile()
-    {
-        return $this->file;
-    }
-
-    /**
-     * @param string $file
-     */
-    public function setFile(string $file)
-    {
-        $this->file = $file;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLinks()
-    {
-        return $this->links;
-    }
-
-    /**
-     * @param string $links
-     */
-    public function setLinks(string $links)
-    {
-        $this->links = $links;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWebdoc()
-    {
-        return $this->webdoc;
-    }
-
-    /**
-     * @param string $webdoc
-     */
-    public function setWebdoc(string $webdoc)
-    {
-        $this->webdoc = $webdoc;
-    }
-
-    /**
-     * @return int
-     */
-    public function getRecoveryNumber()
-    {
-        return $this->recovery_number;
-    }
-
-    /**
-     * @param int $recovery_number
-     */
-    public function setRecoveryNumber(int $recovery_number)
-    {
-        $this->recovery_number = $recovery_number;
-    }
-
-    /**
-     * @return Retention
-     */
-    public function getRetention()
-    {
-        return $this->retention;
-    }
-
-    /**
-     * @param Retention $retention
-     */
-    public function setRetention(Retention $retention)
-    {
-        $this->retention = $retention;
-    }
-
-    /**
-     * @return array
-     */
-    public function getItems(): array
-    {
-        return $this->items;
-    }
-
-    /**
-     * @param array $items
-     */
-    public function setItems(array $items)
-    {
-        $this->items = $items;
-    }
-
 
 }

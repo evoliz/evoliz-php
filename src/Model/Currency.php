@@ -4,21 +4,20 @@ namespace Evoliz\Client\Model;
 
 class Currency
 {
+    /**
+     * @var string Iso currency code
+     */
+    public $code;
 
     /**
-     * @var string
+     * @var float Conversion rate with the "EUR" currency
      */
-    private $code;
+    public $conversion;
 
     /**
-     * @var float
+     * @var string Currency symbol
      */
-    private $conversion;
-
-    /**
-     * @var string
-     */
-    private $symbol;
+    public $symbol;
 
     /**
      * @param array $data
@@ -30,51 +29,4 @@ class Currency
         $this->symbol = $data['symbol'] ?? null;
     }
 
-    /**
-     * @return string
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param string $code
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-    }
-
-    /**
-     * @return float
-     */
-    public function getConversion()
-    {
-        return $this->conversion;
-    }
-
-    /**
-     * @param float $conversion
-     */
-    public function setConversion($conversion)
-    {
-        $this->conversion = $conversion;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSymbol()
-    {
-        return $this->symbol;
-    }
-
-    /**
-     * @param string $symbol
-     */
-    public function setSymbol($symbol)
-    {
-        $this->symbol = $symbol;
-    }
 }

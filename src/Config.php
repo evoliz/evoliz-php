@@ -2,6 +2,7 @@
 
 namespace Evoliz\Client;
 
+use Evoliz\Client\Exception\ReturnTypeException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -111,7 +112,7 @@ class Config
      * @return void
      * @throws \Exception
      */
-    public function checkAuthentication()
+    public function authenticate()
     {
         if (!$this->hasValidAccessToken()) {
             $loginResponse = $this->login();
@@ -142,12 +143,15 @@ class Config
     /**
      * Set resources default return type
      * @return void
+     * @throws ReturnTypeException
      */
     public function setDefaultReturnType(string $returnType)
     {
-        if (in_array($returnType, [self::JSON_RETURN_TYPE, self::OBJECT_RETURN_TYPE])) {
-            $this->defaultReturnType = $returnType;
+        if (!in_array($returnType, [self::JSON_RETURN_TYPE, self::OBJECT_RETURN_TYPE])) {
+            throw new ReturnTypeException("Error : The given return type is not valid.");
         }
+
+        $this->defaultReturnType = $returnType;
     }
 
     /**

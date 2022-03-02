@@ -17,7 +17,7 @@ class InvoiceRepository extends BaseRepository
      * @var string Resources default return type
      * Possible values = 'OBJECT' or 'JSON'
      */
-    private $defaultReturnType; // @Todo: Check the different packages in order to see if we can't use an enum
+    private $defaultReturnType;
 
     /**
      * @param Config $config

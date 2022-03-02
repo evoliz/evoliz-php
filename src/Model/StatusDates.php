@@ -5,120 +5,40 @@ namespace Evoliz\Client\Model;
 class StatusDates
 {
     /**
-     * @var \DateTime
+     * @var \DateTime Document emission date
      */
-    private $create = null;
+    public $create = null;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Document sent date
      */
-    private $sent = null;
+    public $sent = null;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Document partially paid date
      */
-    private $inpayment = null;
+    public $inpayment = null;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Document paid date
      */
-    private $paid = null;
+    public $paid = null;
 
     /**
-     * @var \DateTime
+     * @var \DateTime Document match date
      */
-    private $match = null;
+    public $match = null;
 
     /**
      * @param array $data
      */
     public function __construct(array $data)
     {
-        $this->create = isset($data['create']) ? $data['create'] : null;
-        $this->sent = isset($data['sent']) ? $data['sent'] : null;
-        $this->inpayment = isset($data['inpayment']) ? $data['inpayment'] : null;
-        $this->paid = isset($data['paid']) ? $data['paid'] : null;
-        $this->match = isset($data['match']) ? $data['match'] : null;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreate()
-    {
-        return $this->create;
-    }
-
-    /**
-     * @param \DateTime $create
-     */
-    public function setCreate($create)
-    {
-        $this->create = $create;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getSent()
-    {
-        return $this->sent;
-    }
-
-    /**
-     * @param \DateTime $sent
-     */
-    public function setSent($sent)
-    {
-        $this->sent = $sent;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getInpayment()
-    {
-        return $this->inpayment;
-    }
-
-    /**
-     * @param \DateTime $inpayment
-     */
-    public function setInpayment($inpayment)
-    {
-        $this->inpayment = $inpayment;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getPaid()
-    {
-        return $this->paid;
-    }
-
-    /**
-     * @param \DateTime $paid
-     */
-    public function setPaid($paid)
-    {
-        $this->paid = $paid;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getMatch()
-    {
-        return $this->match;
-    }
-
-    /**
-     * @param \DateTime $match
-     */
-    public function setMatch($match)
-    {
-        $this->match = $match;
+        $this->create = $data['create'] ?? null;
+        $this->sent = $data['sent'] ?? null;
+        $this->inpayment = $data['inpayment'] ?? null;
+        $this->paid = $data['paid'] ?? null;
+        $this->match = $data['match'] ?? null;
     }
 
 }

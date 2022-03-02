@@ -5,24 +5,24 @@ namespace Evoliz\Client\Model;
 class Analytic
 {
     /**
-     * @var integer
+     * @var integer Analytical axis id
      */
-    private $id;
+    public $id;
 
     /**
-     * @var string
+     * @var string Analytical axis code identifier
      */
-    private $code;
+    public $code;
 
     /**
-     * @var string
+     * @var string Analytical axis label
      */
-    private $label;
+    public $label;
 
     /**
      * @var boolean
      */
-    private $enabled;
+    public $enabled;
 
     /**
      * @param array $data
@@ -34,69 +34,4 @@ class Analytic
         $this->label = $data['label'] ?? null;
         $this->enabled = $data['enabled'] ?? null;
     }
-
-    /**
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCode()
-    {
-        return $this->code;
-    }
-
-    /**
-     * @param string $code
-     */
-    public function setCode($code)
-    {
-        $this->code = $code;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLabel()
-    {
-        return $this->label;
-    }
-
-    /**
-     * @param string $label
-     */
-    public function setLabel($label)
-    {
-        $this->label = $label;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * @param bool $enabled
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
-    }
-
 }
