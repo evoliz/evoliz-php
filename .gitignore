@@ -1,5 +1,8 @@
 # @Todo : Setup gitignore (see https://github.com/stripe/stripe-php/blob/master/.gitignore)
 
+# Ignore the /dockerconf/ directory
+/dockerconf/
+
 # Ignore the /vendor/ directory for people using composer
 /vendor/
 
