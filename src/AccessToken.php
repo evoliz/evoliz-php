@@ -36,12 +36,12 @@ class AccessToken
     }
 
     /**
-     * Get token expiration date and time
-     * @return \DateTime
+     * Check if the token is ewpired or not
+     * @return bool
      */
-    public function getExpiresAt(): \DateTime
+    public function isExpired(): bool
     {
-        return $this->expires_at;
+        return $this->expires_at < new \DateTime('now');
     }
 
 }
