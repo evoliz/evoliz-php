@@ -2,6 +2,7 @@
 
 namespace Evoliz\Client;
 
+use Evoliz\Client\Exception\LoginException;
 use Evoliz\Client\Exception\ReturnTypeException;
 use GuzzleHttp\Client;
 
@@ -21,6 +22,7 @@ class Config
      */
     private $clientConfig = [
         'base_uri' => self::BASE_URI,
+        'http_errors' => false,
         'headers' => [
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -155,7 +157,7 @@ class Config
     public function setDefaultReturnType(string $returnType)
     {
         if (!in_array($returnType, [self::JSON_RETURN_TYPE, self::OBJECT_RETURN_TYPE])) {
-            throw new ReturnTypeException("Error : The given return type is not valid.");
+            throw new ReturnTypeException("Error : The given return type is not valid", 400);
         }
 
         $this->defaultReturnType = $returnType;
@@ -178,18 +180,23 @@ class Config
             ])
         ]);
 
-        $loginResponse = json_decode($loginResponse->getBody()->getContents());
+        $responseBody = json_decode($loginResponse->getBody()->getContents());
 
-        if (isset($loginResponse->access_token)) {
+        if ($loginResponse->getStatusCode() !== 200) {
+            $errorMessage = $responseBody->error . ' : ' . $responseBody->message;
+            throw new LoginException($errorMessage, $loginResponse->getStatusCode());
+        }
+
+        if (isset($responseBody->access_token)) {
             // Cookie Storage
             setcookie('evoliz_token_' . $this->companyId, json_encode([
-                'access_token' => $loginResponse->access_token,
-                'expires_at' => $loginResponse->expires_at
+                'access_token' => $responseBody->access_token,
+                'expires_at' => $responseBody->expires_at
             ]));
 
-            $accessToken = new AccessToken($loginResponse->access_token, $loginResponse->expires_at);
+            $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
         } else {
-            // @Todo : Throw exception
+            throw new LoginException('The access token has not been recovered', 422);
         }
 
         return $accessToken;
