@@ -18,6 +18,11 @@ class Config
     private $client;
 
     /**
+     * @var bool Setup Guzzle Client verify parameter for SSL verification
+     */
+    private $verifySSL;
+
+    /**
      * @var integer User's companyid
      */
     private $companyId;
@@ -49,13 +54,15 @@ class Config
      * @param int $companyId
      * @param string $publicKey
      * @param string $secretKey
+     * @param bool $verifySSL
      * @throws \Exception
      */
-    public function __construct(int $companyId, string $publicKey, string $secretKey)
+    public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true)
     {
         $this->companyId = $companyId;
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
+        $this->verifySSL = $verifySSL;
 
         if ($this->hasValidCookieAccessToken()) {
             $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
@@ -66,7 +73,7 @@ class Config
         }
 
         $this->client = new Client([
-            'verify' => false, // @Todo : Remove that in production
+            'verify' => $this->verifySSL,
             'base_uri' => self::BASE_URI,
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->accessToken->getToken(),
@@ -119,7 +126,7 @@ class Config
             $this->accessToken = new AccessToken($loginResponse['access_token'], $loginResponse['expires_at']);
 
             $this->client = new Client([
-                'verify' => false, // @Todo : Remove that in production
+                'verify' => $this->verifySSL,
                 'base_uri' => self::BASE_URI,
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->accessToken->getToken(),
@@ -163,7 +170,7 @@ class Config
     {
         try {
             $client = new Client([
-                'verify' => false, // @Todo : Remove that in production
+                'verify' => $this->verifySSL,
                 'base_uri' => self::BASE_URI,
                 'headers' => [
                     'Accept' => 'application/json',
