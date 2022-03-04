@@ -4,21 +4,9 @@ namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
 use Evoliz\Client\Model\Invoice;
-use GuzzleHttp\Client;
 
 class InvoiceRepository extends BaseRepository
 {
-    /**
-     * @var Client Guzzle active client
-     */
-    private $client;
-
-    /**
-     * @var string Resources default return type
-     * Possible values = 'OBJECT' or 'JSON'
-     */
-    private $defaultReturnType;
-
     /**
      * @param Config $config
      * @throws \Exception
@@ -26,8 +14,6 @@ class InvoiceRepository extends BaseRepository
     public function __construct(Config $config)
     {
         parent::__construct($config);
-        $this->client = $config->getClient();
-        $this->defaultReturnType = $config->getDefaultReturnType();
     }
 
     /**

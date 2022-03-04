@@ -1,7 +1,7 @@
 <?php
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Repository\InvoiceRepository;
+use Evoliz\Client\Repository\ContactClientRepository;
 
 require 'vendor/autoload.php';
 
@@ -11,6 +11,10 @@ const EVOLIZ_PUBLIC_KEY = 'YOUR_PUBLIC_KEY'; // String
 const EVOLIZ_SECRET_KEY = 'YOUR_SECRET_KEY'; // String
 
 $config = new Config(EVOLIZ_COMPANYID, EVOLIZ_PUBLIC_KEY, EVOLIZ_SECRET_KEY);
-
-$invoiceRepository = new InvoiceRepository($config);
-$invoices = $invoiceRepository->detail(25);
+$contactClientRepository = new ContactClientRepository($config);
+$contactClient = $contactClientRepository->create([
+    'clientid' => 25,
+    'firstname' => 'John',
+    'lastname' => 'Doe',
+    'email' => 'jdoe@evoliz.com',
+]);

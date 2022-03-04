@@ -1,7 +1,6 @@
 <?php
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Exception\ReturnTypeException;
 
 require 'vendor/autoload.php';
 
@@ -11,9 +10,4 @@ const EVOLIZ_PUBLIC_KEY = 'YOUR_PUBLIC_KEY'; // String
 const EVOLIZ_SECRET_KEY = 'YOUR_SECRET_KEY'; // String
 
 $config = new Config(EVOLIZ_COMPANYID, EVOLIZ_PUBLIC_KEY, EVOLIZ_SECRET_KEY);
-
-try {
-    $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
-} catch (ReturnTypeException $exception) {
-    exit($exception->getMessage());
-}
+$config->setDefaultReturnType($config::JSON_RETURN_TYPE);

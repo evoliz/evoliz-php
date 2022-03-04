@@ -67,7 +67,7 @@ class Config
      * @param string $publicKey
      * @param string $secretKey
      * @param bool $verifySSL
-     * @throws \Exception
+     * @throws \Exception|LoginException
      */
     public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true)
     {
@@ -128,7 +128,7 @@ class Config
      * Check if the user is already identified and restarts the process if it is not the case
      *
      * @return void
-     * @throws \Exception
+     * @throws LoginException|\Exception
      */
     public function authenticate()
     {
@@ -167,7 +167,7 @@ class Config
      * Login the user with given public and secret keys
      *
      * @return AccessToken
-     * @throws \Exception
+     * @throws LoginException|\Exception
      */
     private function login(): AccessToken
     {
