@@ -3,7 +3,6 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Exception\LoginException;
 use GuzzleHttp\Client;
 
 abstract class BaseRepository

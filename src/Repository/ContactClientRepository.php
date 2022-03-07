@@ -3,7 +3,7 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Exception\LoginException;
+use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\ContactClient;
 
@@ -11,7 +11,7 @@ class ContactClientRepository extends BaseRepository
 {
     /**
      * @param Config $config
-     * @throws LoginException|\Exception
+     * @throws ConfigException|\Exception
      */
     public function __construct(Config $config)
     {
