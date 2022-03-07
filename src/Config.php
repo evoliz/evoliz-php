@@ -2,8 +2,7 @@
 
 namespace Evoliz\Client;
 
-use Evoliz\Client\Exception\LoginException;
-use Evoliz\Client\Exception\ReturnTypeException;
+use Evoliz\Client\Exception\ConfigException;
 use GuzzleHttp\Client;
 
 class Config
@@ -160,12 +159,12 @@ class Config
     /**
      * Set resources default return type
      * @return void
-     * @throws ReturnTypeException
+     * @throws ConfigException
      */
     public function setDefaultReturnType(string $returnType)
     {
         if (!in_array($returnType, [self::JSON_RETURN_TYPE, self::OBJECT_RETURN_TYPE])) {
-            throw new ReturnTypeException("Error : The given return type is not valid", 400);
+            throw new ConfigException("Error : The given return type is not valid", 400);
         }
 
         $this->defaultReturnType = $returnType;
@@ -192,7 +191,7 @@ class Config
 
         if ($loginResponse->getStatusCode() !== 200) {
             $errorMessage = $responseBody->error . ' : ' . $responseBody->message;
-            throw new LoginException($errorMessage, $loginResponse->getStatusCode());
+            throw new ConfigException($errorMessage, $loginResponse->getStatusCode());
         }
 
         if (isset($responseBody->access_token)) {
@@ -204,7 +203,7 @@ class Config
 
             $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
         } else {
-            throw new LoginException('The access token has not been recovered', 422);
+            throw new ConfigException('The access token has not been recovered', 422);
         }
 
         return $accessToken;
