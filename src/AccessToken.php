@@ -36,6 +36,14 @@ class AccessToken
     }
 
     /**
+     * @return \DateTime
+     */
+    public function getExpiresAt(): \DateTime
+    {
+        return $this->expires_at;
+    }
+
+    /**
      * Check if the token is ewpired or not
      * @return bool
      */

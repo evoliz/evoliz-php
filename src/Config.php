@@ -125,6 +125,14 @@ class Config
     }
 
     /**
+     * @return AccessToken
+     */
+    public function getAccessToken(): AccessToken
+    {
+        return $this->accessToken;
+    }
+
+    /**
      * Check if the user is already identified and restarts the process if it is not the case
      *
      * @return void
