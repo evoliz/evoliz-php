@@ -19,14 +19,14 @@ class ContactClientRepository extends BaseRepository
     }
 
     /**
-     * @param array $payload
+     * @param ContactClient $contactClient
      * @return ContactClient|false|string
      * @throws ResourceException
      */
-    public function create(array $payload)
+    public function create(ContactClient $contactClient)
     {
         $response = $this->client->post('api/v1/contacts-clients', [
-            'body' => json_encode($payload)
+            'body' => json_encode($contactClient->mapPayload())
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);

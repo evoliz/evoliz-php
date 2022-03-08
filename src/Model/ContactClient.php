@@ -2,7 +2,7 @@
 
 namespace Evoliz\Client\Model;
 
-class ContactClient
+class ContactClient implements ModelInterface
 {
     /**
      * @var integer Object unique identifier
@@ -96,7 +96,6 @@ class ContactClient
     {
         $this->contactid = $data['contactid'] ?? null;
         $this->userid = $data['userid'] ?? null;
-        $this->client = isset($data['client']) ? new LinkedClient($data['client']) : null;
         $this->civility = $data['civility'] ?? null;
         $this->lastname = $data['lastname'] ?? null;
         $this->firstname = $data['firstname'] ?? null;
@@ -116,6 +115,43 @@ class ContactClient
                 $this->custom_fields[$custom_field_label] = new CustomField($custom_field_value);
             }
         }
+
+        $this->buildLinkedClient($data);
     }
 
+    /**
+     * Mapping of the request payload to create the entry
+     * @return array
+     */
+    public function mapPayload(): array
+    {
+        $payload = [];
+        foreach ($this as $attribute => $value) {
+            if (isset($this->$attribute)) {
+                if ($attribute === 'client') {
+                    $payload['clientid'] = $value->clientid;
+                } else {
+                    $payload[$attribute] = $value;
+                }
+            }
+        }
+        return $payload;
+    }
+
+    /**
+     * Build LinkedClient object with given data
+     * @param $data
+     * @return void
+     */
+    private function buildLinkedClient($data) {
+        if (isset($data['clientid'])) {
+            $this->client = new LinkedClient([
+                'clientid' => $data['clientid']
+            ]);
+        } elseif (isset($data['client'])) {
+            $this->client = new LinkedClient($data['client']);
+        } else {
+            $this->client = null;
+        }
+    }
 }
