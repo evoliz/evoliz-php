@@ -23,11 +23,11 @@ class InvoiceRepository extends BaseRepository
      */
     public function list(array $query = [])
     {
-        $response = $this->client->get('api/v1/invoices', [
+        $response = $this->config->getClient()->get('api/v1/invoices', [
             'query' => $query
         ]);
 
-        if ($this->defaultReturnType === 'OBJECT') {
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
             $invoices = [];
             foreach (json_decode($response->getBody()->getContents(), true)['data'] as $invoiceData) {
                 $invoices[] = new Invoice($invoiceData);
@@ -46,9 +46,9 @@ class InvoiceRepository extends BaseRepository
      */
     public function detail(int $invoiceid)
     {
-        $response = $this->client->get('api/v1/invoices/' . $invoiceid);
+        $response = $this->config->getClient()->get('api/v1/invoices/' . $invoiceid);
 
-        if ($this->defaultReturnType === 'OBJECT') {
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
             return new Invoice(json_decode($response->getBody()->getContents(), true));
         } else {
             return $response->getBody()->getContents();
