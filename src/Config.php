@@ -116,10 +116,10 @@ class Config
     /**
      * Check if the user is already identified and restarts the process if it is not the case
      *
-     * @return void
+     * @return Config
      * @throws \Exception
      */
-    public function authenticate()
+    public function authenticate(): Config
     {
         if (!$this->hasValidAccessToken()) {
             $loginResponse = $this->login();
@@ -135,6 +135,8 @@ class Config
                 ]
             ]);
         }
+
+        return $this;
     }
 
     /**
