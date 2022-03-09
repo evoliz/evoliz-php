@@ -3,7 +3,6 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\ContactClient;
 use Evoliz\Client\Model\Response\ContactClientResponse;
@@ -12,7 +11,7 @@ class ContactClientRepository extends BaseRepository
 {
     /**
      * @param Config $config
-     * @throws ConfigException|\Exception
+     * @throws \Exception
      */
     public function __construct(Config $config)
     {
@@ -31,7 +30,7 @@ class ContactClientRepository extends BaseRepository
             $contactClient = new ContactClient((array) $contactClient);
         }
 
-        $response = $this->client->post('api/v1/contacts-clients', [
+        $response = $this->config->getClient()->post('api/v1/contacts-clients', [
             'body' => json_encode($this->mapPayload($contactClient))
         ]);
 
@@ -49,7 +48,7 @@ class ContactClientRepository extends BaseRepository
             throw new ResourceException($errorMessage, $response->getStatusCode());
         }
 
-        if ($this->defaultReturnType === 'OBJECT') {
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
             return new ContactClientResponse($responseBody);
         } else {
             return json_encode($responseBody);
