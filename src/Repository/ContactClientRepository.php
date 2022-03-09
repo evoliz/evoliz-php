@@ -6,6 +6,7 @@ use Evoliz\Client\Config;
 use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\ContactClient;
+use Evoliz\Client\Model\Response\ContactClientResponse;
 
 class ContactClientRepository extends BaseRepository
 {
@@ -19,14 +20,19 @@ class ContactClientRepository extends BaseRepository
     }
 
     /**
-     * @param ContactClient $contactClient
-     * @return ContactClient|false|string
+     * Create a new client contact with given data
+     * @param ContactClient|ContactClientResponse $contactClient
+     * @return ContactClientResponse|string
      * @throws ResourceException
      */
-    public function create(ContactClient $contactClient)
+    public function create($contactClient)
     {
+        if ($contactClient instanceof ContactClientResponse) {
+            $contactClient = new ContactClient((array) $contactClient);
+        }
+
         $response = $this->client->post('api/v1/contacts-clients', [
-            'body' => json_encode($contactClient->mapPayload())
+            'body' => json_encode($this->mapPayload($contactClient))
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -44,7 +50,7 @@ class ContactClientRepository extends BaseRepository
         }
 
         if ($this->defaultReturnType === 'OBJECT') {
-            return new ContactClient($responseBody);
+            return new ContactClientResponse($responseBody);
         } else {
             return json_encode($responseBody);
         }

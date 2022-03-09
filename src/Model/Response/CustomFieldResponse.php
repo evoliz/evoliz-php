@@ -1,8 +1,8 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class CustomField
+class CustomFieldResponse
 {
     /**
      * @var string
