@@ -5,6 +5,7 @@ namespace Evoliz\Client\Repository;
 use Evoliz\Client\Config;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\ResourceException;
+use Evoliz\Client\Model\Response\APIResponse;
 
 abstract class BaseRepository
 {
@@ -31,7 +32,8 @@ abstract class BaseRepository
     /**
      * Return a list of requested object visible by the current User, according to visibility restriction set in user profile
      * @param array $query
-     * @return array|string objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string objects list in the expected format (OBJECT or JSON)
+     * @throws ResourceException
      */
     public function list(array $query = [])
     {
@@ -39,15 +41,30 @@ abstract class BaseRepository
             'query' => $query
         ]);
 
+        $responseBody = json_decode($response->getBody()->getContents(), true);
+
+        if ($response->getStatusCode() !== 200) {
+            $errorMessage = $responseBody['error'] . ' : ';
+            if (is_array($responseBody['message'])) {
+                foreach ($responseBody['message'] as $error) {
+                    $errorMessage .= '<br>' . $error[0];
+                }
+            } else {
+                $errorMessage .= $responseBody['message'];
+            }
+            throw new ResourceException($errorMessage, $response->getStatusCode());
+        }
+
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            $objects = [];
-            foreach (json_decode($response->getBody()->getContents(), true)['data'] as $objectData) {
-                $objects[] = new $this->responseModel($objectData);
+            $data = [];
+
+            foreach ($responseBody['data'] as $objectData) {
+                $data[] = new $this->responseModel($objectData);
             }
 
-            return $objects;
+            return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
         } else {
-            return $response->getBody()->getContents();
+            return json_encode($responseBody);
         }
     }
 
