@@ -3,6 +3,7 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
+use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\ResourceException;
 
 abstract class BaseRepository
@@ -70,12 +71,14 @@ abstract class BaseRepository
      * Create a new object with given data
      * @param $object
      * @return mixed|string
-     * @throws ResourceException
+     * @throws InvalidTypeException|ResourceException
      */
     public function create($object)
     {
         if ($object instanceof $this->responseModel) {
             $object = new $this->baseModel((array) $object);
+        } elseif (!($object instanceof $this->baseModel)) {
+            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
         }
 
         $response = $this->config->getClient()->post('api/v1/' . $this->baseEndpoint, [

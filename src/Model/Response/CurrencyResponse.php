@@ -1,8 +1,8 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class Currency
+class CurrencyResponse
 {
     /**
      * @var string Iso currency code
@@ -15,7 +15,7 @@ class Currency
     public $conversion;
 
     /**
-     * @var string Currency symbol
+     * @var string CurrencyResponse symbol
      */
     public $symbol;
 

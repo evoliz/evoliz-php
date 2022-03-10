@@ -1,11 +1,11 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class SellDocTotal
+class SellDocTotalResponse
 {
     /**
-     * @var Rebate Document amount rebate
+     * @var RebateResponse Document amount rebate
      */
     public $rebate;
 
@@ -44,7 +44,7 @@ class SellDocTotal
      */
     public function __construct(array $data)
     {
-        $this->rebate = isset($data['rebate']) ? new Rebate($data['rebate']) : null;
+        $this->rebate = isset($data['rebate']) ? new RebateResponse($data['rebate']) : null;
         $this->vat_exclude = $data['vat_exclude'] ?? null;
         $this->vat = $data['vat'] ?? null;
         $this->vat_include = $data['vat_include'] ?? null;
