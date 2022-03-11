@@ -12,21 +12,23 @@ abstract class BaseRepository
     /**
      * @var Config
      */
-    protected $config;
+    private $config;
 
-    protected $baseEndpoint;
+    private $baseEndpoint;
 
-    protected $baseModel;
+    private $baseModel;
 
-    protected $responseModel;
+    private $responseModel;
 
     /**
      * @throws \Exception
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, $baseModel)
     {
         $this->config = $config->authenticate();
-        $this->retrieveModelInformations();
+        $this->baseModel = $baseModel;
+        $this->baseEndpoint = $this->baseModel::BASE_ENDPOINT;
+        $this->responseModel = $this->baseModel::RESPONSE_MODEL;
     }
 
     /**
@@ -121,15 +123,6 @@ abstract class BaseRepository
         } else {
             return json_encode($responseBody);
         }
-    }
-
-    private function retrieveModelInformations()
-    {
-        $repository = explode('\\', get_class($this));
-
-        $this->baseModel = 'Evoliz\Client\Model\\' . str_replace('Repository', '', end($repository));
-        $this->baseEndpoint = $this->baseModel::BASE_ENDPOINT;
-        $this->responseModel = $this->baseModel::RESPONSE_MODEL;
     }
 
     /**

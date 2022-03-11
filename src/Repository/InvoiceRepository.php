@@ -3,6 +3,7 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
+use Evoliz\Client\Model\Invoice;
 
 class InvoiceRepository extends BaseRepository
 {
@@ -12,6 +13,6 @@ class InvoiceRepository extends BaseRepository
      */
     public function __construct(Config $config)
     {
-        parent::__construct($config);
+        parent::__construct($config, Invoice::class);
     }
 }
