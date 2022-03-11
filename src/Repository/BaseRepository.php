@@ -46,15 +46,7 @@ abstract class BaseRepository
         $responseBody = json_decode($response->getBody()->getContents(), true);
 
         if ($response->getStatusCode() !== 200) {
-            $errorMessage = $responseBody['error'] . ' : ';
-            if (is_array($responseBody['message'])) {
-                foreach ($responseBody['message'] as $error) {
-                    $errorMessage .= '<br>' . $error[0];
-                }
-            } else {
-                $errorMessage .= $responseBody['message'];
-            }
-            throw new ResourceException($errorMessage, $response->getStatusCode());
+           $this->handleError($responseBody, $response->getStatusCode());
         }
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
@@ -107,15 +99,7 @@ abstract class BaseRepository
         $responseBody = json_decode($response->getBody()->getContents(), true);
 
         if ($response->getStatusCode() !== 201) {
-            $errorMessage = $responseBody['error'] . ' : ';
-            if ($response->getStatusCode() === 400) {
-                foreach ($responseBody['message'] as $error) {
-                    $errorMessage .= '<br>' . $error[0];
-                }
-            } else {
-                $errorMessage .= $responseBody['message'];
-            }
-            throw new ResourceException($errorMessage, $response->getStatusCode());
+            $this->handleError($responseBody, $response->getStatusCode());
         }
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
@@ -123,6 +107,22 @@ abstract class BaseRepository
         } else {
             return json_encode($responseBody);
         }
+    }
+
+    /**
+     * @throws ResourceException
+     */
+    private function handleError($responseBody, $statusCode)
+    {
+        $errorMessage = $responseBody['error'] . ' : ';
+        if (is_array($responseBody['message'])) {
+            foreach ($responseBody['message'] as $error) {
+                $errorMessage .= '<br>' . $error[0];
+            }
+        } else {
+            $errorMessage .= $responseBody['message'];
+        }
+        throw new ResourceException($errorMessage, $statusCode);
     }
 
     /**
