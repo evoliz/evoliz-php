@@ -134,7 +134,9 @@ abstract class BaseRepository
     {
         $payload = [];
         foreach ($object as $attribute => $value) {
-            if (isset($object->$attribute)) {
+            if (is_object($value) || is_array($value)) {
+                $payload[$attribute] = $this->mapPayload($value);
+            } elseif (isset($object->$attribute)) {
                 $payload[$attribute] = $value;
             }
         }
