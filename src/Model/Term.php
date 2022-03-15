@@ -64,7 +64,7 @@ class Term
      */
     public function __construct(array $data)
     {
-        $this->paytermid = $data['paytermid'] ?? null;
+        $this->paytermid = $this->mapPaytermId($data);
         $this->penalty = $data['penalty'] ?? null;
         $this->no_penalty = $data['no_penalty'] ?? null;
         $this->recovery_indemnity = $data['recovery_indemnity'] ?? null;
@@ -75,5 +75,21 @@ class Term
         $this->endmonth = $data['endmonth'] ?? null;
         $this->payday = $data['payday'] ?? null;
         $this->paytypeid = $data['paytypeid'] ?? null;
+    }
+
+    /**
+     * Map the clientid with the correct information
+     * @param array $data
+     * @return integer|null
+     */
+    private function mapPaytermId(array $data)
+    {
+        if (isset($data['payterm'])) {
+            $paytermid = $data['payterm']->paytermid;
+        } elseif (isset($data['paytermid'])) {
+            $paytermid = $data['paytermid'];
+        }
+
+        return $paytermid ?? null;
     }
 }

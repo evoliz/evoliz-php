@@ -4,6 +4,7 @@ namespace Evoliz\Client\Model;
 
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Model\Response\InvoiceResponse;
+use Evoliz\Client\Model\Response\SellDocItemResponse;
 
 class Invoice
 {
@@ -81,26 +82,79 @@ class Invoice
      */
     public function __construct(array $data)
     {
+        $this->clientid = $this->mapClientId($data);
+        $this->analyticid = $this->mapAnalyticId($data);
+        $this->global_rebate = $this->mapGlobalRebate($data);
+
         $this->external_document_number = $data['external_document_number'] ?? null;
         $this->documentdate = $data['documentdate'] ?? null;
-        $this->clientid = $data['clientid'] ?? null;
-        $this->contactid = $data['contactid'] ?? null;
+        $this->contactid = $data['contactid'] ?? null; //@Todo : Handle this when the resource is updated
         $this->object = $data['object'] ?? null;
-        $this->term = isset($data['term']) ? new Term($data['term']) : null;
-        $this->comment = $data['comment'] ?? null;
-        $this->analyticid = $data['analyticid'] ?? null;
-        $this->global_rebate = $data['global_rebate'] ?? null;
+        $this->term = isset($data['term']) ? new Term((array) $data['term']) : null;
+
+        if (isset($data['comment']) && $data['comment'] !== "") {
+            $this->comment = $data['comment'];
+        }
+
         $this->execdate = $data['execdate'] ?? null;
         $this->retention = isset($data['retention']) ? new Retention($data['retention']) : null;
         $this->include_sale_general_conditions = $data['include_sale_general_conditions'];
 
         if (isset($data['items'])) {
             foreach ($data['items'] as $item) {
-                if (!is_a($item, Item::class)) {
-                    throw new InvalidTypeException('Error : The given object is not of the ' . Item::class . ' type', 401);
+                if (!is_a($item, Item::class) && !is_a($item, SellDocItemResponse::class)) {
+                    throw new InvalidTypeException('Error : The given object is not of the right type', 401);
                 }
                 $this->items[] = $item;
             }
         }
+    }
+
+    /**
+     * Map the clientid with the correct information
+     * @param array $data
+     * @return integer|null
+     */
+    private function mapClientId(array $data)
+    {
+        if (isset($data['client'])) {
+            $clientid = $data['client']->clientid;
+        } elseif (isset($data['clientid'])) {
+            $clientid = $data['clientid'];
+        }
+
+        return $clientid ?? null;
+    }
+
+    /**
+     * Map the analyticid with the correct information
+     * @param array $data
+     * @return integer|null
+     */
+    private function mapAnalyticId(array $data)
+    {
+        if (isset($data['analytic'])) {
+            $analyticid = $data['analytic']->id;
+        } elseif (isset($data['analyticid'])) {
+            $analyticid = $data['analyticid'];
+        }
+
+        return $analyticid ?? null;
+    }
+
+    /**
+     * Map the global_rebate with the correct information
+     * @param array $data
+     * @return float|null
+     */
+    private function mapGlobalRebate(array $data)
+    {
+        if (isset($data['total'])) {
+            $global_rebate = $data['total']->rebate->amount_vat_exclude;
+        } elseif (isset($data['global_rebate'])) {
+            $global_rebate = $data['global_rebate'];
+        }
+
+        return $global_rebate ?? null;
     }
 }
