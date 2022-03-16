@@ -11,6 +11,3 @@ $config->setDefaultReturnType($config::OBJECT_RETURN_TYPE);
 $contactClientRepository = new ContactClientRepository($config);
 $contactClients = $contactClientRepository->list();
 $contactClient = $contactClientRepository->detail(1); // Get ContactClientResponse resource wth Id 1
-
-
-
