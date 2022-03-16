@@ -1,7 +1,7 @@
 <?php
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Repository\InvoiceRepository;
+use Evoliz\Client\Repository\Sales\InvoiceRepository;
 
 require 'vendor/autoload.php';
 

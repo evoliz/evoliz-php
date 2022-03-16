@@ -1,8 +1,8 @@
 <?php
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Model\ContactClient;
-use Evoliz\Client\Repository\ContactClientRepository;
+use Evoliz\Client\Model\Clients\ContactClient;
+use Evoliz\Client\Repository\Clients\ContactClientRepository;
 
 require 'vendor/autoload.php';
 

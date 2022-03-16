@@ -1,9 +1,10 @@
 <?php
 
-namespace Evoliz\Client\Repository;
+namespace Evoliz\Client\Repository\Clients;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Model\ContactClient;
+use Evoliz\Client\Model\Clients\ContactClient;
+use Evoliz\Client\Repository\BaseRepository;
 
 class ContactClientRepository extends BaseRepository
 {
