@@ -103,7 +103,7 @@ class Invoice
 
         if (isset($data['items'])) {
             foreach ($data['items'] as $item) {
-                if (!is_a($item, Item::class) && !is_a($item, SellDocItemResponse::class)) {
+                if (!($item instanceof Item) && !($item instanceof SellDocItemResponse)) {
                     throw new InvalidTypeException('Error : The given object is not of the right type', 401);
                 }
                 $this->items[] = $item;
