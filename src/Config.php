@@ -18,6 +18,17 @@ class Config
     private $client;
 
     /**
+     * @var Client Guzzle active client configuration
+     */
+    private $clientConfig = [
+        'base_uri' => self::BASE_URI,
+        'headers' => [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ]
+    ];
+
+    /**
      * @var bool Setup Guzzle Client verify parameter for SSL verification
      */
     private $verifySSL;
@@ -64,6 +75,10 @@ class Config
         $this->secretKey = $secretKey;
         $this->verifySSL = $verifySSL;
 
+        $this->clientConfig += [
+            'verify' => $this->verifySSL
+        ];
+
         if ($this->hasValidCookieAccessToken()) {
             $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
             $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
@@ -72,15 +87,11 @@ class Config
             $this->accessToken = new AccessToken($loginResponse['access_token'], $loginResponse['expires_at']);
         }
 
-        $this->client = new Client([
-            'verify' => $this->verifySSL,
-            'base_uri' => self::BASE_URI,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->accessToken->getToken(),
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json'
-            ]
-        ]);
+        $this->clientConfig['headers'] += [
+            'Authorization' => 'Bearer ' . $this->accessToken->getToken()
+        ];
+
+        $this->client = new Client($this->clientConfig);
     }
 
     /**
@@ -125,15 +136,7 @@ class Config
             $loginResponse = $this->login();
             $this->accessToken = new AccessToken($loginResponse['access_token'], $loginResponse['expires_at']);
 
-            $this->client = new Client([
-                'verify' => $this->verifySSL,
-                'base_uri' => self::BASE_URI,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->accessToken->getToken(),
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json'
-                ]
-            ]);
+            $this->client = new Client($this->clientConfig);
         }
 
         return $this;
@@ -171,16 +174,9 @@ class Config
     private function login(): array
     {
         try {
-            $client = new Client([
-                'verify' => $this->verifySSL,
-                'base_uri' => self::BASE_URI,
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json'
-                ]
-            ]);
+            $this->client = new Client($this->clientConfig);
 
-            $loginResponse = $client->post('api/login', [
+            $loginResponse = $this->client->post('api/login', [
                 'body' => json_encode([
                     'public_key' => $this->publicKey,
                     'secret_key' => $this->secretKey
