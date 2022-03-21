@@ -66,7 +66,7 @@ class Config
      * @param string $publicKey
      * @param string $secretKey
      * @param bool $verifySSL
-     * @throws \Exception
+     * @throws \Exception|ConfigException
      */
     public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true)
     {
@@ -124,10 +124,18 @@ class Config
     }
 
     /**
+     * @return AccessToken
+     */
+    public function getAccessToken(): AccessToken
+    {
+        return $this->accessToken;
+    }
+
+    /**
      * Check if the user is already identified and restarts the process if it is not the case
      *
      * @return Config
-     * @throws \Exception
+     * @throws ConfigException\Exception
      */
     public function authenticate(): Config
     {
@@ -168,9 +176,9 @@ class Config
      * Login the user with given public and secret keys
      *
      * @return AccessToken
-     * @throws \Exception
+     * @throws ConfigException|\Exception
      */
-    private function login(): AccessToken
+    protected function login(): AccessToken
     {
         $this->client = new Client($this->clientConfig);
 
