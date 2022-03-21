@@ -4,7 +4,6 @@ namespace Evoliz\Client;
 
 use Evoliz\Client\Exception\ReturnTypeException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 
 class Config
 {
@@ -83,8 +82,7 @@ class Config
             $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
             $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
         } else {
-            $loginResponse = $this->login();
-            $this->accessToken = new AccessToken($loginResponse['access_token'], $loginResponse['expires_at']);
+            $this->accessToken = $this->login();
         }
 
         $this->clientConfig['headers'] += [
@@ -133,8 +131,7 @@ class Config
     public function authenticate(): Config
     {
         if (!$this->hasValidAccessToken()) {
-            $loginResponse = $this->login();
-            $this->accessToken = new AccessToken($loginResponse['access_token'], $loginResponse['expires_at']);
+            $this->accessToken = $this->login();
 
             $this->client = new Client($this->clientConfig);
         }
@@ -169,35 +166,35 @@ class Config
     /**
      * Login the user with given public and secret keys
      *
-     * @return array login response
+     * @return AccessToken
+     * @throws \Exception
      */
-    private function login(): array
+    private function login(): AccessToken
     {
-        try {
-            $this->client = new Client($this->clientConfig);
+        $this->client = new Client($this->clientConfig);
 
-            $loginResponse = $this->client->post('api/login', [
-                'body' => json_encode([
-                    'public_key' => $this->publicKey,
-                    'secret_key' => $this->secretKey
-                ])
-            ]);
+        $loginResponse = $this->client->post('api/login', [
+            'body' => json_encode([
+                'public_key' => $this->publicKey,
+                'secret_key' => $this->secretKey
+            ])
+        ]);
 
-            $loginResponse = json_decode($loginResponse->getBody()->getContents(), true);
+        $loginResponse = json_decode($loginResponse->getBody()->getContents());
 
-            if (isset($loginResponse['access_token'])) {
-                // Cookie Storage
-                setcookie('evoliz_token_' . $this->companyId, json_encode([
-                    'access_token' => $loginResponse['access_token'],
-                    'expires_at' => $loginResponse['expires_at']
-                ]));
-            }
+        if (isset($loginResponse->access_token)) {
+            // Cookie Storage
+            setcookie('evoliz_token_' . $this->companyId, json_encode([
+                'access_token' => $loginResponse->access_token,
+                'expires_at' => $loginResponse->expires_at
+            ]));
 
-        } catch (GuzzleException $exception) {
-            $loginResponse = $exception->getMessage();
+            $accessToken = new AccessToken($loginResponse->access_token, $loginResponse->expires_at);
+        } else {
+            // @Todo : Throw exception
         }
 
-        return $loginResponse;
+        return $accessToken;
     }
 
     /**
