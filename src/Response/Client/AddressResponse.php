@@ -30,7 +30,7 @@ class AddressResponse
     public $country;
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {
@@ -40,5 +40,4 @@ class AddressResponse
         $this->town = $data['town'] ?? null;
         $this->country = isset($data['country']) ? new CountryResponse($data['country']) : null;
     }
-
 }

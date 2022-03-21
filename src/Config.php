@@ -19,14 +19,7 @@ class Config
     /**
      * @var Client Guzzle active client configuration
      */
-    private $clientConfig = [
-        'base_uri' => self::BASE_URI,
-        'http_errors' => false,
-        'headers' => [
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json'
-        ]
-    ];
+    private $clientConfig;
 
     /**
      * @var bool Setup Guzzle Client verify parameter for SSL verification
@@ -61,11 +54,10 @@ class Config
 
     /**
      * Setup the configuration for API usage
-     *
-     * @param int $companyId
-     * @param string $publicKey
-     * @param string $secretKey
-     * @param bool $verifySSL
+     * @param int $companyId User's companyid
+     * @param string $publicKey User's public key given in the app
+     * @param string $secretKey User's secret key given when the API credentials are created in the app
+     * @param bool $verifySSL Param to setup Guzzle options for SSL verification
      * @throws \Exception|ConfigException
      */
     public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true)
@@ -75,7 +67,13 @@ class Config
         $this->secretKey = $secretKey;
         $this->verifySSL = $verifySSL;
 
-        $this->clientConfig += [
+        $this->clientConfig = [
+            'base_uri' => self::BASE_URI,
+            'http_errors' => false,
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json'
+            ],
             'verify' => $this->verifySSL
         ];
 
@@ -95,7 +93,6 @@ class Config
 
     /**
      * Get the active Guzzle client
-     *
      * @return Client
      */
     public function getClient(): Client
@@ -105,7 +102,6 @@ class Config
 
     /**
      * Get user's companyid
-     *
      * @return int
      */
     public function getCompanyId(): int
@@ -115,7 +111,6 @@ class Config
 
     /**
      * Set user's companyid
-     *
      * @param int $companyId
      */
     public function setCompanyId(int $companyId)
@@ -124,6 +119,7 @@ class Config
     }
 
     /**
+     * Get the Access Token linked to the connection
      * @return AccessToken
      */
     public function getAccessToken(): AccessToken
@@ -132,10 +128,9 @@ class Config
     }
 
     /**
-     * Check if the user is already identified and restarts the process if it is not the case
-     *
+     * Check if the user is already identified and restarts the process if this is not the case
      * @return Config
-     * @throws ConfigException\Exception
+     * @throws \Exception|ConfigException
      */
     public function authenticate(): Config
     {
@@ -150,7 +145,6 @@ class Config
 
     /**
      * Get resources default return type
-     *
      * @return string
      */
     public function getDefaultReturnType(): string
@@ -160,6 +154,7 @@ class Config
 
     /**
      * Set resources default return type
+     * @param string $returnType Expected type of return (OBJECT or JSON)
      * @return void
      * @throws ConfigException
      */
@@ -174,7 +169,6 @@ class Config
 
     /**
      * Login the user with given public and secret keys
-     *
      * @return AccessToken
      * @throws ConfigException|\Exception
      */
@@ -213,7 +207,6 @@ class Config
 
     /**
      * Check if there is a valid access token stored in the cookies
-     *
      * @throws \Exception
      */
     private function hasValidCookieAccessToken(): bool
@@ -233,5 +226,4 @@ class Config
             || (isset($this->accessToken)
                 && !$this->accessToken->isExpired());
     }
-
 }

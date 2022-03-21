@@ -30,7 +30,7 @@ class StatusDatesResponse
     public $match = null;
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {
@@ -40,5 +40,4 @@ class StatusDatesResponse
         $this->paid = $data['paid'] ?? null;
         $this->match = $data['match'] ?? null;
     }
-
 }

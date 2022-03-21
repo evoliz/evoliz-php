@@ -5,17 +5,17 @@ namespace Evoliz\Client\Response\ContactClient;
 class CustomFieldResponse
 {
     /**
-     * @var string
+     * @var string Custom field label
      */
     public $label;
 
     /**
-     * @var string
+     * @var string Custom field value
      */
     public $value;
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {

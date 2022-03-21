@@ -12,7 +12,7 @@ class ContactClientResponse
     public $contactid;
 
     /**
-     * @var integer
+     * @var integer Contact client’s creator ID
      */
     public $userid;
 
@@ -92,7 +92,7 @@ class ContactClientResponse
     public $custom_fields = [];
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {

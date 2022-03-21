@@ -9,7 +9,8 @@ use Evoliz\Client\Repository\BaseRepository;
 class ClientRepository extends BaseRepository
 {
     /**
-     * @param Config $config
+     * Setup the different parameters for the API requests
+     * @param Config $config Configuration for API usage
      * @throws \Exception
      */
     public function __construct(Config $config)

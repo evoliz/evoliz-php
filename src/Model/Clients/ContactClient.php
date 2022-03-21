@@ -75,7 +75,7 @@ class ContactClient
     public $tel_tertiary;
 
     /**
-     * @param array $data
+     * @param array $data array to build the object
      */
     public function __construct(array $data)
     {
@@ -95,8 +95,8 @@ class ContactClient
     }
 
     /**
-     * Map the clientid with the correct information
-     * @param array $data
+     * Map the clientid field with the correct information
+     * @param array $data array to build the object
      * @return string|null
      */
     private function mapClientId(array $data)

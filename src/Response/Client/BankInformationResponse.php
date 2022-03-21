@@ -25,7 +25,7 @@ class BankInformationResponse
     public $bank_identification_code;
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {

@@ -4,8 +4,13 @@ namespace Evoliz\Client;
 
 abstract class EvolizHelper
 {
-    static function is_json($string)
+    /**
+     * Check if the given parameter is of JSON type
+     * @param mixed $parameter Value to check
+     * @return bool
+     */
+    static function is_json($parameter): bool
     {
-        return is_string($string) && is_array(json_decode($string, true)) && (json_last_error() == JSON_ERROR_NONE);
+        return is_string($parameter) && is_array(json_decode($parameter, true)) && (json_last_error() == JSON_ERROR_NONE);
     }
 }

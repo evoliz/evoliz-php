@@ -78,7 +78,7 @@ class Invoice
     public $items = [];
 
     /**
-     * @param array $data
+     * @param array $data array to build the object
      * @throws InvalidTypeException
      */
     public function __construct(array $data)
@@ -112,8 +112,8 @@ class Invoice
     }
 
     /**
-     * Map the clientid with the correct information
-     * @param array $data
+     * Map the clientid field with the correct information
+     * @param array $data array to build the object
      * @return integer|null
      */
     private function mapClientId(array $data)
@@ -128,8 +128,8 @@ class Invoice
     }
 
     /**
-     * Map the analyticid with the correct information
-     * @param array $data
+     * Map the analyticid field with the correct information
+     * @param array $data array to build the object
      * @return integer|null
      */
     private function mapAnalyticId(array $data)
@@ -144,8 +144,8 @@ class Invoice
     }
 
     /**
-     * Map the global_rebate with the correct information
-     * @param array $data
+     * Map the global_rebate field with the correct information
+     * @param array $data array to build the object
      * @return float|null
      */
     private function mapGlobalRebate(array $data)

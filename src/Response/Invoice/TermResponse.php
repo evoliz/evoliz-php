@@ -43,7 +43,7 @@ class TermResponse
     public $paytype;
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {
@@ -55,5 +55,4 @@ class TermResponse
         $this->payterm = isset($data['payterm']) ? new PayTermResponse($data['payterm']) : null;
         $this->paytype = isset($data['paytype']) ? new PayTypeResponse($data['paytype']) : null;
     }
-
 }
