@@ -217,8 +217,7 @@ class Config
     {
         return $this->hasValidCookieAccessToken()
             || (isset($this->accessToken)
-                && $this->accessToken->getExpiresAt()
-                > new \DateTime('now'));
+                && !$this->accessToken->isExpired());
     }
 
 }
