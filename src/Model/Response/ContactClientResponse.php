@@ -1,13 +1,23 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class ContactClient
+class ContactClientResponse
 {
     /**
-     * @var integer The client's id to attach the contact to
+     * @var integer Object unique identifier
      */
-    public $clientid;
+    public $contactid;
+
+    /**
+     * @var integer
+     */
+    public $userid;
+
+    /**
+     * @var LinkedClientResponse Linked client informations
+     */
+    public $client;
 
     /**
      * @var string Contact client civility
@@ -25,19 +35,14 @@ class ContactClient
     public $firstname;
 
     /**
-     * @var string Contact Job/Function
-     */
-    public $profil;
-
-    /**
      * @var string Contact email address
      */
     public $email;
 
     /**
-     * @var string Contact consent informations
+     * @var string Contact Job/Function
      */
-    public $consent;
+    public $profil;
 
     /**
      * @var string Primary phone label
@@ -70,40 +75,46 @@ class ContactClient
     public $tel_tertiary;
 
     /**
+     * @var bool Determines if the contact is active
+     */
+    public $enabled;
+
+    /**
+     * @var string Contact consent informations
+     */
+    public $consent;
+
+    /**
+     * @var array Custom fields collection
+     */
+    public $custom_fields = [];
+
+    /**
      * @param array $data
      */
     public function __construct(array $data)
     {
-        $this->clientid = $this->mapClientId($data);
+        $this->contactid = $data['contactid'] ?? null;
+        $this->userid = $data['userid'] ?? null;
+        $this->client = isset($data['client']) ? new LinkedClientResponse($data['client']) : null;
         $this->civility = $data['civility'] ?? null;
         $this->lastname = $data['lastname'] ?? null;
         $this->firstname = $data['firstname'] ?? null;
-        $this->profil = $data['profil'] ?? null;
         $this->email = $data['email'] ?? null;
-        $this->consent = $data['consent'] ?? null;
+        $this->profil = $data['profil'] ?? null;
         $this->label_tel_primary = $data['label_tel_primary'] ?? null;
         $this->tel_primary = $data['tel_primary'] ?? null;
         $this->label_tel_secondary = $data['label_tel_secondary'] ?? null;
         $this->tel_secondary = $data['tel_secondary'] ?? null;
         $this->label_tel_tertiary = $data['label_tel_tertiary'] ?? null;
         $this->tel_tertiary = $data['tel_tertiary'] ?? null;
-    }
+        $this->enabled = $data['enabled'] ?? null;
+        $this->consent = $data['consent'] ?? null;
 
-    /**
-     * Map the clientid with the correct information
-     * @param array $data
-     * @return string|null
-     */
-    private function mapClientId(array $data)
-    {
-        $clientid = null;
-
-        if (isset($data['client'])) {
-            $clientid = $data['client']->clientid;
-        } elseif (isset($data['clientid'])) {
-            $clientid = $data['clientid'];
+        if (isset($data['custom_fields'])) {
+            foreach ($data['custom_fields'] as $custom_field_label => $custom_field_value) {
+                $this->custom_fields[$custom_field_label] = new CustomFieldResponse($custom_field_value);
+            }
         }
-
-        return $clientid;
     }
 }
