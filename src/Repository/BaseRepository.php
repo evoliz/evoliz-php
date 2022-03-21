@@ -4,13 +4,18 @@ namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
 
-class BaseRepository
+abstract class BaseRepository
 {
+    /**
+     * @var Config
+     */
+    protected $config;
+
     /**
      * @throws \Exception
      */
     public function __construct(Config $config)
     {
-        $config->checkAuthentication();
+        $this->config = $config->authenticate();
     }
 }

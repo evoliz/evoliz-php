@@ -2,12 +2,15 @@
 
 namespace Evoliz\Client;
 
+use Evoliz\Client\Exception\ReturnTypeException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
 class Config
 {
     const BASE_URI = "https://www.evoliz.io/";
+    const OBJECT_RETURN_TYPE = "OBJECT";
+    const JSON_RETURN_TYPE = "JSON";
 
     /**
      * @var Client Guzzle active client
@@ -38,7 +41,7 @@ class Config
      * @var string Resources default return type
      * Possible values = 'OBJECT' or 'JSON'
      */
-    private $defaultReturnType = 'OBJECT'; // @Todo: Check the different packages in order to see if we can't use an enum
+    private $defaultReturnType = self::OBJECT_RETURN_TYPE;
 
     /**
      * Setup the configuration for API usage
@@ -106,10 +109,10 @@ class Config
     /**
      * Check if the user is already identified and restarts the process if it is not the case
      *
-     * @return void
+     * @return Config
      * @throws \Exception
      */
-    public function checkAuthentication()
+    public function authenticate(): Config
     {
         if (!$this->hasValidAccessToken()) {
             $loginResponse = $this->login();
@@ -125,6 +128,8 @@ class Config
                 ]
             ]);
         }
+
+        return $this;
     }
 
     /**
@@ -138,21 +143,17 @@ class Config
     }
 
     /**
-     * Set resources default return type to Object
+     * Set resources default return type
      * @return void
+     * @throws ReturnTypeException
      */
-    public function setObjectDefaultReturnType()
+    public function setDefaultReturnType(string $returnType)
     {
-        $this->defaultReturnType = 'OBJECT';
-    }
+        if (!in_array($returnType, [self::JSON_RETURN_TYPE, self::OBJECT_RETURN_TYPE])) {
+            throw new ReturnTypeException("Error : The given return type is not valid.");
+        }
 
-    /**
-     * Set resources default return type to JSON
-     * @return void
-     */
-    public function setJSONDefaultReturnType()
-    {
-        $this->defaultReturnType = 'JSON';
+        $this->defaultReturnType = $returnType;
     }
 
     /**
