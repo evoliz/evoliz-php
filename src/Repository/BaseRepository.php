@@ -11,7 +11,7 @@ use Evoliz\Client\Response\APIResponse;
 
 abstract class BaseRepository
 {
-    const EVOLIZ_HTTP_SUCCESS_CODES = [200, 201, 204];
+    const HTTP_SUCCESS_CODES = [200, 201, 202, 203, 204, 206, 207, 208, 226];
 
     /**
      * @var Config Configuration for API usage
@@ -326,7 +326,7 @@ abstract class BaseRepository
      */
     private function handleError(array $responseBody, int $statusCode)
     {
-        if (!in_array($statusCode, self::EVOLIZ_HTTP_SUCCESS_CODES))
+        if (!in_array($statusCode, self::HTTP_SUCCESS_CODES))
         {
             $errorMessage = $responseBody['error'] . ' : ';
             if (is_array($responseBody['message'])) {
