@@ -148,7 +148,6 @@ class Config
                 'Authorization' => 'Bearer ' . $this->accessToken->getToken()
             ];
 
-
             $this->client = new Client($this->clientConfig);
         }
 
