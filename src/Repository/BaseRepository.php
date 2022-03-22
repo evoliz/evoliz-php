@@ -11,6 +11,8 @@ use Evoliz\Client\Response\APIResponse;
 
 abstract class BaseRepository
 {
+    const EVOLIZ_HTTP_SUCCESS_CODES = [200, 201, 204];
+
     /**
      * @var Config Configuration for API usage
      */
@@ -59,9 +61,7 @@ abstract class BaseRepository
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
 
-        if ($response->getStatusCode() !== 200) {
-           $this->handleError($responseBody, $response->getStatusCode());
-        }
+        $this->handleError($responseBody, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
             $data = [];
@@ -112,9 +112,7 @@ abstract class BaseRepository
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
 
-        if ($response->getStatusCode() !== 201) {
-            $this->handleError($responseBody, $response->getStatusCode());
-        }
+        $this->handleError($responseBody, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
             return new $this->responseModel($responseBody);
@@ -142,9 +140,7 @@ abstract class BaseRepository
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
-                if ($response->getStatusCode() !== 200) {
-                    $this->handleError($responseBody, $response->getStatusCode());
-                }
+                $this->handleError($responseBody, $response->getStatusCode());
 
                 $data = [];
                 foreach ($responseBody['data'] as $objectData) {
@@ -165,9 +161,7 @@ abstract class BaseRepository
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
-                if ($response->getStatusCode() !== 200) {
-                    $this->handleError($responseBody, $response->getStatusCode());
-                }
+                $this->handleError($responseBody, $response->getStatusCode());
 
                 return json_encode($responseBody);
             }
@@ -195,9 +189,7 @@ abstract class BaseRepository
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
-                if ($response->getStatusCode() !== 200) {
-                    $this->handleError($responseBody, $response->getStatusCode());
-                }
+                $this->handleError($responseBody, $response->getStatusCode());
 
                 $data = [];
                 foreach ($responseBody['data'] as $objectData) {
@@ -218,9 +210,7 @@ abstract class BaseRepository
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
-                if ($response->getStatusCode() !== 200) {
-                    $this->handleError($responseBody, $response->getStatusCode());
-                }
+                $this->handleError($responseBody, $response->getStatusCode());
 
                 return json_encode($responseBody);
             }
@@ -248,9 +238,7 @@ abstract class BaseRepository
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
-                if ($response->getStatusCode() !== 200) {
-                    $this->handleError($responseBody, $response->getStatusCode());
-                }
+                $this->handleError($responseBody, $response->getStatusCode());
 
                 $data = [];
                 foreach ($responseBody['data'] as $objectData) {
@@ -271,9 +259,7 @@ abstract class BaseRepository
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
-                if ($response->getStatusCode() !== 200) {
-                    $this->handleError($responseBody, $response->getStatusCode());
-                }
+                $this->handleError($responseBody, $response->getStatusCode());
 
                 return json_encode($responseBody);
             }
@@ -301,9 +287,7 @@ abstract class BaseRepository
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
-                if ($response->getStatusCode() !== 200) {
-                    $this->handleError($responseBody, $response->getStatusCode());
-                }
+                $this->handleError($responseBody, $response->getStatusCode());
 
                 $data = [];
                 foreach ($responseBody['data'] as $objectData) {
@@ -325,9 +309,7 @@ abstract class BaseRepository
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
-                if ($response->getStatusCode() !== 200) {
-                    $this->handleError($responseBody, $response->getStatusCode());
-                }
+                $this->handleError($responseBody, $response->getStatusCode());
 
                 return json_encode($responseBody);
             }
@@ -344,15 +326,18 @@ abstract class BaseRepository
      */
     private function handleError(array $responseBody, int $statusCode)
     {
-        $errorMessage = $responseBody['error'] . ' : ';
-        if (is_array($responseBody['message'])) {
-            foreach ($responseBody['message'] as $error) {
-                $errorMessage .= '<br>' . $error[0];
+        if (!in_array($statusCode, self::EVOLIZ_HTTP_SUCCESS_CODES))
+        {
+            $errorMessage = $responseBody['error'] . ' : ';
+            if (is_array($responseBody['message'])) {
+                foreach ($responseBody['message'] as $error) {
+                    $errorMessage .= '<br>' . $error[0];
+                }
+            } else {
+                $errorMessage .= $responseBody['message'];
             }
-        } else {
-            $errorMessage .= $responseBody['message'];
+            throw new ResourceException($errorMessage, $statusCode);
         }
-        throw new ResourceException($errorMessage, $statusCode);
     }
 
     /**
