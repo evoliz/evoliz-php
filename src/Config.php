@@ -140,7 +140,7 @@ class Config
      */
     public function authenticate(): Config
     {
-        if ($this->hasValidAccessToken()) {
+        if (!$this->hasValidAccessToken()) {
             $this->accessToken = $this->login();
 
             $this->clientConfig = $this->defaultClientConfig;
