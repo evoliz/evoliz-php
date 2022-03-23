@@ -37,14 +37,16 @@ abstract class BaseRepository
      * Setup the different parameters for the API requests
      * @param Config $config Configuration for API usage
      * @param string $baseModel Reference model
+     * @param string $baseEndpoint Base endpoint
+     * @param string $responseModel Response model
      * @throws ConfigException
      */
-    public function __construct(Config $config, string $baseModel)
+    public function __construct(Config $config, string $baseModel, string $baseEndpoint, string $responseModel)
     {
         $this->config = $config->authenticate();
         $this->baseModel = $baseModel;
-        $this->baseEndpoint = $this->baseModel::BASE_ENDPOINT;
-        $this->responseModel = $this->baseModel::RESPONSE_MODEL;
+        $this->baseEndpoint = $baseEndpoint;
+        $this->responseModel = $responseModel;
     }
 
     /**

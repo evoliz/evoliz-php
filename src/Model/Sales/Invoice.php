@@ -4,14 +4,10 @@ namespace Evoliz\Client\Model\Sales;
 
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Model\Item;
-use Evoliz\Client\Response\Invoice\InvoiceResponse;
 use Evoliz\Client\Response\Invoice\SellDocItemResponse;
 
 class Invoice
 {
-    const BASE_ENDPOINT = 'invoices';
-    const RESPONSE_MODEL = InvoiceResponse::class;
-
     /**
      * @var string External Document number, must be unique
      */
