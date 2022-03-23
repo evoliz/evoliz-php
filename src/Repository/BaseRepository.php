@@ -80,15 +80,20 @@ abstract class BaseRepository
      * Return an object by its speficied id
      * @param int $objectid Object id
      * @return mixed|string Object in the expected format (OBJECT or JSON)
+     * @throws ResourceException
      */
     public function detail(int $objectid)
     {
         $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint . '/' . $objectid);
 
+        $responseBody = json_decode($response->getBody()->getContents(), true);
+
+        $this->handleError($responseBody, $response->getStatusCode());
+
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            return new $this->responseModel(json_decode($response->getBody()->getContents(), true));
+            return new $this->responseModel($responseBody);
         } else {
-            return $response->getBody()->getContents();
+            return json_encode($responseBody);
         }
     }
 
