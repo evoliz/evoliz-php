@@ -107,7 +107,7 @@ abstract class BaseRepository
         }
 
         $response = $this->config->getClient()->post('api/v1/' . $this->baseEndpoint, [
-            'body' => json_encode($this->mapPayload($object))
+            'body' => json_encode($this->buildPayload($object))
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -342,16 +342,16 @@ abstract class BaseRepository
 
     /**
      * Mapping of the request payload to create the entry
-     * @param $object Object to create
+     * @param mixed|string $object Object to create
      * @return array
      */
-    private function mapPayload($object): array
+    private function buildPayload($object): array
     {
         $payload = [];
         foreach ($object as $attribute => $value) {
             if (is_object($value) || is_array($value)) {
-                $payload[$attribute] = $this->mapPayload($value);
-            } elseif (isset($object->$attribute)) {
+                $payload[$attribute] = $this->buildPayload($value);
+            } elseif ($value !== null) {
                 $payload[$attribute] = $value;
             }
         }

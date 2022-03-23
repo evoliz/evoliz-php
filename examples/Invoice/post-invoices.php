@@ -8,7 +8,9 @@ use Evoliz\Client\Repository\Sales\InvoiceRepository;
 require 'vendor/autoload.php';
 
 $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
-$config->setDefaultReturnType($config::OBJECT_RETURN_TYPE);
+// Resources are returned in OBJECT type by default.
+// If you want resources to be returned as JSON, set default return type to JSON
+// Use $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
 
 $invoiceRepository = new InvoiceRepository($config);
 $newInvoice = $invoiceRepository->create(new Invoice([
