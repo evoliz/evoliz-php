@@ -49,8 +49,8 @@ class Term
      */
     public function __construct(array $data)
     {
-        $this->paytermid = $this->mapPayTermId($data);
-        $this->paytypeid = $this->mapPayTypeId($data);
+        $this->paytermid = $this->extractPayTermId($data);
+        $this->paytypeid = $this->extractPayTypeId($data);
 
         $this->validity = $data['validity'] ?? null;
         $this->penalty = $data['penalty'] ?? null;
@@ -61,11 +61,11 @@ class Term
     }
 
     /**
-     * Map the paytermid field with the correct information
+     * Extract the paytermid field with the correct information
      * @param array $data array to build the object
      * @return mixed|null
      */
-    private function mapPayTermId(array $data)
+    private function extractPayTermId(array $data)
     {
         if (isset($data['payterm'])) {
             $paytermid = $data['payterm']->paytermid;
@@ -77,11 +77,11 @@ class Term
     }
 
     /**
-     * Map the paytypeid field with the correct information
+     * Extract the paytypeid field with the correct information
      * @param array $data array to build the object
      * @return mixed|null
      */
-    private function mapPayTypeId(array $data)
+    private function extractPayTypeId(array $data)
     {
         if (isset($data['paytype'])) {
             $paytypeid = $data['paytype']->paytypeid;

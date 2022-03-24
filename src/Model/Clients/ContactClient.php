@@ -76,7 +76,7 @@ class ContactClient extends BaseModel
      */
     public function __construct(array $data)
     {
-        $this->clientid = $this->mapClientId($data);
+        $this->clientid = $this->extractClientId($data);
         $this->civility = $data['civility'] ?? null;
         $this->lastname = $data['lastname'] ?? null;
         $this->firstname = $data['firstname'] ?? null;
@@ -92,11 +92,11 @@ class ContactClient extends BaseModel
     }
 
     /**
-     * Map the clientid field with the correct information
+     * Extract the clientid field with the correct information
      * @param array $data array to build the object
      * @return string|null
      */
-    private function mapClientId(array $data)
+    private function extractClientId(array $data)
     {
         $clientid = null;
 

@@ -34,7 +34,7 @@ class Address
      */
     public function __construct(array $data)
     {
-        $this->iso2 = $this->mapIso2($data);
+        $this->iso2 = $this->extractIso2($data);
 
         $this->postcode = $data['postcode'] ?? null;
         $this->town = $data['town'] ?? null;
@@ -43,11 +43,11 @@ class Address
     }
 
     /**
-     * Map the iso2 field with the correct information
+     * Extract the iso2 field with the correct information
      * @param array $data array to build the object
      * @return mixed|null
      */
-    private function mapIso2(array $data)
+    private function extractIso2(array $data)
     {
         if (isset($data['country'])) {
             $iso2 = $data['country']->iso2;
