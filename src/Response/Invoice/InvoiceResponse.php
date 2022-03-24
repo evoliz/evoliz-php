@@ -2,9 +2,12 @@
 
 namespace Evoliz\Client\Response\Invoice;
 
+use Evoliz\Client\Exception\InvalidTypeException;
+use Evoliz\Client\Model\Sales\Invoice;
 use Evoliz\Client\Response\Common\LinkedClientResponse;
+use Evoliz\Client\Response\ResponseInterface;
 
-class InvoiceResponse
+class InvoiceResponse implements ResponseInterface
 {
     /**
      * @var integer Object unique identifier
@@ -198,4 +201,13 @@ class InvoiceResponse
         }
     }
 
+    /**
+     * Build Invoice from InvoiceResponse
+     * @return Invoice
+     * @throws InvalidTypeException
+     */
+    public function createFromResponse(): Invoice
+    {
+        return new Invoice((array) $this);
+    }
 }

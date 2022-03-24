@@ -2,9 +2,9 @@
 
 namespace Evoliz\Client\Model\Clients;
 
-use Evoliz\Client\Response\ContactClient\ContactClientResponse;
+use Evoliz\Client\Model\BaseModel;
 
-class ContactClient
+class ContactClient extends BaseModel
 {
     /**
      * @var integer The client's id to attach the contact to

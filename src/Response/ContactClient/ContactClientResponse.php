@@ -2,9 +2,11 @@
 
 namespace Evoliz\Client\Response\ContactClient;
 
+use Evoliz\Client\Model\Clients\ContactClient;
 use Evoliz\Client\Response\Common\LinkedClientResponse;
+use Evoliz\Client\Response\ResponseInterface;
 
-class ContactClientResponse
+class ContactClientResponse implements ResponseInterface
 {
     /**
      * @var integer Object unique identifier
@@ -118,5 +120,14 @@ class ContactClientResponse
                 $this->custom_fields[$custom_field_label] = new CustomFieldResponse($custom_field_value);
             }
         }
+    }
+
+    /**
+     * Build ContactClient from ContactClientResponse
+     * @return ContactClient
+     */
+    public function createFromResponse(): ContactClient
+    {
+        return new ContactClient((array) $this);
     }
 }

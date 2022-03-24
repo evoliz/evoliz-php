@@ -3,10 +3,11 @@
 namespace Evoliz\Client\Model\Sales;
 
 use Evoliz\Client\Exception\InvalidTypeException;
+use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Model\Item;
 use Evoliz\Client\Response\Invoice\SellDocItemResponse;
 
-class Invoice
+class Invoice extends BaseModel
 {
     /**
      * @var string External Document number, must be unique
