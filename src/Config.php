@@ -216,10 +216,6 @@ class Config
                 'expires_at' => $responseBody->expires_at
             ]));
 
-            if (!$cookiesIsSet) {
-                throw new ConfigException('The cookie has not been set correctly', 422);
-            }
-
             $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
         } else {
             throw new ConfigException('The access token has not been recovered', 422);
