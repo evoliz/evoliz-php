@@ -4,6 +4,7 @@ namespace Evoliz\Client;
 
 use Evoliz\Client\Exception\ConfigException;
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 
 class Config
 {
@@ -17,12 +18,12 @@ class Config
     private $client;
 
     /**
-     * @var Client Guzzle client default configuration
+     * @var array Guzzle client default configuration
      */
     private $defaultClientConfig;
 
     /**
-     * @var Client Guzzle active client configuration
+     * @var array Guzzle active client configuration
      */
     private $clientConfig;
 
@@ -30,6 +31,11 @@ class Config
      * @var bool Setup Guzzle Client verify parameter for SSL verification
      */
     private $verifySSL;
+
+    /**
+     * @var HandlerStack Guzzle Handler stack
+     */
+    private $handlerStack;
 
     /**
      * @var integer User's companyid
@@ -65,12 +71,13 @@ class Config
      * @param bool $verifySSL Param to setup Guzzle options for SSL verification
      * @throws \Exception|ConfigException
      */
-    public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true)
+    public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true, HandlerStack $handlerStack = null)
     {
         $this->companyId = $companyId;
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
         $this->verifySSL = $verifySSL;
+        $this->handlerStack = $handlerStack;
 
         $this->defaultClientConfig = [
             'base_uri' => self::BASE_URI,
@@ -79,7 +86,8 @@ class Config
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json'
             ],
-            'verify' => $this->verifySSL
+            'verify' => $this->verifySSL,
+            'handler' => $this->handlerStack
         ];
 
         if ($this->hasValidCookieAccessToken()) {
@@ -183,7 +191,7 @@ class Config
      * @return AccessToken
      * @throws ConfigException|\Exception
      */
-    protected function login(): AccessToken
+    private function login(): AccessToken
     {
         $this->client = new Client($this->defaultClientConfig);
 
@@ -203,10 +211,14 @@ class Config
 
         if (isset($responseBody->access_token)) {
             // Cookie Storage
-            setcookie('evoliz_token_' . $this->companyId, json_encode([
+            $cookiesIsSet = setcookie('evoliz_token_' . $this->companyId, json_encode([
                 'access_token' => $responseBody->access_token,
                 'expires_at' => $responseBody->expires_at
             ]));
+
+            if (!$cookiesIsSet) {
+                throw new ConfigException('The cookie has not been set correctly', 422);
+            }
 
             $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
         } else {

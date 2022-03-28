@@ -1,8 +1,10 @@
 <?php
 
-use Evoliz\Client\AccessToken;
 use Evoliz\Client\Config;
 use Evoliz\Client\Exception\ConfigException;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
@@ -27,6 +29,9 @@ class ConfigTest extends TestCase
      */
     private $expirationDate;
 
+    /**
+     * @throws Exception
+     */
     public function setUp()
     {
         parent::setUp();
@@ -40,9 +45,82 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @runInSeparateProcess
+     * @throws ConfigException
+     * @throws Exception
      */
-    public function testHasValidCookieToken()
+    public function testAuthenticateWithoutValidToken()
+    {
+        // Setup expired Token to test authenticate method without valid token
+        $yesterday = new DateTime('yesterday', new DateTimeZone('Europe/Paris'));
+        $yesterday = str_replace('+01:00', '.000000Z', $yesterday->format(DateTime::ATOM));
+
+        $expiredToken = json_encode([
+            'access_token' => $this->faker->uuid,
+            'expires_at' => $yesterday
+        ]);
+
+        $validToken = json_encode([
+            'access_token' => $this->accessToken,
+            'expires_at' => $this->expirationDate
+        ]);
+
+        $guzzleMock = new MockHandler([
+            new Response(200, [], $expiredToken),
+            new Response(200, [], $validToken),
+        ]);
+
+        $handlerStack = HandlerStack::create($guzzleMock);
+
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $this->assertTrue($config->getAccessToken()->isExpired());
+
+        $config = $config->authenticate();
+        $this->assertFalse($config->getAccessToken()->isExpired());
+
+        $guzzleClientToken = explode(' ', $config->getClient()->getConfig('headers')['Authorization'])[1];
+
+        $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
+        $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
+        $this->assertEquals($guzzleClientToken, $this->accessToken);
+    }
+
+    /**
+     * @runInSeparateProcess
+     * @throws ConfigException
+     * @throws Exception
+     */
+    public function testAuthenticateWithValidToken()
+    {
+        $validToken = json_encode([
+            'access_token' => $this->accessToken,
+            'expires_at' => $this->expirationDate
+        ]);
+
+        $guzzleMock = new MockHandler([
+            new Response(200, [], $validToken),
+        ]);
+
+        $handlerStack = HandlerStack::create($guzzleMock);
+
+        $baseConfig = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $this->assertFalse($baseConfig->getAccessToken()->isExpired());
+
+        $config = $baseConfig->authenticate();
+        $this->assertEquals($baseConfig->getAccessToken()->getToken(), $config->getAccessToken()->getToken());
+
+        $guzzleClientToken = explode(' ', $config->getClient()->getConfig('headers')['Authorization'])[1];
+
+        $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
+        $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
+        $this->assertEquals($guzzleClientToken, $this->accessToken);
+    }
+
+    /**
+     * @throws ConfigException
+     * @throws Exception
+     */
+    public function testAuthenticateWithValidCookieToken()
     {
         $_COOKIE['evoliz_token_' . $this->companyId] = json_encode([
             'access_token' => $this->accessToken,
@@ -50,12 +128,14 @@ class ConfigTest extends TestCase
         ]);
 
         $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
+        $this->assertFalse($config->getAccessToken()->isExpired());
+
+        $config = $config->authenticate();
 
         $guzzleClientToken = explode(' ', $config->getClient()->getConfig('headers')['Authorization'])[1];
 
         $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
         $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
-
         $this->assertEquals($guzzleClientToken, $this->accessToken);
     }
 
@@ -69,62 +149,30 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @throws ConfigException
-     */
-    public function testLoginWithValidCredentials()
-    {
-        $mock = Mockery::mock('Evoliz\Client\Config')->shouldAllowMockingProtectedMethods();
-
-        $token = new AccessToken($this->accessToken, $this->expirationDate);
-
-        $mock->shouldReceive('login')
-            ->once()->andReturn($token);
-
-        $mock->shouldReceive('setcookie')
-            ->once()->andReturn($_COOKIE['evoliz_token_' . $this->companyId] = json_encode([
-                'access_token' => $this->accessToken,
-                'expires_at' => $this->expirationDate
-            ]));
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
-
-        $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
-        $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
-
-        $guzzleClientToken = explode(' ', $config->getClient()->getConfig('headers')['Authorization'])[1];
-        $this->assertEquals($config->getAccessToken()->getToken(), $guzzleClientToken);
-    }
-
-    /**
+     * @runInSeparateProcess
      * @return void
      * @throws ConfigException
      */
     public function testSetDefaultReturnType()
     {
-        $_COOKIE['evoliz_token_' . $this->companyId] = json_encode([
+        $validToken = json_encode([
             'access_token' => $this->accessToken,
             'expires_at' => $this->expirationDate
         ]);
 
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
+        $guzzleMock = new MockHandler([
+            new Response(200, [], $validToken),
+        ]);
 
-        $config->setDefaultReturnType($config::OBJECT_RETURN_TYPE);
+        $handlerStack = HandlerStack::create($guzzleMock);
+
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
         $this->assertEquals($config::OBJECT_RETURN_TYPE, $config->getDefaultReturnType());
-    }
 
-    /**
-     * @throws ConfigException
-     */
-    public function testSetDefaultReturnTypeWithUnallowedReturnType()
-    {
-        $_COOKIE['evoliz_token_' . $this->companyId] = json_encode([
-            'access_token' => $this->accessToken,
-            'expires_at' => $this->expirationDate
-        ]);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
+        $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
+        $this->assertEquals($config::JSON_RETURN_TYPE, $config->getDefaultReturnType());
 
         $this->expectException(ConfigException::class);
-        $config->setDefaultReturnType('JAR');
+        $config->setDefaultReturnType('EVZ');
     }
 }
