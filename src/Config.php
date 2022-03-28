@@ -216,6 +216,8 @@ class Config
                 'expires_at' => $responseBody->expires_at
             ]));
 
+            // Test de JIRA
+
             $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
         } else {
             throw new ConfigException('The access token has not been recovered', 422);
