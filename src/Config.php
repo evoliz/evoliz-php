@@ -2,9 +2,8 @@
 
 namespace Evoliz\Client;
 
-use Evoliz\Client\Exception\ReturnTypeException;
+use Evoliz\Client\Exception\ConfigException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 
 class Config
 {
@@ -16,6 +15,23 @@ class Config
      * @var Client Guzzle active client
      */
     private $client;
+
+    /**
+     * @var Client Guzzle active client configuration
+     */
+    private $clientConfig = [
+        'base_uri' => self::BASE_URI,
+        'http_errors' => false,
+        'headers' => [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ]
+    ];
+
+    /**
+     * @var bool Setup Guzzle Client verify parameter for SSL verification
+     */
+    private $verifySSL;
 
     /**
      * @var integer User's companyid
@@ -49,31 +65,32 @@ class Config
      * @param int $companyId
      * @param string $publicKey
      * @param string $secretKey
-     * @throws \Exception
+     * @param bool $verifySSL
+     * @throws \Exception|ConfigException
      */
-    public function __construct(int $companyId, string $publicKey, string $secretKey)
+    public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true)
     {
         $this->companyId = $companyId;
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
+        $this->verifySSL = $verifySSL;
+
+        $this->clientConfig += [
+            'verify' => $this->verifySSL
+        ];
 
         if ($this->hasValidCookieAccessToken()) {
             $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
             $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
         } else {
-            $loginResponse = $this->login();
-            $this->accessToken = new AccessToken($loginResponse['access_token'], $loginResponse['expires_at']);
+            $this->accessToken = $this->login();
         }
 
-        $this->client = new Client([
-            'verify' => false, // @Todo : Remove that in production
-            'base_uri' => self::BASE_URI,
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->accessToken->getToken(),
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json'
-            ]
-        ]);
+        $this->clientConfig['headers'] += [
+            'Authorization' => 'Bearer ' . $this->accessToken->getToken()
+        ];
+
+        $this->client = new Client($this->clientConfig);
     }
 
     /**
@@ -107,26 +124,25 @@ class Config
     }
 
     /**
+     * @return AccessToken
+     */
+    public function getAccessToken(): AccessToken
+    {
+        return $this->accessToken;
+    }
+
+    /**
      * Check if the user is already identified and restarts the process if it is not the case
      *
      * @return Config
-     * @throws \Exception
+     * @throws ConfigException\Exception
      */
     public function authenticate(): Config
     {
         if (!$this->hasValidAccessToken()) {
-            $loginResponse = $this->login();
-            $this->accessToken = new AccessToken($loginResponse['access_token'], $loginResponse['expires_at']);
+            $this->accessToken = $this->login();
 
-            $this->client = new Client([
-                'verify' => false, // @Todo : Remove that in production
-                'base_uri' => self::BASE_URI,
-                'headers' => [
-                    'Authorization' => 'Bearer ' . $this->accessToken->getToken(),
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json'
-                ]
-            ]);
+            $this->client = new Client($this->clientConfig);
         }
 
         return $this;
@@ -145,12 +161,12 @@ class Config
     /**
      * Set resources default return type
      * @return void
-     * @throws ReturnTypeException
+     * @throws ConfigException
      */
     public function setDefaultReturnType(string $returnType)
     {
         if (!in_array($returnType, [self::JSON_RETURN_TYPE, self::OBJECT_RETURN_TYPE])) {
-            throw new ReturnTypeException("Error : The given return type is not valid.");
+            throw new ConfigException("Error : The given return type is not valid", 400);
         }
 
         $this->defaultReturnType = $returnType;
@@ -159,42 +175,40 @@ class Config
     /**
      * Login the user with given public and secret keys
      *
-     * @return array login response
+     * @return AccessToken
+     * @throws ConfigException|\Exception
      */
-    private function login(): array
+    protected function login(): AccessToken
     {
-        try {
-            $client = new Client([
-                'verify' => false, // @Todo : Remove that in production
-                'base_uri' => self::BASE_URI,
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/json'
-                ]
-            ]);
+        $this->client = new Client($this->clientConfig);
 
-            $loginResponse = $client->post('api/login', [
-                'body' => json_encode([
-                    'public_key' => $this->publicKey,
-                    'secret_key' => $this->secretKey
-                ])
-            ]);
+        $loginResponse = $this->client->post('api/login', [
+            'body' => json_encode([
+                'public_key' => $this->publicKey,
+                'secret_key' => $this->secretKey
+            ])
+        ]);
 
-            $loginResponse = json_decode($loginResponse->getBody()->getContents(), true);
+        $responseBody = json_decode($loginResponse->getBody()->getContents());
 
-            if (isset($loginResponse['access_token'])) {
-                // Cookie Storage
-                setcookie('evoliz_token_' . $this->companyId, json_encode([
-                    'access_token' => $loginResponse['access_token'],
-                    'expires_at' => $loginResponse['expires_at']
-                ]));
-            }
-
-        } catch (GuzzleException $exception) {
-            $loginResponse = $exception->getMessage();
+        if ($loginResponse->getStatusCode() !== 200) {
+            $errorMessage = $responseBody->error . ' : ' . $responseBody->message;
+            throw new ConfigException($errorMessage, $loginResponse->getStatusCode());
         }
 
-        return $loginResponse;
+        if (isset($responseBody->access_token)) {
+            // Cookie Storage
+            setcookie('evoliz_token_' . $this->companyId, json_encode([
+                'access_token' => $responseBody->access_token,
+                'expires_at' => $responseBody->expires_at
+            ]));
+
+            $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
+        } else {
+            throw new ConfigException('The access token has not been recovered', 422);
+        }
+
+        return $accessToken;
     }
 
     /**
@@ -217,8 +231,7 @@ class Config
     {
         return $this->hasValidCookieAccessToken()
             || (isset($this->accessToken)
-                && $this->accessToken->getExpiresAt()
-                > new \DateTime('now'));
+                && !$this->accessToken->isExpired());
     }
 
 }

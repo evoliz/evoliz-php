@@ -18,4 +18,20 @@ abstract class BaseRepository
     {
         $this->config = $config->authenticate();
     }
+
+    /**
+     * Mapping of the request payload to create the entry
+     * @param $object
+     * @return array
+     */
+    protected function mapPayload($object): array
+    {
+        $payload = [];
+        foreach ($object as $attribute => $value) {
+            if (isset($object->$attribute)) {
+                $payload[$attribute] = $value;
+            }
+        }
+        return $payload;
+    }
 }
