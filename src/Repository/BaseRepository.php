@@ -5,33 +5,37 @@ namespace Evoliz\Client\Repository;
 use Evoliz\Client\Config;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\ResourceException;
+use Evoliz\Client\Model\Response\APIResponse;
 
 abstract class BaseRepository
 {
     /**
      * @var Config
      */
-    protected $config;
+    private $config;
 
-    protected $baseEndpoint;
+    private $baseEndpoint;
 
-    protected $baseModel;
+    private $baseModel;
 
-    protected $responseModel;
+    private $responseModel;
 
     /**
      * @throws \Exception
      */
-    public function __construct(Config $config)
+    public function __construct(Config $config, $baseModel)
     {
         $this->config = $config->authenticate();
-        $this->retrieveModelInformations();
+        $this->baseModel = $baseModel;
+        $this->baseEndpoint = $this->baseModel::BASE_ENDPOINT;
+        $this->responseModel = $this->baseModel::RESPONSE_MODEL;
     }
 
     /**
      * Return a list of requested object visible by the current User, according to visibility restriction set in user profile
      * @param array $query
-     * @return array|string objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string objects list in the expected format (OBJECT or JSON)
+     * @throws ResourceException
      */
     public function list(array $query = [])
     {
@@ -39,15 +43,22 @@ abstract class BaseRepository
             'query' => $query
         ]);
 
+        $responseBody = json_decode($response->getBody()->getContents(), true);
+
+        if ($response->getStatusCode() !== 200) {
+           $this->handleError($responseBody, $response->getStatusCode());
+        }
+
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            $objects = [];
-            foreach (json_decode($response->getBody()->getContents(), true)['data'] as $objectData) {
-                $objects[] = new $this->responseModel($objectData);
+            $data = [];
+
+            foreach ($responseBody['data'] as $objectData) {
+                $data[] = new $this->responseModel($objectData);
             }
 
-            return $objects;
+            return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
         } else {
-            return $response->getBody()->getContents();
+            return json_encode($responseBody);
         }
     }
 
@@ -88,15 +99,7 @@ abstract class BaseRepository
         $responseBody = json_decode($response->getBody()->getContents(), true);
 
         if ($response->getStatusCode() !== 201) {
-            $errorMessage = $responseBody['error'] . ' : ';
-            if ($response->getStatusCode() === 400) {
-                foreach ($responseBody['message'] as $error) {
-                    $errorMessage .= '<br>' . $error[0];
-                }
-            } else {
-                $errorMessage .= $responseBody['message'];
-            }
-            throw new ResourceException($errorMessage, $response->getStatusCode());
+            $this->handleError($responseBody, $response->getStatusCode());
         }
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
@@ -106,13 +109,20 @@ abstract class BaseRepository
         }
     }
 
-    private function retrieveModelInformations()
+    /**
+     * @throws ResourceException
+     */
+    private function handleError($responseBody, $statusCode)
     {
-        $repository = explode('\\', get_class($this));
-
-        $this->baseModel = 'Evoliz\Client\Model\\' . str_replace('Repository', '', end($repository));
-        $this->baseEndpoint = $this->baseModel::BASE_ENDPOINT;
-        $this->responseModel = $this->baseModel::RESPONSE_MODEL;
+        $errorMessage = $responseBody['error'] . ' : ';
+        if (is_array($responseBody['message'])) {
+            foreach ($responseBody['message'] as $error) {
+                $errorMessage .= '<br>' . $error[0];
+            }
+        } else {
+            $errorMessage .= $responseBody['message'];
+        }
+        throw new ResourceException($errorMessage, $statusCode);
     }
 
     /**
