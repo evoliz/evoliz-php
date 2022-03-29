@@ -2,8 +2,13 @@
 
 namespace Evoliz\Client\Model;
 
+use Evoliz\Client\Model\Response\ContactClientResponse;
+
 class ContactClient
 {
+    const BASE_ENDPOINT = 'contacts-clients';
+    const RESPONSE_MODEL = ContactClientResponse::class;
+
     /**
      * @var integer The client's id to attach the contact to
      */

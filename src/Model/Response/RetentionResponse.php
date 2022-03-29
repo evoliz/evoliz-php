@@ -1,26 +1,26 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class Retention
+class RetentionResponse
 {
     /**
-     * @var float Retention percent
+     * @var float RetentionResponse percent
      */
     public $percent;
 
     /**
-     * @var float Retention amount
+     * @var float RetentionResponse amount
      */
     public $amount;
 
     /**
-     * @var float Retention amount in currency
+     * @var float RetentionResponse amount in currency
      */
     public $currency_amount;
 
     /**
-     * @var \DateTime Retention Date
+     * @var \DateTime RetentionResponse Date
      */
     public $date;
 

@@ -1,23 +1,28 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class SaleClassification
+class AnalyticResponse
 {
     /**
-     * @var integer Classification id
+     * @var integer Analytical axis id
      */
     public $id;
 
     /**
-     * @var string Classification code
+     * @var string Analytical axis code identifier
      */
     public $code;
 
     /**
-     * @var string Classification label
+     * @var string Analytical axis label
      */
     public $label;
+
+    /**
+     * @var boolean
+     */
+    public $enabled;
 
     /**
      * @param array $data
@@ -27,6 +32,6 @@ class SaleClassification
         $this->id = $data['id'] ?? null;
         $this->code = $data['code'] ?? null;
         $this->label = $data['label'] ?? null;
+        $this->enabled = $data['enabled'] ?? null;
     }
-
 }

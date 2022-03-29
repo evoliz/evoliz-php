@@ -1,11 +1,11 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class Rebate
+class RebateResponse
 {
     /**
-     * @var float Rebate amount excluding vat in currency
+     * @var float RebateResponse amount excluding vat in currency
      */
     public $amount_vat_exclude;
 

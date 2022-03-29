@@ -1,8 +1,8 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class Term
+class TermResponse
 {
     /**
      * @var float Penalty rate
@@ -30,12 +30,12 @@ class Term
     public $no_discount_term;
 
     /**
-     * @var PayTerm Payment condition term
+     * @var PayTermResponse Payment condition term
      */
     public $payterm;
 
     /**
-     * @var PayType Payment condition term
+     * @var PayTypeResponse Payment condition term
      */
     public $paytype;
 
@@ -49,8 +49,8 @@ class Term
         $this->recovery_indemnity = $data['recovery_indemnity'] ?? null;
         $this->discount_term = $data['discount_term'] ?? null;
         $this->no_discount_term = $data['no_discount_term'] ?? null;
-        $this->payterm = isset($data['payterm']) ? new PayTerm($data['payterm']) : null;
-        $this->paytype = isset($data['paytype']) ? new PayType($data['paytype']) : null;
+        $this->payterm = isset($data['payterm']) ? new PayTermResponse($data['payterm']) : null;
+        $this->paytype = isset($data['paytype']) ? new PayTypeResponse($data['paytype']) : null;
     }
 
 }

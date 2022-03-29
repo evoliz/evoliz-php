@@ -1,8 +1,8 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class PayTerm
+class PayTermResponse
 {
     /**
      * @var integer Payment term identifier

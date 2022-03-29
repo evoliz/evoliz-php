@@ -1,8 +1,8 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Response;
 
-class SellDocItem
+class SellDocItemResponse
 {
     /**
      * @var integer Item id
@@ -60,17 +60,17 @@ class SellDocItem
     public $vat;
 
     /**
-     * @var ItemTotal Document total amounts
+     * @var ItemTotalResponse Document total amounts
      */
     public $total = null;
 
     /**
-     * @var ItemTotal Document total amounts in currency
+     * @var ItemTotalResponse Document total amounts in currency
      */
     public $currency_total = null;
 
     /**
-     * @var SaleClassification Item classification information
+     * @var SaleClassificationResponse Item classification information
      */
     public $sale_classification;
 
@@ -90,9 +90,9 @@ class SellDocItem
         $this->unit_price_vat_exclude = $data['unit_price_vat_exclude'] ?? null;
         $this->unit_price_vat_exclude_currency = $data['unit_price_vat_exclude_currency'] ?? null;
         $this->vat = $data['vat'] ?? null;
-        $this->total = isset($data['total']) ? new ItemTotal($data['total']) : null;
-        $this->currency_total = isset($data['currency_total']) ? new ItemTotal($data['currency_total']) : null;
-        $this->sale_classification = isset($data['sale_classification']) ? new SaleClassification($data['sale_classification']) : null;
+        $this->total = isset($data['total']) ? new ItemTotalResponse($data['total']) : null;
+        $this->currency_total = isset($data['currency_total']) ? new ItemTotalResponse($data['currency_total']) : null;
+        $this->sale_classification = isset($data['sale_classification']) ? new SaleClassificationResponse($data['sale_classification']) : null;
     }
 
 }
