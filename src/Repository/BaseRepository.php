@@ -137,6 +137,63 @@ abstract class BaseRepository
     }
 
     /**
+     * Move to the requested page of the resource
+     * @param APIResponse|string $object Object Response to list() function
+     * @param int $pageNumber Requested page number
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @throws InvalidTypeException|ResourceException
+     */
+    public function goToPage($object, int $pageNumber)
+    {
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            if (!($object instanceof APIResponse)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            if ($object->meta['current_page'] !== $pageNumber) {
+                $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
+
+                $response = $this->config->getClient()->get($requestedUri, [
+                    'headers' => $this->overloadedHeaders
+                ]);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                $this->handleError($responseBody, $response->getStatusCode());
+
+                $data = [];
+                foreach ($responseBody['data'] as $objectData) {
+                    $data[] = new $this->responseModel($objectData);
+                }
+
+                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            }
+        } else {
+            if (!EvolizHelper::is_json($object)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            $decodedObject = json_decode($object);
+
+            if ($decodedObject->meta->current_page !== $pageNumber) {
+                $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $decodedObject->links->first);
+
+                $response = $this->config->getClient()->get($requestedUri, [
+                    'headers' => $this->overloadedHeaders
+                ]);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                $this->handleError($responseBody, $response->getStatusCode());
+
+                return json_encode($responseBody);
+            }
+        }
+
+        return $object;
+    }
+
+    /**
      * Move to the first page of the resource
      * If you are already on the first page, return the resource as is
      * @param APIResponse|string $object Object Response to list() function
