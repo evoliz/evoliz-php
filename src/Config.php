@@ -96,13 +96,6 @@ class Config
         } else {
             $this->accessToken = $this->login();
         }
-
-        $this->clientConfig = $this->defaultClientConfig;
-        $this->clientConfig['headers'] += [
-            'Authorization' => 'Bearer ' . $this->accessToken->getToken()
-        ];
-
-        $this->client = new Client($this->clientConfig);
     }
 
     /**
@@ -150,13 +143,6 @@ class Config
     {
         if (!$this->hasValidAccessToken()) {
             $this->accessToken = $this->login();
-
-            $this->clientConfig = $this->defaultClientConfig;
-            $this->clientConfig['headers'] += [
-                'Authorization' => 'Bearer ' . $this->accessToken->getToken()
-            ];
-
-            $this->client = new Client($this->clientConfig);
         }
 
         return $this;
@@ -215,8 +201,6 @@ class Config
                 'access_token' => $responseBody->access_token,
                 'expires_at' => $responseBody->expires_at
             ]));
-
-            // Test de JIRA
 
             $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
         } else {

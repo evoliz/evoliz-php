@@ -59,7 +59,10 @@ abstract class BaseRepository
     public function list(array $query = [])
     {
         $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint, [
-            'query' => $query
+            'query' => $query,
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+            ]
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -87,7 +90,11 @@ abstract class BaseRepository
      */
     public function detail(int $objectid)
     {
-        $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint . '/' . $objectid);
+        $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint . '/' . $objectid, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+            ]
+        ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -109,7 +116,10 @@ abstract class BaseRepository
     public function create(BaseModel $object)
     {
         $response = $this->config->getClient()->post('api/v1/' . $this->baseEndpoint, [
-            'body' => json_encode($this->buildPayload($object))
+            'body' => json_encode($this->buildPayload($object)),
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+            ]
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -138,7 +148,11 @@ abstract class BaseRepository
             }
 
             if ($object->meta['current_page'] !== 1) {
-                $response = $this->config->getClient()->get($object->links['first']);
+                $response = $this->config->getClient()->get($object->links['first'], [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+                    ]
+                ]);
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -159,7 +173,11 @@ abstract class BaseRepository
             $decodedObject = json_decode($object);
 
             if ($decodedObject->meta->current_page !== 1) {
-                $response = $this->config->getClient()->get($decodedObject->links->first);
+                $response = $this->config->getClient()->get($decodedObject->links->first, [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+                    ]
+                ]);
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -187,7 +205,11 @@ abstract class BaseRepository
             }
 
             if ($object->meta['current_page'] < $object->meta['last_page']) {
-                $response = $this->config->getClient()->get($object->links['last']);
+                $response = $this->config->getClient()->get($object->links['last'], [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+                    ]
+                ]);
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -208,7 +230,11 @@ abstract class BaseRepository
             $decodedObject = json_decode($object);
 
             if ($decodedObject->meta->current_page < $decodedObject->meta->last_page) {
-                $response = $this->config->getClient()->get($decodedObject->links->last);
+                $response = $this->config->getClient()->get($decodedObject->links->last, [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+                    ]
+                ]);
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -236,7 +262,11 @@ abstract class BaseRepository
             }
 
             if ($object->meta['current_page'] > 1) {
-                $response = $this->config->getClient()->get($object->links['prev']);
+                $response = $this->config->getClient()->get($object->links['prev'], [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+                    ]
+                ]);
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -257,7 +287,11 @@ abstract class BaseRepository
             $decodedObject = json_decode($object);
 
             if ($decodedObject->meta->current_page > 1) {
-                $response = $this->config->getClient()->get($decodedObject->links->prev);
+                $response = $this->config->getClient()->get($decodedObject->links->prev, [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+                    ]
+                ]);
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -285,7 +319,11 @@ abstract class BaseRepository
             }
 
             if ($object->meta['current_page'] < $object->meta['last_page']) {
-                $response = $this->config->getClient()->get($object->links['next']);
+                $response = $this->config->getClient()->get($object->links['next'], [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+                    ]
+                ]);
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -307,7 +345,11 @@ abstract class BaseRepository
             $decodedObject = json_decode($object);
 
             if ($decodedObject->meta->current_page < $decodedObject->meta->last_page) {
-                $response = $this->config->getClient()->get($decodedObject->links->next);
+                $response = $this->config->getClient()->get($decodedObject->links->next, [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
+                    ]
+                ]);
 
                 $responseBody = json_decode($response->getBody()->getContents(), true);
 
