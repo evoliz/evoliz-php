@@ -1,8 +1,8 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Clients;
 
-use Evoliz\Client\Model\Response\ContactClientResponse;
+use Evoliz\Client\Response\ContactClient\ContactClientResponse;
 
 class ContactClient
 {

@@ -1,10 +1,11 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Sales;
 
 use Evoliz\Client\Exception\InvalidTypeException;
-use Evoliz\Client\Model\Response\InvoiceResponse;
-use Evoliz\Client\Model\Response\SellDocItemResponse;
+use Evoliz\Client\Model\Item;
+use Evoliz\Client\Response\Invoice\InvoiceResponse;
+use Evoliz\Client\Response\Invoice\SellDocItemResponse;
 
 class Invoice
 {

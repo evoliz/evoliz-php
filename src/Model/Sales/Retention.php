@@ -1,6 +1,6 @@
 <?php
 
-namespace Evoliz\Client\Model;
+namespace Evoliz\Client\Model\Sales;
 
 class Retention
 {

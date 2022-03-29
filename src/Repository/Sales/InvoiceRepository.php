@@ -1,9 +1,10 @@
 <?php
 
-namespace Evoliz\Client\Repository;
+namespace Evoliz\Client\Repository\Sales;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Model\Invoice;
+use Evoliz\Client\Model\Sales\Invoice;
+use Evoliz\Client\Repository\BaseRepository;
 
 class InvoiceRepository extends BaseRepository
 {

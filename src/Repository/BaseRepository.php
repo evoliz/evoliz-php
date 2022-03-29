@@ -5,7 +5,7 @@ namespace Evoliz\Client\Repository;
 use Evoliz\Client\Config;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\ResourceException;
-use Evoliz\Client\Model\Response\APIResponse;
+use Evoliz\Client\Response\APIResponse;
 
 abstract class BaseRepository
 {

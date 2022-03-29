@@ -1,9 +1,9 @@
 <?php
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Model\Invoice;
 use Evoliz\Client\Model\Item;
-use Evoliz\Client\Repository\InvoiceRepository;
+use Evoliz\Client\Model\Sales\Invoice;
+use Evoliz\Client\Repository\Sales\InvoiceRepository;
 
 require 'vendor/autoload.php';
 

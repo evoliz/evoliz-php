@@ -1,6 +1,6 @@
 <?php
 
-namespace Evoliz\Client\Model\Response;
+namespace Evoliz\Client\Response\Invoice;
 
 class ItemTotalResponse
 {

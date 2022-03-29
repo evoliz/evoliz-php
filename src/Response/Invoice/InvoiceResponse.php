@@ -1,6 +1,8 @@
 <?php
 
-namespace Evoliz\Client\Model\Response;
+namespace Evoliz\Client\Response\Invoice;
+
+use Evoliz\Client\Response\Common\LinkedClientResponse;
 
 class InvoiceResponse
 {
