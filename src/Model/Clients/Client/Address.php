@@ -1,0 +1,55 @@
+<?php
+
+namespace Evoliz\Client\Model\Clients\Client;
+
+class Address
+{
+    /**
+     * @var string Postcode
+     */
+    public $postcode;
+
+    /**
+     * @var string Town
+     */
+    public $town;
+
+    /**
+     * @var string Address ISO2
+     */
+    public $iso2;
+
+    /**
+     * @var string Address line 1
+     */
+    public $addr;
+
+    /**
+     * @var string Address line 2
+     */
+    public $addr2;
+
+    /**
+     * @param array $data
+     */
+    public function __construct(array $data)
+    {
+        $this->iso2 = $this->mapIso2($data);
+
+        $this->postcode = $data['postcode'] ?? null;
+        $this->town = $data['town'] ?? null;
+        $this->addr = $data['addr'] ?? null;
+        $this->addr2 = $data['addr2'] ?? null;
+    }
+
+    private function mapIso2(array $data)
+    {
+        if (isset($data['country'])) {
+            $iso2 = $data['country']->iso2;
+        } elseif (isset($data['iso2'])) {
+            $iso2 = $data['iso2'];
+        }
+
+        return $iso2 ?? null;
+    }
+}

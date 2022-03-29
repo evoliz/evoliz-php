@@ -152,7 +152,7 @@ class ClientResponse
         $this->fax = $data['fax'] ?? null;
         $this->website = $data['website'] ?? null;
         $this->safe_amount = $data['safe_amount'] ?? null;
-        $this->term = isset($data['term']) ? new TermResponse($data['$term']) : null;
+        $this->term = isset($data['term']) ? new TermResponse($data['term']) : null;
         $this->ttc = $data['ttc'] ?? null;
         $this->comment = $data['comment'] ?? null;
         $this->enabled = $data['enabled'] ?? null;
