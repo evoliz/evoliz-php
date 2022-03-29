@@ -78,11 +78,8 @@ class ConfigTest extends TestCase
         $config = $config->authenticate();
         $this->assertFalse($config->getAccessToken()->isExpired());
 
-        $guzzleClientToken = explode(' ', $config->getClient()->getConfig('headers')['Authorization'])[1];
-
         $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
         $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
-        $this->assertEquals($guzzleClientToken, $this->accessToken);
     }
 
     /**
@@ -109,11 +106,8 @@ class ConfigTest extends TestCase
         $config = $baseConfig->authenticate();
         $this->assertEquals($baseConfig->getAccessToken()->getToken(), $config->getAccessToken()->getToken());
 
-        $guzzleClientToken = explode(' ', $config->getClient()->getConfig('headers')['Authorization'])[1];
-
         $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
         $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
-        $this->assertEquals($guzzleClientToken, $this->accessToken);
     }
 
     /**
@@ -132,11 +126,8 @@ class ConfigTest extends TestCase
 
         $config = $config->authenticate();
 
-        $guzzleClientToken = explode(' ', $config->getClient()->getConfig('headers')['Authorization'])[1];
-
         $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
         $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
-        $this->assertEquals($guzzleClientToken, $this->accessToken);
     }
 
     /**

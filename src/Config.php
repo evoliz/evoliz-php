@@ -90,6 +90,8 @@ class Config
             'handler' => $this->handlerStack
         ];
 
+        $this->client = new Client($this->defaultClientConfig);
+
         if ($this->hasValidCookieAccessToken()) {
             $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
             $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
@@ -179,8 +181,6 @@ class Config
      */
     private function login(): AccessToken
     {
-        $this->client = new Client($this->defaultClientConfig);
-
         $loginResponse = $this->client->post('api/login', [
             'body' => json_encode([
                 'public_key' => $this->publicKey,
