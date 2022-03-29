@@ -1,12 +1,27 @@
 <?php
 
-namespace Evoliz\Client\Response\Invoice;
+namespace Evoliz\Client\Response\Client;
 
 use Evoliz\Client\Response\Common\PayTermResponse;
 use Evoliz\Client\Response\Common\PayTypeResponse;
 
 class TermResponse
 {
+    /**
+     * @var integer Client's quote period of validity (in days)
+     */
+    public $validity;
+
+    /**
+     * @var PayTermResponse Payment condition term
+     */
+    public $payterm;
+
+    /**
+     * @var PayTypeResponse Payment condition term
+     */
+    public $paytype;
+
     /**
      * @var float Penalty rate
      */
@@ -15,7 +30,7 @@ class TermResponse
     /**
      * @var boolean Use legal mention about penalty rate
      */
-    public $nopenalty; //@Todo : Check for modifications on that
+    public $no_penalty;
 
     /**
      * @var boolean Use legal collection cost
@@ -33,27 +48,19 @@ class TermResponse
     public $no_discount_term;
 
     /**
-     * @var PayTermResponse Payment condition term
-     */
-    public $payterm;
-
-    /**
-     * @var PayTypeResponse Payment condition term
-     */
-    public $paytype;
-
-    /**
      * @param array $data
      */
     public function __construct(array $data)
     {
+        $this->validity = $data['validity'] ?? null;
+        $this->payterm = isset($data['payterm']) ? new PayTermResponse($data['payterm']) : null;
+        $this->paytype = isset($data['paytype']) ? new PayTypeResponse($data['paytype']) : null;
         $this->penalty = $data['penalty'] ?? null;
-        $this->nopenalty = $data['nopenalty'] ?? null;
+        $this->no_penalty = $data['no_penalty'] ?? null;
         $this->recovery_indemnity = $data['recovery_indemnity'] ?? null;
         $this->discount_term = $data['discount_term'] ?? null;
         $this->no_discount_term = $data['no_discount_term'] ?? null;
-        $this->payterm = isset($data['payterm']) ? new PayTermResponse($data['payterm']) : null;
-        $this->paytype = isset($data['paytype']) ? new PayTypeResponse($data['paytype']) : null;
     }
+
 
 }
