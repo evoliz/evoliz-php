@@ -13,8 +13,6 @@ use Evoliz\Client\Response\APIResponse;
 
 abstract class BaseRepository
 {
-    const HTTP_SUCCESS_CODES = [200, 201, 202, 203, 204, 206, 207, 208, 226];
-
     /**
      * @var Config Configuration for API usage
      */
@@ -218,7 +216,7 @@ abstract class BaseRepository
      */
     private function handleError(array $responseBody, int $statusCode)
     {
-        if (!in_array($statusCode, self::HTTP_SUCCESS_CODES))
+        if (!($statusCode >= 200 && $statusCode < 300))
         {
             $errorMessage = $responseBody['error'] . ' : ';
             if (is_array($responseBody['message'])) {
