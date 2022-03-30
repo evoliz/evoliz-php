@@ -40,7 +40,7 @@ class SellDocTotalResponse
     public $net_to_pay;
 
     /**
-     * @param array $data response array to build the object
+     * @param array $data Response array to build the object
      */
     public function __construct(array $data)
     {

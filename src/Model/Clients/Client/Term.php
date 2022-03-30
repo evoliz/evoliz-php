@@ -45,7 +45,7 @@ class Term
     public $paytypeid;
 
     /**
-     * @param array $data array to build the object
+     * @param array $data Array to build the object
      */
     public function __construct(array $data)
     {
@@ -62,8 +62,8 @@ class Term
 
     /**
      * Extract the paytermid field with the correct information
-     * @param array $data array to build the object
-     * @return mixed|null
+     * @param array $data Array to build the object
+     * @return integer|null
      */
     private function extractPayTermId(array $data)
     {
@@ -78,8 +78,8 @@ class Term
 
     /**
      * Extract the paytypeid field with the correct information
-     * @param array $data array to build the object
-     * @return mixed|null
+     * @param array $data Array to build the object
+     * @return integer|null
      */
     private function extractPayTypeId(array $data)
     {
