@@ -10,12 +10,12 @@ use Evoliz\Client\Response\Invoice\InvoiceResponse;
 class InvoiceRepository extends BaseRepository
 {
     /**
-     * Setup the different parameters for the API requests
+     * Set up the different parameters for the API requests
      * @param Config $config Configuration for API usage
      * @throws \Exception
      */
     public function __construct(Config $config)
     {
-        parent::__construct($config, Invoice::class, 'invoices', InvoiceResponse::class);
+        parent::__construct($config, 'invoices', InvoiceResponse::class);
     }
 }

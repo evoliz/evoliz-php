@@ -24,11 +24,6 @@ abstract class BaseRepository
     private $baseEndpoint;
 
     /**
-     * @var string Reference model
-     */
-    private $baseModel;
-
-    /**
      * @var string Associated response model
      */
     private $responseModel;
@@ -41,16 +36,14 @@ abstract class BaseRepository
     /**
      * Setup the different parameters for the API requests
      * @param Config $config Configuration for API usage
-     * @param string $baseModel Reference model
      * @param string $baseEndpoint Base endpoint
      * @param string $responseModel Response model
      * @throws ConfigException
      */
-    public function __construct(Config $config, string $baseModel, string $baseEndpoint, string $responseModel)
+    public function __construct(Config $config, string $baseEndpoint, string $responseModel)
     {
         $this->config = $config->authenticate();
-        $this->baseModel = $baseModel;
-        $this->baseEndpoint = $baseEndpoint;
+        $this->baseEndpoint = 'api/v1/' . $baseEndpoint;
         $this->responseModel = $responseModel;
 
         $this->overloadedHeaders = [
@@ -66,7 +59,7 @@ abstract class BaseRepository
      */
     public function list(array $query = [])
     {
-        $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint, [
+        $response = $this->config->getClient()->get($this->baseEndpoint, [
             'query' => $query,
             'headers' => $this->overloadedHeaders
         ]);
@@ -96,7 +89,7 @@ abstract class BaseRepository
      */
     public function detail(int $objectid)
     {
-        $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint . '/' . $objectid, [
+        $response = $this->config->getClient()->get($this->baseEndpoint . '/' . $objectid, [
             'headers' => $this->overloadedHeaders
         ]);
 
@@ -119,7 +112,7 @@ abstract class BaseRepository
      */
     public function create(BaseModel $object)
     {
-        $response = $this->config->getClient()->post('api/v1/' . $this->baseEndpoint, [
+        $response = $this->config->getClient()->post($this->baseEndpoint, [
             'body' => json_encode($this->buildPayload($object)),
             'headers' => $this->overloadedHeaders
         ]);
