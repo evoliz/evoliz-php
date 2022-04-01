@@ -14,9 +14,10 @@ $invoiceRepository = new InvoiceRepository($config);
 
 $invoices = $invoiceRepository->list();
 
-$invoicesNextPage = $invoiceRepository->nextPage($invoices);
-$invoicesPreviousPage = $invoiceRepository->previousPage($invoicesNextPage);
-$invoicesLastPage = $invoiceRepository->lastPage($invoicesPreviousPage);
-$invoicesFirstPage = $invoiceRepository->firstPage($invoicesLastPage);
+$invoicesNextPage = $invoiceRepository->paginate($invoices, 'next');
+$invoicesPreviousPage = $invoiceRepository->paginate($invoicesNextPage, 'previous');
+$invoicesLastPage = $invoiceRepository->paginate($invoicesPreviousPage, 'last');
+$invoicesFirstPage = $invoiceRepository->paginate($invoicesLastPage, 'first');
+$invoicesPage42 = $invoiceRepository->paginate($invoicesFirstPage, 'perso', 42);
 
 $invoice = $invoiceRepository->detail(1); // Get InvoiceResponse resource wth Id 1

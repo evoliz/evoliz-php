@@ -14,9 +14,10 @@ $contactClientRepository = new ContactClientRepository($config);
 
 $contactClients = $contactClientRepository->list();
 
-$contactClientsNextPage = $contactClientRepository->nextPage($contactClients);
-$contactClientsPreviousPage = $contactClientRepository->previousPage($contactClientsNextPage);
-$contactClientsLastPage = $contactClientRepository->lastPage($contactClientsPreviousPage);
-$contactClientsFirstPage = $contactClientRepository->firstPage($contactClientsLastPage);
+$contactClientsNextPage = $contactClientRepository->paginate($contactClients, 'next');
+$contactClientsPreviousPage = $contactClientRepository->paginate($contactClientsNextPage, 'previous');
+$contactClientsLastPage = $contactClientRepository->paginate($contactClientsPreviousPage, 'last');
+$contactClientsFirstPage = $contactClientRepository->paginate($contactClientsLastPage, 'first');
+$contactClientsPage42 = $contactClientRepository->paginate($contactClientsFirstPage, 'perso', 42);
 
 $contactClient = $contactClientRepository->detail(1); // Get ContactClientResponse resource wth Id 1

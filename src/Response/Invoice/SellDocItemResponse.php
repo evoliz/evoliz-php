@@ -2,6 +2,8 @@
 
 namespace Evoliz\Client\Response\Invoice;
 
+use Evoliz\Client\Response\Common\ClassificationResponse;
+
 class SellDocItemResponse
 {
     /**
@@ -70,7 +72,7 @@ class SellDocItemResponse
     public $currency_total = null;
 
     /**
-     * @var SaleClassificationResponse Item classification information
+     * @var ClassificationResponse Item classification information
      */
     public $sale_classification;
 
@@ -92,7 +94,7 @@ class SellDocItemResponse
         $this->vat = $data['vat'] ?? null;
         $this->total = isset($data['total']) ? new ItemTotalResponse($data['total']) : null;
         $this->currency_total = isset($data['currency_total']) ? new ItemTotalResponse($data['currency_total']) : null;
-        $this->sale_classification = isset($data['sale_classification']) ? new SaleClassificationResponse($data['sale_classification']) : null;
+        $this->sale_classification = isset($data['sale_classification']) ? new ClassificationResponse($data['sale_classification']) : null;
     }
 
 }
