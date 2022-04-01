@@ -2,7 +2,7 @@
 
 namespace Evoliz\Client\Response\Article;
 
-use Evoliz\Client\Model\Clients\Client\Client;
+use Evoliz\Client\Model\Catalog\Article;
 use Evoliz\Client\Response\Common\ClassificationResponse;
 use Evoliz\Client\Response\ContactClient\CustomFieldResponse;
 use Evoliz\Client\Response\ResponseInterface;
@@ -164,11 +164,20 @@ class ArticleResponse implements ResponseInterface
         $this->stocked_quantity = $data['stocked_quantity'] ?? null;
         $this->enabled = $data['enabled'] ?? null;
         $this->picture_link = $data['picture_link'] ?? null;
-        $this->custom_fields = $data['custom_fields'] ?? null;
+
+        if (isset($data['custom_fields'])) {
+            foreach ($data['custom_fields'] as $custom_field_label => $custom_field_value) {
+                $this->custom_fields[$custom_field_label] = new CustomFieldResponse($custom_field_value);
+            }
+        }
     }
 
-    public function createFromResponse()
+    /**
+     * Build Article from ArticleResponse
+     * @return Article
+     */
+    public function createFromResponse(): Article
     {
-        // TODO: Implement createFromResponse() method.
+        return new Article((array) $this);
     }
 }

@@ -112,7 +112,7 @@ class Client extends BaseModel
         $this->name = $data['name'] ?? null;
         $this->type = $data['type'] ?? null;
         $this->address = isset($data['address']) ? new Address((array) $data['address']) : null;
-        $this->code = $data['code'] ?? null; //@Todo : Useless field, wait for modifications on the API
+        $this->code = $data['code'] ?? null;
         $this->legalform = $data['legalform'] ?? null;
         $this->activity_number = $data['activity_number'] ?? null;
         $this->immat_number = $data['immat_number'] ?? null;
