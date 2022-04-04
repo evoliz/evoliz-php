@@ -17,6 +17,11 @@ class Config
     private $client;
 
     /**
+     * @var Client Guzzle client default configuration
+     */
+    private $defaultClientConfig;
+
+    /**
      * @var Client Guzzle active client configuration
      */
     private $clientConfig;
@@ -67,7 +72,7 @@ class Config
         $this->secretKey = $secretKey;
         $this->verifySSL = $verifySSL;
 
-        $this->clientConfig = [
+        $this->defaultClientConfig = [
             'base_uri' => self::BASE_URI,
             'http_errors' => false,
             'headers' => [
@@ -84,6 +89,7 @@ class Config
             $this->accessToken = $this->login();
         }
 
+        $this->clientConfig = $this->defaultClientConfig;
         $this->clientConfig['headers'] += [
             'Authorization' => 'Bearer ' . $this->accessToken->getToken()
         ];
@@ -137,6 +143,11 @@ class Config
         if (!$this->hasValidAccessToken()) {
             $this->accessToken = $this->login();
 
+            $this->clientConfig = $this->defaultClientConfig;
+            $this->clientConfig['headers'] += [
+                'Authorization' => 'Bearer ' . $this->accessToken->getToken()
+            ];
+
             $this->client = new Client($this->clientConfig);
         }
 
@@ -174,7 +185,7 @@ class Config
      */
     protected function login(): AccessToken
     {
-        $this->client = new Client($this->clientConfig);
+        $this->client = new Client($this->defaultClientConfig);
 
         $loginResponse = $this->client->post('api/login', [
             'body' => json_encode([
