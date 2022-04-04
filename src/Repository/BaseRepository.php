@@ -3,6 +3,7 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
+use Evoliz\Client\EvolizHelper;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Response\APIResponse;
@@ -13,6 +14,14 @@ abstract class BaseRepository
      * @var Config
      */
     private $config;
+
+    /**
+     * @return Config
+     */
+    public function getConfig(): Config
+    {
+        return $this->config;
+    }
 
     private $baseEndpoint;
 
@@ -107,6 +116,219 @@ abstract class BaseRepository
         } else {
             return json_encode($responseBody);
         }
+    }
+
+    /**
+     * Move to the first page of the resource
+     * If you are already on the first page, return the resource as is
+     * @param APIResponse|string $object Object Response to list() function
+     * @return APIResponse|string
+     * @throws ResourceException|InvalidTypeException
+     */
+    public function firstPage($object)
+    {
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            if (!($object instanceof APIResponse)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            if ($object->meta['current_page'] !== 1) {
+                $response = $this->config->getClient()->get($object->links['first']);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if ($response->getStatusCode() !== 200) {
+                    $this->handleError($responseBody, $response->getStatusCode());
+                }
+
+                $data = [];
+                foreach ($responseBody['data'] as $objectData) {
+                    $data[] = new $this->responseModel($objectData);
+                }
+
+                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            }
+        } else {
+            if (!EvolizHelper::is_json($object)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            $decodedObject = json_decode($object);
+
+            if ($decodedObject->meta->current_page !== 1) {
+                $response = $this->config->getClient()->get($decodedObject->links->first);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if ($response->getStatusCode() !== 200) {
+                    $this->handleError($responseBody, $response->getStatusCode());
+                }
+
+                return json_encode($responseBody);
+            }
+        }
+
+        return $object;
+    }
+
+    /**
+     * Move to the first last of the resource
+     * If you are already on the last page, return the resource as is
+     * @param APIResponse|string $object Object Response to list() function
+     * @return APIResponse|string
+     * @throws ResourceException|InvalidTypeException
+     */
+    public function lastPage($object)
+    {
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            if (!($object instanceof APIResponse)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            if ($object->meta['current_page'] < $object->meta['last_page']) {
+                $response = $this->config->getClient()->get($object->links['last']);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if ($response->getStatusCode() !== 200) {
+                    $this->handleError($responseBody, $response->getStatusCode());
+                }
+
+                $data = [];
+                foreach ($responseBody['data'] as $objectData) {
+                    $data[] = new $this->responseModel($objectData);
+                }
+
+                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            }
+        } else {
+            if (!EvolizHelper::is_json($object)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            $decodedObject = json_decode($object);
+
+            if ($decodedObject->meta->current_page < $decodedObject->meta->last_page) {
+                $response = $this->config->getClient()->get($decodedObject->links->last);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if ($response->getStatusCode() !== 200) {
+                    $this->handleError($responseBody, $response->getStatusCode());
+                }
+
+                return json_encode($responseBody);
+            }
+        }
+
+        return $object;
+    }
+
+    /**
+     * Move to the previous page of the resource
+     * If there is no previous page, return the resource as is
+     * @param APIResponse|string $object Object Response to list() function
+     * @return APIResponse|string
+     * @throws ResourceException|InvalidTypeException
+     */
+    public function previousPage($object)
+    {
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            if (!($object instanceof APIResponse)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            if ($object->meta['current_page'] > 1) {
+                $response = $this->config->getClient()->get($object->links['prev']);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if ($response->getStatusCode() !== 200) {
+                    $this->handleError($responseBody, $response->getStatusCode());
+                }
+
+                $data = [];
+                foreach ($responseBody['data'] as $objectData) {
+                    $data[] = new $this->responseModel($objectData);
+                }
+
+                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            }
+        } else {
+            if (!EvolizHelper::is_json($object)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            $decodedObject = json_decode($object);
+
+            if ($decodedObject->meta->current_page > 1) {
+                $response = $this->config->getClient()->get($decodedObject->links->prev);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if ($response->getStatusCode() !== 200) {
+                    $this->handleError($responseBody, $response->getStatusCode());
+                }
+
+                return json_encode($responseBody);
+            }
+        }
+
+        return $object;
+    }
+
+    /**
+     * Move to the next page of the resource
+     * If there is no next page, return the resource as is
+     * @param APIResponse|string $object Object Response to list() function
+     * @return APIResponse|string
+     * @throws ResourceException|InvalidTypeException
+     */
+    public function nextPage($object)
+    {
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            if (!($object instanceof APIResponse)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            if ($object->meta['current_page'] < $object->meta['last_page']) {
+                $response = $this->config->getClient()->get($object->links['next']);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if ($response->getStatusCode() !== 200) {
+                    $this->handleError($responseBody, $response->getStatusCode());
+                }
+
+                $data = [];
+                foreach ($responseBody['data'] as $objectData) {
+                    $data[] = new $this->responseModel($objectData);
+                }
+
+                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            }
+
+        } else {
+            if (!EvolizHelper::is_json($object)) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            $decodedObject = json_decode($object);
+
+            if ($decodedObject->meta->current_page < $decodedObject->meta->last_page) {
+                $response = $this->config->getClient()->get($decodedObject->links->next);
+
+                $responseBody = json_decode($response->getBody()->getContents(), true);
+
+                if ($response->getStatusCode() !== 200) {
+                    $this->handleError($responseBody, $response->getStatusCode());
+                }
+
+                return json_encode($responseBody);
+            }
+        }
+
+        return $object;
     }
 
     /**
