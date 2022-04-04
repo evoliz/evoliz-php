@@ -48,7 +48,7 @@ class TermResponse
     public $no_discount_term;
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {

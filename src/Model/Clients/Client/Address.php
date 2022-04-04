@@ -30,7 +30,7 @@ class Address
     public $addr2;
 
     /**
-     * @param array $data
+     * @param array $data array to build the object
      */
     public function __construct(array $data)
     {
@@ -42,6 +42,11 @@ class Address
         $this->addr2 = $data['addr2'] ?? null;
     }
 
+    /**
+     * Map the iso2 field with the correct information
+     * @param array $data array to build the object
+     * @return mixed|null
+     */
     private function mapIso2(array $data)
     {
         if (isset($data['country'])) {

@@ -5,27 +5,27 @@ namespace Evoliz\Client\Response\Invoice;
 class AnalyticResponse
 {
     /**
-     * @var integer Analytical axis id
+     * @var integer Analytic axis id
      */
     public $id;
 
     /**
-     * @var string Analytical axis code identifier
+     * @var string Analytic axis code identifier
      */
     public $code;
 
     /**
-     * @var string Analytical axis label
+     * @var string Analytic axis label
      */
     public $label;
 
     /**
-     * @var boolean
+     * @var boolean Determines if the analytic axis is active
      */
     public $enabled;
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {

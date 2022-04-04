@@ -60,7 +60,7 @@ class Term
     public $paytypeid;
 
     /**
-     * @param array $data
+     * @param array $data array to build the object
      */
     public function __construct(array $data)
     {
@@ -78,8 +78,8 @@ class Term
     }
 
     /**
-     * Map the clientid with the correct information
-     * @param array $data
+     * Map the paytermid field with the correct information
+     * @param array $data array to build the object
      * @return integer|null
      */
     private function mapPaytermId(array $data)

@@ -15,7 +15,7 @@ class Retention
     public $date;
 
     /**
-     * @param array $data
+     * @param array $data array to build the object
      */
     public function __construct(array $data)
     {

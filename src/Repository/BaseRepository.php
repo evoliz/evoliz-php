@@ -4,6 +4,7 @@ namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
 use Evoliz\Client\EvolizHelper;
+use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Response\APIResponse;
@@ -11,28 +12,32 @@ use Evoliz\Client\Response\APIResponse;
 abstract class BaseRepository
 {
     /**
-     * @var Config
+     * @var Config Configuration for API usage
      */
     private $config;
 
     /**
-     * @return Config
+     * @var string Model's base endpoint
      */
-    public function getConfig(): Config
-    {
-        return $this->config;
-    }
-
     private $baseEndpoint;
 
+    /**
+     * @var string Reference model
+     */
     private $baseModel;
 
+    /**
+     * @var string Associated response model
+     */
     private $responseModel;
 
     /**
-     * @throws \Exception
+     * Setup the different parameters for the API requests
+     * @param Config $config Configuration for API usage
+     * @param string $baseModel Reference model
+     * @throws ConfigException
      */
-    public function __construct(Config $config, $baseModel)
+    public function __construct(Config $config, string $baseModel)
     {
         $this->config = $config->authenticate();
         $this->baseModel = $baseModel;
@@ -42,8 +47,8 @@ abstract class BaseRepository
 
     /**
      * Return a list of requested object visible by the current User, according to visibility restriction set in user profile
-     * @param array $query
-     * @return APIResponse|string objects list in the expected format (OBJECT or JSON)
+     * @param array $query Additional query parameters
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
     public function list(array $query = [])
@@ -73,7 +78,7 @@ abstract class BaseRepository
 
     /**
      * Return an object by its speficied id
-     * @param int $objectid
+     * @param int $objectid Object id
      * @return mixed|string Object in the expected format (OBJECT or JSON)
      */
     public function detail(int $objectid)
@@ -89,8 +94,8 @@ abstract class BaseRepository
 
     /**
      * Create a new object with given data
-     * @param $object
-     * @return mixed|string
+     * @param mixed|string $object Object to create
+     * @return mixed|string Object in the expected format (OBJECT or JSON)
      * @throws InvalidTypeException|ResourceException
      */
     public function create($object)
@@ -122,7 +127,7 @@ abstract class BaseRepository
      * Move to the first page of the resource
      * If you are already on the first page, return the resource as is
      * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException|InvalidTypeException
      */
     public function firstPage($object)
@@ -175,7 +180,7 @@ abstract class BaseRepository
      * Move to the first last of the resource
      * If you are already on the last page, return the resource as is
      * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException|InvalidTypeException
      */
     public function lastPage($object)
@@ -228,7 +233,7 @@ abstract class BaseRepository
      * Move to the previous page of the resource
      * If there is no previous page, return the resource as is
      * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException|InvalidTypeException
      */
     public function previousPage($object)
@@ -281,7 +286,7 @@ abstract class BaseRepository
      * Move to the next page of the resource
      * If there is no next page, return the resource as is
      * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException|InvalidTypeException
      */
     public function nextPage($object)
@@ -332,9 +337,12 @@ abstract class BaseRepository
     }
 
     /**
+     * Handle response error returned by the API
+     * @param array $responseBody Array of response error and message
+     * @param int $statusCode HTTP Status code
      * @throws ResourceException
      */
-    private function handleError($responseBody, $statusCode)
+    private function handleError(array $responseBody, int $statusCode)
     {
         $errorMessage = $responseBody['error'] . ' : ';
         if (is_array($responseBody['message'])) {
@@ -349,7 +357,7 @@ abstract class BaseRepository
 
     /**
      * Mapping of the request payload to create the entry
-     * @param $object
+     * @param $object Object to create
      * @return array
      */
     private function mapPayload($object): array

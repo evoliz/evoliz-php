@@ -45,7 +45,7 @@ class Term
     public $paytypeid;
 
     /**
-     * @param array $data
+     * @param array $data array to build the object
      */
     public function __construct(array $data)
     {
@@ -60,6 +60,11 @@ class Term
         $this->no_discount_term = $data['no_discount_term'] ?? null;
     }
 
+    /**
+     * Map the paytermid field with the correct information
+     * @param array $data array to build the object
+     * @return mixed|null
+     */
     private function mapPayTermId(array $data)
     {
         if (isset($data['payterm'])) {
@@ -71,6 +76,11 @@ class Term
         return $paytermid ?? null;
     }
 
+    /**
+     * Map the paytypeid field with the correct information
+     * @param array $data array to build the object
+     * @return mixed|null
+     */
     private function mapPayTypeId(array $data)
     {
         if (isset($data['paytype'])) {

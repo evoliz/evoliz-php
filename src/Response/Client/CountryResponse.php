@@ -15,7 +15,7 @@ class CountryResponse
     public $iso2;
 
     /**
-     * @param array $data
+     * @param array $data response array to build the object
      */
     public function __construct(array $data)
     {

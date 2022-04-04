@@ -50,7 +50,7 @@ class Item
     public $sale_classificationid;
 
     /**
-     * @param array $data
+     * @param array $data array to build the object
      */
     public function __construct(array $data)
     {
@@ -64,5 +64,4 @@ class Item
         $this->rebate = $data['rebate'] ?? null;
         $this->sale_classificationid = $data['sale_classificationid'] ?? null;
     }
-
 }
