@@ -59,20 +59,22 @@ abstract class BaseRepository
             'query' => $query
         ]);
 
-        $responseBody = json_decode($response->getBody()->getContents(), true);
+        $responseContent = $response->getBody()->getContents();
 
-        $this->handleError($responseBody, $response->getStatusCode());
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
             $data = [];
 
-            foreach ($responseBody['data'] as $objectData) {
+            foreach ($decodedContent['data'] as $objectData) {
                 $data[] = new $this->responseModel($objectData);
             }
 
-            return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
         } else {
-            return json_encode($responseBody);
+            return $responseContent;
         }
     }
 
@@ -86,14 +88,16 @@ abstract class BaseRepository
     {
         $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint . '/' . $objectid);
 
-        $responseBody = json_decode($response->getBody()->getContents(), true);
+        $responseContent = $response->getBody()->getContents();
 
-        $this->handleError($responseBody, $response->getStatusCode());
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            return new $this->responseModel($responseBody);
+            return new $this->responseModel($decodedContent);
         } else {
-            return json_encode($responseBody);
+            return $responseContent;
         }
     }
 
@@ -115,14 +119,16 @@ abstract class BaseRepository
             'body' => json_encode($this->buildPayload($object))
         ]);
 
-        $responseBody = json_decode($response->getBody()->getContents(), true);
+        $responseContent = $response->getBody()->getContents();
 
-        $this->handleError($responseBody, $response->getStatusCode());
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            return new $this->responseModel($responseBody);
+            return new $this->responseModel($decodedContent);
         } else {
-            return json_encode($responseBody);
+            return $responseContent;
         }
     }
 
@@ -324,6 +330,7 @@ abstract class BaseRepository
     }
 
     /**
+     * @Todo : Think about a design pattern for error handling
      * Handle response error returned by the API
      * @param array $responseBody Array of response error and message
      * @param int $statusCode HTTP Status code
