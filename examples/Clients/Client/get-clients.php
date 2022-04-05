@@ -18,5 +18,6 @@ $clientsNextPage = $clientRepository->nextPage($clients);
 $clientsPreviousPage = $clientRepository->previousPage($clientsNextPage);
 $clientsLastPage = $clientRepository->lastPage($clientsPreviousPage);
 $clientsFirstPage = $clientRepository->firstPage($clientsLastPage);
+$clientsPage42 = $clientRepository->page($clientsLastPage, 42);
 
 $client = $clientRepository->detail(1); // Get ClientResponse resource wth Id 1

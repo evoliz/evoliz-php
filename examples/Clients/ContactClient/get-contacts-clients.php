@@ -18,5 +18,6 @@ $contactClientsNextPage = $contactClientRepository->nextPage($contactClients);
 $contactClientsPreviousPage = $contactClientRepository->previousPage($contactClientsNextPage);
 $contactClientsLastPage = $contactClientRepository->lastPage($contactClientsPreviousPage);
 $contactClientsFirstPage = $contactClientRepository->firstPage($contactClientsLastPage);
+$contactClientsPage42 = $contactClientRepository->page($contactClientsLastPage, 42);
 
 $contactClient = $contactClientRepository->detail(1); // Get ContactClientResponse resource wth Id 1

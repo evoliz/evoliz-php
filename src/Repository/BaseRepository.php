@@ -138,25 +138,65 @@ abstract class BaseRepository
     }
 
     /**
+     * Move to the first page of the resource
+     * @param APIResponse|string $object Object Response to list() function
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|InvalidTypeException|ResourceException
+     */
+    public function firstPage($object)
+    {
+        return $this->paginate($object, 'first');
+    }
+
+    /**
+     * Move to the last page of the resource
+     * @param APIResponse|string $object Object Response to list() function
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|InvalidTypeException|ResourceException
+     */
+    public function lastPage($object)
+    {
+        return $this->paginate($object, 'last');
+    }
+
+    /**
+     * Move to the previous page of the resource
+     * @param APIResponse|string $object Object Response to list() function
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|InvalidTypeException|ResourceException
+     */
+    public function previousPage($object)
+    {
+        return $this->paginate($object, 'previous');
+    }
+
+    /**
+     * Move to the next page of the resource
+     * @param APIResponse|string $object Object Response to list() function
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|InvalidTypeException|ResourceException
+     */
+    public function nextPage($object)
+    {
+        return $this->paginate($object, 'next');
+    }
+
+    /**
      * Move to the requested page of the resource
      * @param APIResponse|string $object Object Response to list() function
-     * @param string $requestedPage Requested page ('first', 'last', 'previous', 'next' or 'perso')
-     * @param int|null $pageNumber Requested page number (used only if $requestedPAge = 'perso')
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested uri does not exist
-     * @throws InvalidTypeException|ResourceException|PaginationException
+     * @param int $pageNumber Requested page number
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @throws ResourceException|InvalidTypeException
      */
-    public function paginate($object, string $requestedPage, int $pageNumber = null)
+    public function page($object, int $pageNumber)
     {
-        if (!($object instanceof APIResponse) && !EvolizHelper::is_json($object) ) {
-            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-        }
-
-        if (!in_array($requestedPage, ['first', 'last', 'previous', 'next', 'perso'])) {
-            throw new PaginationException('Error : The requestedPage attribute must be one of first, last, previous, next or perso', 401);
-        }
-
         if ($this->config->getDefaultReturnType() === 'JSON') {
             $decodedObject = json_decode($object, true);
+
+            if ($decodedObject === null) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
             $data = [];
 
             foreach ($decodedObject['data'] as $objectData) {
@@ -164,6 +204,68 @@ abstract class BaseRepository
             }
 
             $object = new APIResponse($data, $decodedObject['links'], $decodedObject['meta']);
+        }
+
+        if (!($object instanceof APIResponse)) {
+            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+        }
+
+        $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
+
+        $response = $this->config->getClient()->get($requestedUri, [
+            'headers' => $this->overloadedHeaders
+        ]);
+
+        $responseContent = $response->getBody()->getContents();
+
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
+
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            $data = [];
+
+            foreach ($decodedContent['data'] as $objectData) {
+                $data[] = new $this->responseModel($objectData);
+            }
+
+            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
+        } else {
+            return $responseContent;
+        }
+    }
+
+    /**
+     * Move to the requested page of the resource
+     * @param APIResponse|string $object Object Response to list() function
+     * @param string $requestedPage Requested page ('first', 'last', 'previous' or 'next')
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested uri does not exist
+     * @throws InvalidTypeException|PaginationException|ResourceException
+     */
+    private function paginate($object, string $requestedPage)
+    {
+        if (!in_array($requestedPage, ['first', 'last', 'previous', 'next'])) {
+            throw new PaginationException('Error : The requestedPage attribute must be one of first, last, previous or next', 401);
+        }
+
+        if ($this->config->getDefaultReturnType() === 'JSON') {
+            $decodedObject = json_decode($object, true);
+
+            if ($decodedObject === null) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            $data = [];
+
+            foreach ($decodedObject['data'] as $objectData) {
+                $data[] = new $this->responseModel($objectData);
+            }
+
+            $object = new APIResponse($data, $decodedObject['links'], $decodedObject['meta']);
+        }
+
+        if (!($object instanceof APIResponse)) {
+            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
         }
 
         switch ($requestedPage) {
@@ -174,12 +276,6 @@ abstract class BaseRepository
                 break;
             case 'previous':
                 $requestedUri = $object->links['prev'] ?? null;
-                break;
-            case 'perso':
-                if ($pageNumber === null){
-                    throw new PaginationException('Error : The pageNumber attribute must be filled if the requestedPage attribute is set to perso', 401);
-                }
-                $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
                 break;
             default:
                 $requestedUri = null;
@@ -193,20 +289,22 @@ abstract class BaseRepository
             'headers' => $this->overloadedHeaders
         ]);
 
-        $responseBody = json_decode($response->getBody()->getContents(), true);
+        $responseContent = $response->getBody()->getContents();
 
-        $this->handleError($responseBody, $response->getStatusCode());
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
             $data = [];
 
-            foreach ($responseBody['data'] as $objectData) {
+            foreach ($decodedContent['data'] as $objectData) {
                 $data[] = new $this->responseModel($objectData);
             }
 
-            return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
         } else {
-            return json_encode($responseBody);
+            return $responseContent;
         }
     }
 

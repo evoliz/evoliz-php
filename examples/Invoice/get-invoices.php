@@ -18,5 +18,6 @@ $invoicesNextPage = $invoiceRepository->nextPage($invoices);
 $invoicesPreviousPage = $invoiceRepository->previousPage($invoicesNextPage);
 $invoicesLastPage = $invoiceRepository->lastPage($invoicesPreviousPage);
 $invoicesFirstPage = $invoiceRepository->firstPage($invoicesLastPage);
+$invoicePage42 = $invoiceRepository->page($invoicesFirstPage, 42);
 
 $invoice = $invoiceRepository->detail(1); // Get InvoiceResponse resource wth Id 1
