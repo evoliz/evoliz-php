@@ -1,6 +1,6 @@
 <?php
 
-namespace Evoliz\Client\Response\Invoice;
+namespace Evoliz\Client\Response\Sales;
 
 use Evoliz\Client\Response\Common\ClassificationResponse;
 

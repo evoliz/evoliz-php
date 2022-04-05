@@ -1,11 +1,15 @@
 <?php
 
-namespace Evoliz\Client\Response\Invoice;
+namespace Evoliz\Client\Response\Sales\Invoice;
 
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Model\Sales\Invoice;
 use Evoliz\Client\Response\Common\LinkedClientResponse;
 use Evoliz\Client\Response\ResponseInterface;
+use Evoliz\Client\Response\Sales\AnalyticResponse;
+use Evoliz\Client\Response\Sales\CurrencyResponse;
+use Evoliz\Client\Response\Sales\SellDocItemResponse;
+use Evoliz\Client\Response\Sales\TermResponse;
 
 class InvoiceResponse implements ResponseInterface
 {
