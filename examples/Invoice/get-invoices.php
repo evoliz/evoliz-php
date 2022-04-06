@@ -14,8 +14,13 @@ $invoiceRepository = new InvoiceRepository($config);
 
 $invoices = $invoiceRepository->list();
 
-$invoicesNextPage = $invoiceRepository->nextPage($invoices);
-$invoicesPreviousPage = $invoiceRepository->previousPage($invoicesNextPage);
+$invoicePages[] = $invoices;
+
+while ($invoices = $invoiceRepository->nextPage($invoices)) {
+    $invoicePages[] = $invoices;
+}
+
+$invoicesPreviousPage = $invoiceRepository->previousPage($invoices);
 $invoicesLastPage = $invoiceRepository->lastPage($invoicesPreviousPage);
 $invoicesFirstPage = $invoiceRepository->firstPage($invoicesLastPage);
 $invoicePage42 = $invoiceRepository->page($invoicesFirstPage, 42);
