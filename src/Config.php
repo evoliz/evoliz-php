@@ -86,17 +86,6 @@ class Config
         ];
 
         $this->authenticate();
-
-//        if ($this->hasValidCookieAccessToken()) {
-//            $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
-//            $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
-//        } else {
-//            $this->accessToken = $this->login();
-//        }
-//
-//        $clientConfig = $this->defaultClientConfig;
-//        $clientConfig['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
-//        $this->client = new Client($clientConfig);
     }
 
     /**
