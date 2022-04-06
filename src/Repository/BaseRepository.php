@@ -177,47 +177,11 @@ abstract class BaseRepository
      */
     public function page($object, int $pageNumber)
     {
-        if ($this->config->getDefaultReturnType() === 'JSON') {
-            $decodedObject = json_decode($object, true);
-
-            if ($decodedObject === null) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
-
-            $data = [];
-
-            foreach ($decodedObject['data'] as $objectData) {
-                $data[] = new $this->responseModel($objectData);
-            }
-
-            $object = new APIResponse($data, $decodedObject['links'], $decodedObject['meta']);
-        }
-
-        if (!($object instanceof APIResponse)) {
-            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-        }
+        $object = $this->formatedObject($object);
 
         $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
 
-        $response = $this->config->getClient()->get($requestedUri);
-
-        $responseContent = $response->getBody()->getContents();
-
-        $decodedContent = json_decode($responseContent, true);
-
-        $this->handleError($decodedContent, $response->getStatusCode());
-
-        if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            $data = [];
-
-            foreach ($decodedContent['data'] as $objectData) {
-                $data[] = new $this->responseModel($objectData);
-            }
-
-            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
-        } else {
-            return $responseContent;
-        }
+        return $this->requestForPaginate($requestedUri);
     }
 
     /**
@@ -233,25 +197,7 @@ abstract class BaseRepository
             throw new PaginationException('Error : The requestedPage attribute must be one of first, last, prev or next', 401);
         }
 
-        if ($this->config->getDefaultReturnType() === 'JSON') {
-            $decodedObject = json_decode($object, true);
-
-            if ($decodedObject === null) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
-
-            $data = [];
-
-            foreach ($decodedObject['data'] as $objectData) {
-                $data[] = new $this->responseModel($objectData);
-            }
-
-            $object = new APIResponse($data, $decodedObject['links'], $decodedObject['meta']);
-        }
-
-        if (!($object instanceof APIResponse)) {
-            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-        }
+        $object = $this->formatedObject($object);
 
         $requestedUri = $object->links[$requestedPage] ?? null;
 
@@ -259,25 +205,7 @@ abstract class BaseRepository
             return null;
         }
 
-        $response = $this->config->getClient()->get($requestedUri);
-
-        $responseContent = $response->getBody()->getContents();
-
-        $decodedContent = json_decode($responseContent, true);
-
-        $this->handleError($decodedContent, $response->getStatusCode());
-
-        if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            $data = [];
-
-            foreach ($decodedContent['data'] as $objectData) {
-                $data[] = new $this->responseModel($objectData);
-            }
-
-            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
-        } else {
-            return $responseContent;
-        }
+        return $this->requestForPaginate($requestedUri);
     }
 
     /**
@@ -318,5 +246,65 @@ abstract class BaseRepository
             }
         }
         return $payload;
+    }
+
+    /**
+     * Format an object response to OBJECT format
+     * @param APIResponse|string $object Object Response to guzzle query
+     * @return APIResponse Objects list in the OBJECT format
+     * @throws InvalidTypeException
+     */
+    private function formatedObject($object): APIResponse
+    {
+        if ($this->config->getDefaultReturnType() === 'JSON') {
+            $decodedObject = json_decode($object, true);
+
+            if ($decodedObject === null) {
+                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+            }
+
+            $data = [];
+
+            foreach ($decodedObject['data'] as $objectData) {
+                $data[] = new $this->responseModel($objectData);
+            }
+
+            $object = new APIResponse($data, $decodedObject['links'], $decodedObject['meta']);
+        }
+
+        if (!($object instanceof APIResponse)) {
+            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
+        }
+
+        return $object;
+    }
+
+    /**
+     * Guzzle request with custom uri for pagination
+     * @param string $requestedUri Requested pagination uri
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @throws ResourceException
+     */
+    public function requestForPaginate(string $requestedUri)
+    {
+        $response = $this->config->getClient()->get($requestedUri);
+
+        $responseContent = $response->getBody()->getContents();
+
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
+
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            $data = [];
+
+            foreach ($decodedContent['data'] as $objectData) {
+                $data[] = new $this->responseModel($objectData);
+            }
+
+            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
+        } else {
+            return $responseContent;
+        }
     }
 }
