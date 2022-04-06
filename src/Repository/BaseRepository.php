@@ -36,9 +36,9 @@ abstract class BaseRepository
     private $responseModel;
 
     /**
-     * @var string[] Array of headers to pass to Guzzle queries to override current headers
+     * @var string Authentication token retrieved from the API
      */
-    private $overloadedHeaders;
+    private $authenticationToken;
 
     /**
      * Setup the different parameters for the API requests
@@ -55,9 +55,7 @@ abstract class BaseRepository
         $this->baseEndpoint = $baseEndpoint;
         $this->responseModel = $responseModel;
 
-        $this->overloadedHeaders = [
-            'Authorization' => 'Bearer ' . $this->config->getAccessToken()->getToken()
-        ];
+        $this->authenticationToken = 'Bearer ' . $this->config->getAccessToken()->getToken();
     }
 
     /**
@@ -70,7 +68,9 @@ abstract class BaseRepository
     {
         $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint, [
             'query' => $query,
-            'headers' => $this->overloadedHeaders
+            'headers' => [
+                'Authorization' => $this->authenticationToken
+            ]
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -99,7 +99,9 @@ abstract class BaseRepository
     public function detail(int $objectid)
     {
         $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint . '/' . $objectid, [
-            'headers' => $this->overloadedHeaders
+            'headers' => [
+                'Authorization' => $this->authenticationToken
+            ]
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -123,7 +125,9 @@ abstract class BaseRepository
     {
         $response = $this->config->getClient()->post('api/v1/' . $this->baseEndpoint, [
             'body' => json_encode($this->buildPayload($object)),
-            'headers' => $this->overloadedHeaders
+            'headers' => [
+                'Authorization' => $this->authenticationToken
+            ]
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -213,7 +217,9 @@ abstract class BaseRepository
         $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
 
         $response = $this->config->getClient()->get($requestedUri, [
-            'headers' => $this->overloadedHeaders
+            'headers' => [
+                'Authorization' => $this->authenticationToken
+            ]
         ]);
 
         $responseContent = $response->getBody()->getContents();
@@ -286,7 +292,9 @@ abstract class BaseRepository
         }
 
         $response = $this->config->getClient()->get($requestedUri, [
-            'headers' => $this->overloadedHeaders
+            'headers' => [
+                'Authorization' => $this->authenticationToken
+            ]
         ]);
 
         $responseContent = $response->getBody()->getContents();

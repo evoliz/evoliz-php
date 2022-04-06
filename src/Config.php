@@ -23,11 +23,6 @@ class Config
     private $defaultClientConfig;
 
     /**
-     * @var array Guzzle active client configuration
-     */
-    private $clientConfig;
-
-    /**
      * @var bool Setup Guzzle Client verify parameter for SSL verification
      */
     private $verifySSL;
@@ -197,7 +192,7 @@ class Config
 
         if (isset($responseBody->access_token)) {
             // Cookie Storage
-            $cookiesIsSet = setcookie('evoliz_token_' . $this->companyId, json_encode([
+            setcookie('evoliz_token_' . $this->companyId, json_encode([
                 'access_token' => $responseBody->access_token,
                 'expires_at' => $responseBody->expires_at
             ]));
