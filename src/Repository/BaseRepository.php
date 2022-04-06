@@ -171,7 +171,7 @@ abstract class BaseRepository
      */
     public function previousPage($object)
     {
-        return $this->paginate($object, 'previous');
+        return $this->paginate($object, 'prev');
     }
 
     /**
@@ -274,18 +274,7 @@ abstract class BaseRepository
             throw new InvalidTypeException('Error : The given object is not of the right type', 401);
         }
 
-        switch ($requestedPage) {
-            case 'first':
-            case 'last':
-            case 'next':
-                $requestedUri = $object->links[$requestedPage] ?? null;
-                break;
-            case 'previous':
-                $requestedUri = $object->links['prev'] ?? null;
-                break;
-            default:
-                $requestedUri = null;
-        }
+        $requestedUri = $object->links[$requestedPage] ?? null;
 
         if ($requestedUri === null) {
             return null;
