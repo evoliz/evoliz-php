@@ -80,9 +80,9 @@ class Invoice extends BaseModel
      */
     public function __construct(array $data)
     {
-        $this->clientid = $this->mapClientId($data);
-        $this->analyticid = $this->mapAnalyticId($data);
-        $this->global_rebate = $this->mapGlobalRebate($data);
+        $this->clientid = $this->extractClientId($data);
+        $this->analyticid = $this->extractAnalyticId($data);
+        $this->global_rebate = $this->extractGlobalRebate($data);
 
         $this->external_document_number = $data['external_document_number'] ?? null;
         $this->documentdate = $data['documentdate'] ?? null;
@@ -109,11 +109,11 @@ class Invoice extends BaseModel
     }
 
     /**
-     * Map the clientid field with the correct information
+     * Extract the clientid field with the correct information
      * @param array $data array to build the object
      * @return integer|null
      */
-    private function mapClientId(array $data)
+    private function extractClientId(array $data)
     {
         if (isset($data['client'])) {
             $clientid = $data['client']->clientid;
@@ -125,11 +125,11 @@ class Invoice extends BaseModel
     }
 
     /**
-     * Map the analyticid field with the correct information
+     * Extract the analyticid field with the correct information
      * @param array $data array to build the object
      * @return integer|null
      */
-    private function mapAnalyticId(array $data)
+    private function extractAnalyticId(array $data)
     {
         if (isset($data['analytic'])) {
             $analyticid = $data['analytic']->id;
@@ -141,11 +141,11 @@ class Invoice extends BaseModel
     }
 
     /**
-     * Map the global_rebate field with the correct information
+     * Extract the global_rebate field with the correct information
      * @param array $data array to build the object
      * @return float|null
      */
-    private function mapGlobalRebate(array $data)
+    private function extractGlobalRebate(array $data)
     {
         if (isset($data['total'])) {
             $global_rebate = $data['total']->rebate->amount_vat_exclude;
