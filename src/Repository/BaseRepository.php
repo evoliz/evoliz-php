@@ -36,11 +36,6 @@ abstract class BaseRepository
     private $responseModel;
 
     /**
-     * @var string Authentication token retrieved from the API
-     */
-    private $authenticationToken;
-
-    /**
      * Setup the different parameters for the API requests
      * @param Config $config Configuration for API usage
      * @param string $baseModel Reference model
@@ -54,8 +49,6 @@ abstract class BaseRepository
         $this->baseModel = $baseModel;
         $this->baseEndpoint = $baseEndpoint;
         $this->responseModel = $responseModel;
-
-        $this->authenticationToken = 'Bearer ' . $this->config->getAccessToken()->getToken();
     }
 
     /**
@@ -67,10 +60,7 @@ abstract class BaseRepository
     public function list(array $query = [])
     {
         $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint, [
-            'query' => $query,
-            'headers' => [
-                'Authorization' => $this->authenticationToken
-            ]
+            'query' => $query
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -98,11 +88,7 @@ abstract class BaseRepository
      */
     public function detail(int $objectid)
     {
-        $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint . '/' . $objectid, [
-            'headers' => [
-                'Authorization' => $this->authenticationToken
-            ]
-        ]);
+        $response = $this->config->getClient()->get('api/v1/' . $this->baseEndpoint . '/' . $objectid);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
 
@@ -124,10 +110,7 @@ abstract class BaseRepository
     public function create(BaseModel $object)
     {
         $response = $this->config->getClient()->post('api/v1/' . $this->baseEndpoint, [
-            'body' => json_encode($this->buildPayload($object)),
-            'headers' => [
-                'Authorization' => $this->authenticationToken
-            ]
+            'body' => json_encode($this->buildPayload($object))
         ]);
 
         $responseBody = json_decode($response->getBody()->getContents(), true);
@@ -216,11 +199,7 @@ abstract class BaseRepository
 
         $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
 
-        $response = $this->config->getClient()->get($requestedUri, [
-            'headers' => [
-                'Authorization' => $this->authenticationToken
-            ]
-        ]);
+        $response = $this->config->getClient()->get($requestedUri);
 
         $responseContent = $response->getBody()->getContents();
 
@@ -244,14 +223,14 @@ abstract class BaseRepository
     /**
      * Move to the requested page of the resource
      * @param APIResponse|string $object Object Response to list() function
-     * @param string $requestedPage Requested page ('first', 'last', 'previous' or 'next')
+     * @param string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested uri does not exist
      * @throws InvalidTypeException|PaginationException|ResourceException
      */
     private function paginate($object, string $requestedPage)
     {
-        if (!in_array($requestedPage, ['first', 'last', 'previous', 'next'])) {
-            throw new PaginationException('Error : The requestedPage attribute must be one of first, last, previous or next', 401);
+        if (!in_array($requestedPage, ['first', 'last', 'prev', 'next'])) {
+            throw new PaginationException('Error : The requestedPage attribute must be one of first, last, prev or next', 401);
         }
 
         if ($this->config->getDefaultReturnType() === 'JSON') {
@@ -280,11 +259,7 @@ abstract class BaseRepository
             return null;
         }
 
-        $response = $this->config->getClient()->get($requestedUri, [
-            'headers' => [
-                'Authorization' => $this->authenticationToken
-            ]
-        ]);
+        $response = $this->config->getClient()->get($requestedUri);
 
         $responseContent = $response->getBody()->getContents();
 

@@ -85,14 +85,18 @@ class Config
             'handler' => $this->handlerStack
         ];
 
-        $this->client = new Client($this->defaultClientConfig);
+        $this->authenticate();
 
-        if ($this->hasValidCookieAccessToken()) {
-            $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
-            $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
-        } else {
-            $this->accessToken = $this->login();
-        }
+//        if ($this->hasValidCookieAccessToken()) {
+//            $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
+//            $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
+//        } else {
+//            $this->accessToken = $this->login();
+//        }
+//
+//        $clientConfig = $this->defaultClientConfig;
+//        $clientConfig['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
+//        $this->client = new Client($clientConfig);
     }
 
     /**
@@ -140,6 +144,15 @@ class Config
     {
         if (!$this->hasValidAccessToken()) {
             $this->accessToken = $this->login();
+        } elseif ($this->hasValidCookieAccessToken() && $this->accessToken === null) {
+            $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
+            $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
+        }
+
+        if ($this->client === null || $this->client->getConfig()['headers']['Authorization'] !== 'Bearer ' . $this->accessToken->getToken()) {
+            $clientConfig = $this->defaultClientConfig;
+            $clientConfig['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
+            $this->client = new Client($clientConfig);
         }
 
         return $this;
@@ -176,7 +189,8 @@ class Config
      */
     private function login(): AccessToken
     {
-        $loginResponse = $this->client->post('api/login', [
+        $tempClient = new Client($this->defaultClientConfig);
+        $loginResponse = $tempClient->post('api/login', [
             'body' => json_encode([
                 'public_key' => $this->publicKey,
                 'secret_key' => $this->secretKey
