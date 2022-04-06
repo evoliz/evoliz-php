@@ -234,7 +234,7 @@ abstract class BaseRepository
 
     /**
      * Mapping of the request payload to create the entry
-     * @param object|array|string $object Object to create
+     * @param \stdClass|array $object Object to create
      * @return array
      */
     private function buildPayload($object): array
