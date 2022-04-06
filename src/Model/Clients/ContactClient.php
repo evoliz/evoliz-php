@@ -6,9 +6,6 @@ use Evoliz\Client\Response\ContactClient\ContactClientResponse;
 
 class ContactClient
 {
-    const BASE_ENDPOINT = 'contacts-clients';
-    const RESPONSE_MODEL = ContactClientResponse::class;
-
     /**
      * @var integer The client's id to attach the contact to
      */

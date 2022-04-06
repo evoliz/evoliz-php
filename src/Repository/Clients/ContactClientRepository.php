@@ -5,6 +5,7 @@ namespace Evoliz\Client\Repository\Clients;
 use Evoliz\Client\Config;
 use Evoliz\Client\Model\Clients\ContactClient;
 use Evoliz\Client\Repository\BaseRepository;
+use Evoliz\Client\Response\ContactClient\ContactClientResponse;
 
 class ContactClientRepository extends BaseRepository
 {
@@ -15,6 +16,6 @@ class ContactClientRepository extends BaseRepository
      */
     public function __construct(Config $config)
     {
-        parent::__construct($config, ContactClient::class);
+        parent::__construct($config, ContactClient::class, 'contacts-clients', ContactClientResponse::class);
     }
 }
