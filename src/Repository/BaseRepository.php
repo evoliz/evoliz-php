@@ -7,6 +7,7 @@ use Evoliz\Client\EvolizHelper;
 use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\ResourceException;
+use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Response\APIResponse;
 
 abstract class BaseRepository
@@ -83,7 +84,7 @@ abstract class BaseRepository
     /**
      * Return an object by its speficied id
      * @param int $objectid Object id
-     * @return mixed|string Object in the expected format (OBJECT or JSON)
+     * @return mixed|string Response in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
     public function detail(int $objectid)
@@ -105,18 +106,12 @@ abstract class BaseRepository
 
     /**
      * Create a new object with given data
-     * @param mixed|string $object Object to create
-     * @return mixed|string Object in the expected format (OBJECT or JSON)
-     * @throws InvalidTypeException|ResourceException
+     * @param BaseModel $object Object to create
+     * @return mixed|string Response in the expected format (OBJECT or JSON)
+     * @throws ResourceException
      */
-    public function create($object)
+    public function create(BaseModel $object)
     {
-        if ($object instanceof $this->responseModel) {
-            $object = new $this->baseModel((array) $object);
-        } elseif (!($object instanceof $this->baseModel)) {
-            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-        }
-
         $response = $this->config->getClient()->post('api/v1/' . $this->baseEndpoint, [
             'body' => json_encode($this->buildPayload($object))
         ]);

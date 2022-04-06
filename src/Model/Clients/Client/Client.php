@@ -2,9 +2,9 @@
 
 namespace Evoliz\Client\Model\Clients\Client;
 
-use Evoliz\Client\Response\Client\ClientResponse;
+use Evoliz\Client\Model\BaseModel;
 
-class Client
+class Client extends BaseModel
 {
     /**
      * @var string Client name
