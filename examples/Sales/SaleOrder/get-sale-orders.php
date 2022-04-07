@@ -14,11 +14,15 @@ $saleOrderRepository = new SaleOrderRepository($config);
 
 $saleOrders = $saleOrderRepository->list();
 
-// @Todo : Handle upcoming changements on pagination
-$saleOrdersNextPage = $saleOrderRepository->paginate($saleOrders, 'next');
-$saleOrdersPreviousPage = $saleOrderRepository->paginate($saleOrdersNextPage, 'previous');
-$saleOrdersLastPage = $saleOrderRepository->paginate($saleOrdersPreviousPage, 'last');
-$saleOrdersFirstPage = $saleOrderRepository->paginate($saleOrdersLastPage, 'first');
-$saleOrdersPage42 = $saleOrderRepository->paginate($saleOrdersFirstPage, 'perso', 42);
+$saleOrderPages[] = $saleOrders;
+
+while ($saleOrders = $saleOrderRepository->nextPage($saleOrders)) {
+    $saleOrderPages[] = $saleOrders;
+}
+
+$saleOrdersPreviousPage = $saleOrderRepository->previousPage($saleOrders);
+$saleOrdersLastPage = $saleOrderRepository->lastPage($saleOrdersPreviousPage);
+$saleOrdersFirstPage = $saleOrderRepository->firstPage($saleOrdersLastPage);
+$saleOrderPage42 = $saleOrderRepository->page($saleOrdersFirstPage, 42);
 
 $saleOrder = $saleOrderRepository->detail(1); // Get InvoiceResponse resource wth Id 1
