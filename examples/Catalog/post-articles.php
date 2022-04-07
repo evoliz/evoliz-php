@@ -14,5 +14,5 @@ $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY
 $articleRepository = new ArticleRepository($config);
 $newArticle = $articleRepository->create(new Article([
     'reference' => 'evz42',
-    'designation' => 'Test de dydy'
+    'designation' => 'Mug banana'
 ]));
