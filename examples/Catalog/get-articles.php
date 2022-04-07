@@ -14,10 +14,15 @@ $articleRepository = new ArticleRepository($config);
 
 $articles = $articleRepository->list();
 
-$articlesNextPage = $articleRepository->paginate($articles, 'next');
-$articlesPreviousPage = $articleRepository->paginate($articlesNextPage, 'previous');
-$articlesLastPage = $articleRepository->paginate($articlesPreviousPage, 'last');
-$articlesFirstPage = $articleRepository->paginate($articlesLastPage, 'first');
-$articlesPage42 = $articleRepository->paginate($articlesFirstPage, 'perso', 42);
+$articlePages[] = $articles;
+
+while ($articles = $articleRepository->nextPage($articles)) {
+    $articlePages[] = $articles;
+}
+
+$articlesPreviousPage = $articleRepository->previousPage($articles);
+$articlesLastPage = $articleRepository->lastPage($articlesPreviousPage);
+$articlesFirstPage = $articleRepository->firstPage($articlesLastPage);
+$articlePage42 = $articleRepository->page($articlesFirstPage, 42);
 
 $article = $articleRepository->detail(1); // Get ArticleResponse resource wth Id 1
