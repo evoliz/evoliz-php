@@ -4,7 +4,7 @@ namespace Evoliz\Client\Repository\Sales;
 
 use Evoliz\Client\Config;
 use Evoliz\Client\Repository\BaseRepository;
-use Evoliz\Client\Response\Sales\Invoice\InvoiceResponse;
+use Evoliz\Client\Response\Sales\InvoiceResponse;
 
 class InvoiceRepository extends BaseRepository
 {

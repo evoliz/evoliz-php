@@ -6,7 +6,7 @@ use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\Clients\ContactClient;
 use Evoliz\Client\Repository\Clients\ContactClientRepository;
 use Evoliz\Client\Response\APIResponse;
-use Evoliz\Client\Response\ContactClient\ContactClientResponse;
+use Evoliz\Client\Response\Clients\ContactClientResponse;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
