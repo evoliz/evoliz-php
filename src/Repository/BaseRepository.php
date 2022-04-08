@@ -3,7 +3,6 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\EvolizHelper;
 use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\PaginationException;
