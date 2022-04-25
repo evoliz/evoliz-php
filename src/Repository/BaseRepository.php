@@ -177,11 +177,11 @@ abstract class BaseRepository
      */
     public function page($object, int $pageNumber)
     {
-        $object = $this->formatedObject($object);
+        $object = $this->formatObject($object);
 
         $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
 
-        return $this->requestForPaginate($requestedUri);
+        return $this->getRequestUri($requestedUri);
     }
 
     /**
@@ -197,7 +197,7 @@ abstract class BaseRepository
             throw new PaginationException('Error : The requestedPage attribute must be one of first, last, prev or next', 401);
         }
 
-        $object = $this->formatedObject($object);
+        $object = $this->formatObject($object);
 
         $requestedUri = $object->links[$requestedPage] ?? null;
 
@@ -205,7 +205,7 @@ abstract class BaseRepository
             return null;
         }
 
-        return $this->requestForPaginate($requestedUri);
+        return $this->getRequestUri($requestedUri);
     }
 
     /**
@@ -254,7 +254,7 @@ abstract class BaseRepository
      * @return APIResponse Objects list in the OBJECT format
      * @throws InvalidTypeException
      */
-    private function formatedObject($object): APIResponse
+    private function formatObject($object): APIResponse
     {
         if ($this->config->getDefaultReturnType() === 'JSON') {
             $decodedObject = json_decode($object, true);
@@ -285,7 +285,7 @@ abstract class BaseRepository
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
-    public function requestForPaginate(string $requestedUri)
+    private function getRequestUri(string $requestedUri)
     {
         $response = $this->config->getClient()->get($requestedUri);
 
