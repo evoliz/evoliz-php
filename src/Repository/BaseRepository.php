@@ -26,14 +26,14 @@ abstract class BaseRepository
     private $baseEndpoint;
 
     /**
-     * @var string Reference model
-     */
-    private $baseModel;
-
-    /**
      * @var string Associated response model
      */
     private $responseModel;
+
+    /**
+     * @var APIResponse|string Last query response
+     */
+    private $lastResponse;
 
     /**
      * Setup the different parameters for the API requests
@@ -73,11 +73,11 @@ abstract class BaseRepository
             foreach ($responseBody['data'] as $objectData) {
                 $data[] = new $this->responseModel($objectData);
             }
-
-            return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            $this->lastResponse = new APIResponse($data, $responseBody['links'], $responseBody['meta']);
         } else {
-            return json_encode($responseBody);
+            $this->lastResponse = json_encode($responseBody);
         }
+        return $this->lastResponse;
     }
 
     /**
@@ -125,60 +125,80 @@ abstract class BaseRepository
     }
 
     /**
-     * Move to the first page of the resource
-     * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
-     * @throws PaginationException|InvalidTypeException|ResourceException
+     * Accessor for the number of pages of the resource
+     * @return int Number of pages
+     * @throws InvalidTypeException|ResourceException
      */
-    public function firstPage($object)
+    public function getNumberOfPages(): int
     {
-        return $this->paginate($object, 'first');
+
+        if (!isset($this->lastResponse)) {
+            $this->lastResponse = $this->list();
+        }
+
+        $object = $this->formatObject($this->lastResponse);
+
+        return $object->meta['last_page'];
+    }
+
+    /**
+     * Move to the first page of the resource
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws InvalidTypeException
+     * @throws PaginationException
+     * @throws ResourceException
+     */
+    public function firstPage()
+    {
+        return $this->paginate('first');
     }
 
     /**
      * Move to the last page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
      * @throws PaginationException|InvalidTypeException|ResourceException
      */
-    public function lastPage($object)
+    public function lastPage()
     {
-        return $this->paginate($object, 'last');
+        return $this->paginate('last');
     }
 
     /**
      * Move to the previous page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
-     * @throws PaginationException|InvalidTypeException|ResourceException
+     * @throws InvalidTypeException
+     * @throws PaginationException
+     * @throws ResourceException
      */
-    public function previousPage($object)
+    public function previousPage()
     {
-        return $this->paginate($object, 'prev');
+        return $this->paginate('prev');
     }
 
     /**
      * Move to the next page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
-     * @throws PaginationException|InvalidTypeException|ResourceException
+     * @throws InvalidTypeException
+     * @throws PaginationException
+     * @throws ResourceException
      */
-    public function nextPage($object)
+    public function nextPage()
     {
-        return $this->paginate($object, 'next');
+        return $this->paginate('next');
     }
 
     /**
      * Move to the requested page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @param int $pageNumber Requested page number
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
-     * @throws ResourceException|InvalidTypeException
+     * @throws InvalidTypeException
+     * @throws ResourceException
      */
-    public function page($object, int $pageNumber)
+    public function page(int $pageNumber)
     {
-        $object = $this->formatObject($object);
+        $object = $this->formatObject($this->lastResponse);
 
+        //@Todo : Find a better solution
         $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
 
         return $this->getRequestUri($requestedUri);
@@ -186,18 +206,23 @@ abstract class BaseRepository
 
     /**
      * Move to the requested page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @param string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested uri does not exist
-     * @throws InvalidTypeException|PaginationException|ResourceException
+     * @throws InvalidTypeException
+     * @throws PaginationException
+     * @throws ResourceException
      */
-    private function paginate($object, string $requestedPage)
+    private function paginate(string $requestedPage)
     {
         if (!in_array($requestedPage, ['first', 'last', 'prev', 'next'])) {
             throw new PaginationException('Error : The requestedPage attribute must be one of first, last, prev or next', 401);
         }
 
-        $object = $this->formatObject($object);
+        if (!isset($this->lastResponse)) {
+            $this->lastResponse = $this->list();
+        }
+
+        $object = $this->formatObject($this->lastResponse);
 
         $requestedUri = $object->links[$requestedPage] ?? null;
 
@@ -302,9 +327,10 @@ abstract class BaseRepository
                 $data[] = new $this->responseModel($objectData);
             }
 
-            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
+            $this->lastResponse = new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
         } else {
-            return $responseContent;
+            $this->lastResponse = $responseContent;
         }
+        return $this->lastResponse;
     }
 }
