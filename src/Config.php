@@ -84,8 +84,6 @@ class Config
             'verify' => $this->verifySSL,
             'handler' => $this->handlerStack
         ];
-
-        $this->authenticate();
     }
 
     /**
