@@ -1,7 +1,13 @@
 <?php
 
+namespace Tests;
+
+use DateTime;
+use DateTimeZone;
 use Evoliz\Client\Config;
 use Evoliz\Client\Exception\ConfigException;
+use Faker\Factory;
+use Faker\Generator;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -10,7 +16,7 @@ use PHPUnit\Framework\TestCase;
 class ConfigTest extends TestCase
 {
     /**
-     * @var \Faker\Generator
+     * @var Generator
      */
     private $faker;
 
@@ -36,7 +42,7 @@ class ConfigTest extends TestCase
     {
         parent::setUp();
 
-        $this->faker = Faker\Factory::create();
+        $this->faker = Factory::create();
         $this->companyId = $this->faker->randomNumber(5);
         $this->accessToken = $this->faker->uuid;
 
