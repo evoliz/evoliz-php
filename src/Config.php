@@ -4,6 +4,7 @@ namespace Evoliz\Client;
 
 use Evoliz\Client\Exception\ConfigException;
 use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
 
 class Config
 {
@@ -17,19 +18,19 @@ class Config
     private $client;
 
     /**
-     * @var Client Guzzle client default configuration
+     * @var array Guzzle client default configuration
      */
     private $defaultClientConfig;
-
-    /**
-     * @var Client Guzzle active client configuration
-     */
-    private $clientConfig;
 
     /**
      * @var bool Setup Guzzle Client verify parameter for SSL verification
      */
     private $verifySSL;
+
+    /**
+     * @var HandlerStack Guzzle Handler stack
+     */
+    private $handlerStack;
 
     /**
      * @var integer User's companyid
@@ -65,12 +66,13 @@ class Config
      * @param bool $verifySSL Param to setup Guzzle options for SSL verification
      * @throws \Exception|ConfigException
      */
-    public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true)
+    public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true, HandlerStack $handlerStack = null)
     {
         $this->companyId = $companyId;
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
         $this->verifySSL = $verifySSL;
+        $this->handlerStack = $handlerStack;
 
         $this->defaultClientConfig = [
             'base_uri' => self::BASE_URI,
@@ -79,22 +81,11 @@ class Config
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json'
             ],
-            'verify' => $this->verifySSL
+            'verify' => $this->verifySSL,
+            'handler' => $this->handlerStack
         ];
 
-        if ($this->hasValidCookieAccessToken()) {
-            $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
-            $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
-        } else {
-            $this->accessToken = $this->login();
-        }
-
-        $this->clientConfig = $this->defaultClientConfig;
-        $this->clientConfig['headers'] += [
-            'Authorization' => 'Bearer ' . $this->accessToken->getToken()
-        ];
-
-        $this->client = new Client($this->clientConfig);
+        $this->authenticate();
     }
 
     /**
@@ -140,15 +131,19 @@ class Config
      */
     public function authenticate(): Config
     {
-        if (!$this->hasValidAccessToken()) {
+        if ($this->hasValidAccessToken()) {
+            if ($this->hasValidCookieAccessToken() && !$this->hasValidConfigAccessToken()) {
+                $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
+                $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
+            }
+        } else {
             $this->accessToken = $this->login();
+        }
 
-            $this->clientConfig = $this->defaultClientConfig;
-            $this->clientConfig['headers'] += [
-                'Authorization' => 'Bearer ' . $this->accessToken->getToken()
-            ];
-
-            $this->client = new Client($this->clientConfig);
+        if (!$this->activeClientIsValid()) {
+            $clientConfig = $this->defaultClientConfig;
+            $clientConfig['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
+            $this->client = new Client($clientConfig);
         }
 
         return $this;
@@ -183,11 +178,10 @@ class Config
      * @return AccessToken
      * @throws ConfigException|\Exception
      */
-    protected function login(): AccessToken
+    private function login(): AccessToken
     {
-        $this->client = new Client($this->defaultClientConfig);
-
-        $loginResponse = $this->client->post('api/login', [
+        $tempClient = new Client($this->defaultClientConfig);
+        $loginResponse = $tempClient->post('api/login', [
             'body' => json_encode([
                 'public_key' => $this->publicKey,
                 'secret_key' => $this->secretKey
@@ -228,13 +222,31 @@ class Config
     }
 
     /**
+     * Check if there is a valid access token stored in the config
+     */
+    private function hasValidConfigAccessToken(): bool
+    {
+        return isset($this->accessToken)
+            && !$this->accessToken->isExpired();
+    }
+
+    /**
      * Check if there is a valid access token stored in the cookies or the config
      * @throws \Exception
      */
     private function hasValidAccessToken(): bool
     {
         return $this->hasValidCookieAccessToken()
-            || (isset($this->accessToken)
-                && !$this->accessToken->isExpired());
+            || $this->hasValidConfigAccessToken();
+    }
+
+    /**
+     * Check if there is a valid guzzle client
+     */
+    private function activeClientIsValid(): bool
+    {
+        return isset($this->client)
+            && $this->client->getConfig()['headers']['Authorization'] === 'Bearer ' . $this->accessToken->getToken()
+            && !$this->accessToken->isExpired();
     }
 }
