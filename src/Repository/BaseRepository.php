@@ -3,7 +3,6 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\EvolizHelper;
 use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\PaginationException;
@@ -198,10 +197,10 @@ abstract class BaseRepository
     {
         $object = $this->formatObject($this->lastResponse);
 
-        //@Todo : Find a better solution
-        $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
+        parse_str(parse_url($object->links['first'], PHP_URL_QUERY), $query);
+        $query['page'] = $pageNumber;
 
-        return $this->getRequestUri($requestedUri);
+        return $this->getRequestUri($object->meta['path'], $query);
     }
 
     /**
@@ -310,9 +309,15 @@ abstract class BaseRepository
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
-    private function getRequestUri(string $requestedUri)
+    private function getRequestUri(string $requestedUri, array $query = null)
     {
-        $response = $this->config->getClient()->get($requestedUri);
+        if (isset($query)) {
+            $response = $this->config->getClient()->get($requestedUri, [
+                'query' => $query
+            ]);
+        } else {
+            $response = $this->config->getClient()->get($requestedUri);
+        }
 
         $responseContent = $response->getBody()->getContents();
 
