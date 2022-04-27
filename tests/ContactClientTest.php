@@ -43,6 +43,7 @@ class ContactClientTest extends TestCase
 
         $this->faker = Faker\Factory::create();
         $this->companyId = $this->faker->randomNumber(5);
+        $this->contactId = $this->faker->randomNumber(5);
         $this->accessToken = $this->faker->uuid;
 
         $tomorrow = new DateTime('tomorrow', new DateTimeZone('Europe/Paris'));
@@ -62,7 +63,7 @@ class ContactClientTest extends TestCase
         $response = json_encode([
             'data' => [
                 0 => [
-                    'contactid' => 8568,
+                    'contactid' => $this->contactId,
                 ],
             ],
             'links' => [],
@@ -83,6 +84,7 @@ class ContactClientTest extends TestCase
 
         $firstContactClient = $contactClients->data[0];
         $this->assertInstanceOf(ContactClientResponse::class, $firstContactClient);
+        $this->assertEquals($this->contactId, $contactClients->data[0]->contactid);
     }
 
     /**
@@ -91,7 +93,7 @@ class ContactClientTest extends TestCase
     public function testContactClientDetailShouldReturnContactClientResponseObject()
     {
         $response = json_encode([
-            'contactid' => 8568,
+            'contactid' => $this->contactId,
         ]);
 
         $guzzleMock = new MockHandler([
@@ -105,6 +107,7 @@ class ContactClientTest extends TestCase
 
         $contactClient = $contactClientRepository->detail(1);
         $this->assertInstanceOf(ContactClientResponse::class, $contactClient);
+        $this->assertEquals($this->contactId, $contactClient->contactid);
     }
 
     /**
@@ -113,7 +116,7 @@ class ContactClientTest extends TestCase
     public function testContactClientCreateShouldReturnContactClientResponseObject()
     {
         $response = json_encode([
-            'contactid' => 8568,
+            'contactid' => $this->contactId,
         ]);
 
         $guzzleMock = new MockHandler([
