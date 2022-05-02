@@ -194,7 +194,7 @@ abstract class BaseRepository
             $this->list();
         }
 
-        parse_str(parse_url($this->lastResponse['links']['first'], PHP_URL_QUERY), $query);
+        $query = $this->retrieveQueryParameters($this->lastResponse['links']['first']);
         $query['page'] = $pageNumber;
 
         return $this->list($query);
@@ -224,7 +224,7 @@ abstract class BaseRepository
             return null;
         }
 
-        parse_str(parse_url($this->lastResponse['links'][$requestedPage], PHP_URL_QUERY), $query);
+        $query = $this->retrieveQueryParameters($this->lastResponse['links'][$requestedPage]);
 
         return $this->list($query);
     }
@@ -268,5 +268,16 @@ abstract class BaseRepository
             }
         }
         return $payload;
+    }
+
+    /**
+     * Retrieve query parameters from an uri
+     * @param string $uri Requested uri with parameters to retrieve
+     * @return array Array of query parameters
+     */
+    private function retrieveQueryParameters(string $uri): array
+    {
+        parse_str(parse_url($uri, PHP_URL_QUERY), $query);
+        return $query;
     }
 }
