@@ -8,7 +8,8 @@ use GuzzleHttp\HandlerStack;
 
 class Config
 {
-    const BASE_URI = "https://www.api.evoliz.net/"; // @Todo : Change it in production
+    const VERSION = "dev";
+    const BASE_URI = "https://www.evoliz.io/";
     const OBJECT_RETURN_TYPE = "OBJECT";
     const JSON_RETURN_TYPE = "JSON";
 
@@ -79,7 +80,8 @@ class Config
             'http_errors' => false,
             'headers' => [
                 'Accept' => 'application/json',
-                'Content-Type' => 'application/json'
+                'Content-Type' => 'application/json',
+                'User-Agent' => 'evoliz-php/' . self::VERSION,
             ],
             'verify' => $this->verifySSL,
             'handler' => $this->handlerStack
