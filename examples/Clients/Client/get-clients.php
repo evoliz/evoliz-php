@@ -16,13 +16,13 @@ $clients = $clientRepository->list();
 
 $clientPages[] = $clients;
 
-while ($clients = $clientRepository->nextPage($clients)) {
+while ($clients = $clientRepository->nextPage()) {
     $clientPages[] = $clients;
 }
 
-$clientsPreviousPage = $clientRepository->previousPage($clients);
-$clientsLastPage = $clientRepository->lastPage($clientsPreviousPage);
-$clientsFirstPage = $clientRepository->firstPage($clientsLastPage);
-$clientsPage42 = $clientRepository->page($clientsLastPage, 42);
+$clientsPreviousPage = $clientRepository->previousPage();
+$clientsLastPage = $clientRepository->lastPage();
+$clientsFirstPage = $clientRepository->firstPage();
+$clientsPage42 = $clientRepository->page(42);
 
 $client = $clientRepository->detail(1); // Get ClientResponse resource wth Id 1

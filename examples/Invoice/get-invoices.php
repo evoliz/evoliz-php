@@ -16,13 +16,13 @@ $invoices = $invoiceRepository->list();
 
 $invoicePages[] = $invoices;
 
-while ($invoices = $invoiceRepository->nextPage($invoices)) {
+while ($invoices = $invoiceRepository->nextPage()) {
     $invoicePages[] = $invoices;
 }
 
-$invoicesPreviousPage = $invoiceRepository->previousPage($invoices);
-$invoicesLastPage = $invoiceRepository->lastPage($invoicesPreviousPage);
-$invoicesFirstPage = $invoiceRepository->firstPage($invoicesLastPage);
-$invoicePage42 = $invoiceRepository->page($invoicesFirstPage, 42);
+$invoicesPreviousPage = $invoiceRepository->previousPage();
+$invoicesLastPage = $invoiceRepository->lastPage();
+$invoicesFirstPage = $invoiceRepository->firstPage();
+$invoicePage42 = $invoiceRepository->page(42);
 
 $invoice = $invoiceRepository->detail(1); // Get InvoiceResponse resource wth Id 1
