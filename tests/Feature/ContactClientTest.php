@@ -12,7 +12,6 @@ use Evoliz\Client\Repository\Clients\ContactClientRepository;
 use Evoliz\Client\Response\APIResponse;
 use Evoliz\Client\Response\ContactClient\ContactClientResponse;
 use Faker\Factory;
-use Faker\Generator;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -21,24 +20,11 @@ use PHPUnit\Framework\TestCase;
 class ContactClientTest extends TestCase
 {
     /**
-     * @var Generator
-     */
-    private $faker;
-
-    /**
      * @var integer
      */
     private $companyId;
 
-    /**
-     * @var string
-     */
-    private $accessToken;
-
-    /**
-     * @var string
-     */
-    private $expirationDate;
+    private $faker;
 
     /**
      * @throws \Exception
@@ -50,14 +36,14 @@ class ContactClientTest extends TestCase
         $this->faker = Factory::create();
         $this->companyId = $this->faker->randomNumber(5);
         $this->contactId = $this->faker->randomNumber(5);
-        $this->accessToken = $this->faker->uuid;
+        $accessToken = $this->faker->uuid;
 
         $tomorrow = new DateTime('tomorrow', new DateTimeZone('Europe/Paris'));
-        $this->expirationDate = str_replace('+01:00', '.000000Z', $tomorrow->format(DateTime::ATOM));
+        $expirationDate = str_replace('+01:00', '.000000Z', $tomorrow->format(DateTime::ATOM));
 
         $_COOKIE['evoliz_token_' . $this->companyId] = json_encode([
-            'access_token' => $this->accessToken,
-            'expires_at' => $this->expirationDate
+            'access_token' => $accessToken,
+            'expires_at' => $expirationDate
         ]);
     }
 
@@ -143,9 +129,9 @@ class ContactClientTest extends TestCase
      */
     public function testContactClientShouldThrowResourceException()
     {
-        $errorCode = 400;
-        $errorLabel = 'Gandalf';
-        $errorMessage = 'You Shall Not Pass!';
+        $errorCode = $this->faker->randomElement([400, 401, 403, 404, 405, 422, 424, 429, 500]);
+        $errorLabel = $this->faker->word();
+        $errorMessage = $this->faker->sentence;
 
         $guzzleMock = new MockHandler([
             new Response($errorCode, [], json_encode([
