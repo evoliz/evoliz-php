@@ -9,14 +9,6 @@ use Evoliz\Client\Response\ResponseInterface;
 class InvoiceResponse extends BaseResponse implements ResponseInterface
 {
     /**
-     * @param array $data Response array to build the object
-     */
-    public function __construct(array $data)
-    {
-        parent::__construct($data);
-    }
-
-    /**
      * Build Invoice from InvoiceResponse
      * @return Invoice
      */
