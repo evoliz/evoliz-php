@@ -3,9 +3,8 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\EvolizHelper;
 use Evoliz\Client\Exception\ConfigException;
-use Evoliz\Client\Exception\InvalidTypeException;
+use Evoliz\Client\Exception\PaginationException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Response\APIResponse;
@@ -25,14 +24,14 @@ abstract class BaseRepository
     private $baseEndpoint;
 
     /**
-     * @var string Reference model
-     */
-    private $baseModel;
-
-    /**
      * @var string Associated response model
      */
     private $responseModel;
+
+    /**
+     * @var APIResponse|string Last query response
+     */
+    private $lastResponse;
 
     /**
      * Setup the different parameters for the API requests
@@ -63,19 +62,18 @@ abstract class BaseRepository
         ]);
 
         $responseContent = $response->getBody()->getContents();
+        $this->lastResponse = json_decode($responseContent, true);
 
-        $decodedContent = json_decode($responseContent, true);
-
-        $this->handleError($decodedContent, $response->getStatusCode());
+        $this->handleError($this->lastResponse, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
             $data = [];
 
-            foreach ($decodedContent['data'] as $objectData) {
+            foreach ($this->lastResponse['data'] as $objectData) {
                 $data[] = new $this->responseModel($objectData);
             }
 
-            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
+            return new APIResponse($data, $this->lastResponse['links'], $this->lastResponse['meta']);
         } else {
             return $responseContent;
         }
@@ -130,200 +128,105 @@ abstract class BaseRepository
     }
 
     /**
-     * Move to the first page of the resource
-     * If you are already on the first page, return the resource as is
-     * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
-     * @throws ResourceException|InvalidTypeException
+     * Accessor for the number of pages of the resource
+     * @return int Number of pages
+     * @throws ResourceException
      */
-    public function firstPage($object)
+    public function getNumberOfPages(): int
     {
-        if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            if (!($object instanceof APIResponse)) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
 
-            if ($object->meta['current_page'] !== 1) {
-                $response = $this->config->getClient()->get($object->links['first']);
-
-                $responseBody = json_decode($response->getBody()->getContents(), true);
-
-                $this->handleError($responseBody, $response->getStatusCode());
-
-                $data = [];
-                foreach ($responseBody['data'] as $objectData) {
-                    $data[] = new $this->responseModel($objectData);
-                }
-
-                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
-            }
-        } else {
-            if (!EvolizHelper::is_json($object)) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
-
-            $decodedObject = json_decode($object);
-
-            if ($decodedObject->meta->current_page !== 1) {
-                $response = $this->config->getClient()->get($decodedObject->links->first);
-
-                $responseBody = json_decode($response->getBody()->getContents(), true);
-
-                $this->handleError($responseBody, $response->getStatusCode());
-
-                return json_encode($responseBody);
-            }
+        if (!isset($this->lastResponse)) {
+            $this->list();
         }
 
-        return $object;
+        return $this->lastResponse['meta']['last_page'];
     }
 
     /**
-     * Move to the first last of the resource
-     * If you are already on the last page, return the resource as is
-     * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
-     * @throws ResourceException|InvalidTypeException
+     * Move to the first page of the resource
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|ResourceException
      */
-    public function lastPage($object)
+    public function firstPage()
     {
-        if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            if (!($object instanceof APIResponse)) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
+        return $this->paginate('first');
+    }
 
-            if ($object->meta['current_page'] < $object->meta['last_page']) {
-                $response = $this->config->getClient()->get($object->links['last']);
-
-                $responseBody = json_decode($response->getBody()->getContents(), true);
-
-                $this->handleError($responseBody, $response->getStatusCode());
-
-                $data = [];
-                foreach ($responseBody['data'] as $objectData) {
-                    $data[] = new $this->responseModel($objectData);
-                }
-
-                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
-            }
-        } else {
-            if (!EvolizHelper::is_json($object)) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
-
-            $decodedObject = json_decode($object);
-
-            if ($decodedObject->meta->current_page < $decodedObject->meta->last_page) {
-                $response = $this->config->getClient()->get($decodedObject->links->last);
-
-                $responseBody = json_decode($response->getBody()->getContents(), true);
-
-                $this->handleError($responseBody, $response->getStatusCode());
-
-                return json_encode($responseBody);
-            }
-        }
-
-        return $object;
+    /**
+     * Move to the last page of the resource
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|ResourceException
+     */
+    public function lastPage()
+    {
+        return $this->paginate('last');
     }
 
     /**
      * Move to the previous page of the resource
-     * If there is no previous page, return the resource as is
-     * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
-     * @throws ResourceException|InvalidTypeException
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|ResourceException
      */
-    public function previousPage($object)
+    public function previousPage()
     {
-        if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            if (!($object instanceof APIResponse)) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
-
-            if ($object->meta['current_page'] > 1) {
-                $response = $this->config->getClient()->get($object->links['prev']);
-
-                $responseBody = json_decode($response->getBody()->getContents(), true);
-
-                $this->handleError($responseBody, $response->getStatusCode());
-
-                $data = [];
-                foreach ($responseBody['data'] as $objectData) {
-                    $data[] = new $this->responseModel($objectData);
-                }
-
-                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
-            }
-        } else {
-            if (!EvolizHelper::is_json($object)) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
-
-            $decodedObject = json_decode($object);
-
-            if ($decodedObject->meta->current_page > 1) {
-                $response = $this->config->getClient()->get($decodedObject->links->prev);
-
-                $responseBody = json_decode($response->getBody()->getContents(), true);
-
-                $this->handleError($responseBody, $response->getStatusCode());
-
-                return json_encode($responseBody);
-            }
-        }
-
-        return $object;
+        return $this->paginate('prev');
     }
 
     /**
      * Move to the next page of the resource
-     * If there is no next page, return the resource as is
-     * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
-     * @throws ResourceException|InvalidTypeException
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|ResourceException
      */
-    public function nextPage($object)
+    public function nextPage()
     {
-        if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            if (!($object instanceof APIResponse)) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
+        return $this->paginate('next');
+    }
 
-            if ($object->meta['current_page'] < $object->meta['last_page']) {
-                $response = $this->config->getClient()->get($object->links['next']);
-
-                $responseBody = json_decode($response->getBody()->getContents(), true);
-
-                $this->handleError($responseBody, $response->getStatusCode());
-
-                $data = [];
-                foreach ($responseBody['data'] as $objectData) {
-                    $data[] = new $this->responseModel($objectData);
-                }
-
-                return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
-            }
-
-        } else {
-            if (!EvolizHelper::is_json($object)) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
-
-            $decodedObject = json_decode($object);
-
-            if ($decodedObject->meta->current_page < $decodedObject->meta->last_page) {
-                $response = $this->config->getClient()->get($decodedObject->links->next);
-
-                $responseBody = json_decode($response->getBody()->getContents(), true);
-
-                $this->handleError($responseBody, $response->getStatusCode());
-
-                return json_encode($responseBody);
-            }
+    /**
+     * Move to the requested page of the resource
+     * @param int $pageNumber Requested page number
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @throws ResourceException
+     */
+    public function page(int $pageNumber)
+    {
+        if (!isset($this->lastResponse)) {
+            $this->list();
         }
 
-        return $object;
+        $query = $this->retrieveQueryParameters($this->lastResponse['links']['first']);
+        $query['page'] = $pageNumber;
+
+        return $this->list($query);
+    }
+
+    /**
+     * Move to the requested page of the resource
+     * @param string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested uri does not exist
+     * @throws PaginationException|ResourceException
+     */
+    private function paginate(string $requestedPage)
+    {
+        if (!in_array($requestedPage, ['first', 'last', 'prev', 'next'])) {
+            throw new PaginationException('Error : The requestedPage attribute must be one of first, last, prev or next', 401);
+        }
+
+        if (!isset($this->lastResponse)) {
+            if (in_array($requestedPage, ['next', 'prev'])) {
+                return null;
+            }
+            $this->list();
+        }
+
+        // If the requested page doesn't exist, return null
+        if ($this->lastResponse['links'][$requestedPage] === null) {
+            return null;
+        }
+
+        $query = $this->retrieveQueryParameters($this->lastResponse['links'][$requestedPage]);
+
+        return $this->list($query);
     }
 
     /**
@@ -365,5 +268,16 @@ abstract class BaseRepository
             }
         }
         return $payload;
+    }
+
+    /**
+     * Retrieve query parameters from an uri
+     * @param string $uri Requested uri with parameters to retrieve
+     * @return array Array of query parameters
+     */
+    private function retrieveQueryParameters(string $uri): array
+    {
+        parse_str(parse_url($uri, PHP_URL_QUERY), $query);
+        return $query;
     }
 }
