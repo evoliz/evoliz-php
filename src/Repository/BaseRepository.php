@@ -3,9 +3,7 @@
 namespace Evoliz\Client\Repository;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\EvolizHelper;
 use Evoliz\Client\Exception\ConfigException;
-use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Exception\PaginationException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\BaseModel;
@@ -27,6 +25,11 @@ abstract class BaseRepository
      * @var string Associated response model
      */
     private $responseModel;
+
+    /**
+     * @var APIResponse|string Last query response
+     */
+    private $lastResponse;
 
     /**
      * Setup the different parameters for the API requests
@@ -54,20 +57,21 @@ abstract class BaseRepository
             'query' => $query
         ]);
 
-        $responseBody = json_decode($response->getBody()->getContents(), true);
+        $responseContent = $response->getBody()->getContents();
+        $this->lastResponse = json_decode($responseContent, true);
 
-        $this->handleError($responseBody, $response->getStatusCode());
+        $this->handleError($this->lastResponse, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
             $data = [];
 
-            foreach ($responseBody['data'] as $objectData) {
+            foreach ($this->lastResponse['data'] as $objectData) {
                 $data[] = new $this->responseModel($objectData);
             }
 
-            return new APIResponse($data, $responseBody['links'], $responseBody['meta']);
+            return new APIResponse($data, $this->lastResponse['links'], $this->lastResponse['meta']);
         } else {
-            return json_encode($responseBody);
+            return $responseContent;
         }
     }
 
@@ -81,14 +85,16 @@ abstract class BaseRepository
     {
         $response = $this->config->getClient()->get($this->baseEndpoint . '/' . $objectid);
 
-        $responseBody = json_decode($response->getBody()->getContents(), true);
+        $responseContent = $response->getBody()->getContents();
 
-        $this->handleError($responseBody, $response->getStatusCode());
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            return new $this->responseModel($responseBody);
+            return new $this->responseModel($decodedContent);
         } else {
-            return json_encode($responseBody);
+            return $responseContent;
         }
     }
 
@@ -104,102 +110,123 @@ abstract class BaseRepository
             'body' => json_encode($this->buildPayload($object))
         ]);
 
-        $responseBody = json_decode($response->getBody()->getContents(), true);
+        $responseContent = $response->getBody()->getContents();
 
-        $this->handleError($responseBody, $response->getStatusCode());
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
 
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            return new $this->responseModel($responseBody);
+            return new $this->responseModel($decodedContent);
         } else {
-            return json_encode($responseBody);
+            return $responseContent;
         }
     }
 
     /**
-     * Move to the first page of the resource
-     * @param APIResponse|string $object Object Response to list() function
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
-     * @throws PaginationException|InvalidTypeException|ResourceException
+     * Accessor for the number of pages of the resource
+     * @return int Number of pages
+     * @throws ResourceException
      */
-    public function firstPage($object)
+    public function getNumberOfPages(): int
     {
-        return $this->paginate($object, 'first');
+
+        if (!isset($this->lastResponse)) {
+            $this->list();
+        }
+
+        return $this->lastResponse['meta']['last_page'];
+    }
+
+    /**
+     * Move to the first page of the resource
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @throws PaginationException|ResourceException
+     */
+    public function firstPage()
+    {
+        return $this->paginate('first');
     }
 
     /**
      * Move to the last page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
-     * @throws PaginationException|InvalidTypeException|ResourceException
+     * @throws PaginationException|ResourceException
      */
-    public function lastPage($object)
+    public function lastPage()
     {
-        return $this->paginate($object, 'last');
+        return $this->paginate('last');
     }
 
     /**
      * Move to the previous page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
-     * @throws PaginationException|InvalidTypeException|ResourceException
+     * @throws PaginationException|ResourceException
      */
-    public function previousPage($object)
+    public function previousPage()
     {
-        return $this->paginate($object, 'prev');
+        return $this->paginate('prev');
     }
 
     /**
      * Move to the next page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
-     * @throws PaginationException|InvalidTypeException|ResourceException
+     * @throws PaginationException|ResourceException
      */
-    public function nextPage($object)
+    public function nextPage()
     {
-        return $this->paginate($object, 'next');
+        return $this->paginate('next');
     }
 
     /**
      * Move to the requested page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @param int $pageNumber Requested page number
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
-     * @throws ResourceException|InvalidTypeException
+     * @throws ResourceException
      */
-    public function page($object, int $pageNumber)
+    public function page(int $pageNumber)
     {
-        $object = $this->formatedObject($object);
+        if (!isset($this->lastResponse)) {
+            $this->list();
+        }
 
-        $requestedUri = preg_replace(['/[?]page=[0-9]+/', '/[&]page=[0-9]+/'], ['?page=' . $pageNumber, '&page=' . $pageNumber], $object->links['first']);
+        $query = $this->retrieveQueryParameters($this->lastResponse['links']['first']);
+        $query['page'] = $pageNumber;
 
-        return $this->requestForPaginate($requestedUri);
+        return $this->list($query);
     }
 
     /**
      * Move to the requested page of the resource
-     * @param APIResponse|string $object Object Response to list() function
      * @param string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
      * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested uri does not exist
-     * @throws InvalidTypeException|PaginationException|ResourceException
+     * @throws PaginationException|ResourceException
      */
-    private function paginate($object, string $requestedPage)
+    private function paginate(string $requestedPage)
     {
         if (!in_array($requestedPage, ['first', 'last', 'prev', 'next'])) {
             throw new PaginationException('Error : The requestedPage attribute must be one of first, last, prev or next', 401);
         }
 
-        $object = $this->formatedObject($object);
+        if (!isset($this->lastResponse)) {
+            if (in_array($requestedPage, ['next', 'prev'])) {
+                return null;
+            }
+            $this->list();
+        }
 
-        $requestedUri = $object->links[$requestedPage] ?? null;
-
-        if ($requestedUri === null) {
+        // If the requested page doesn't exist, return null
+        if ($this->lastResponse['links'][$requestedPage] === null) {
             return null;
         }
 
-        return $this->requestForPaginate($requestedUri);
+        $query = $this->retrieveQueryParameters($this->lastResponse['links'][$requestedPage]);
+
+        return $this->list($query);
     }
 
     /**
+     * @Todo : Think about a design pattern for error handling
      * Handle response error returned by the API
      * @param array $responseBody Array of response error and message
      * @param int $statusCode HTTP Status code
@@ -240,62 +267,13 @@ abstract class BaseRepository
     }
 
     /**
-     * Format an object response to OBJECT format
-     * @param APIResponse|string $object Object Response to guzzle query
-     * @return APIResponse Objects list in the OBJECT format
-     * @throws InvalidTypeException
+     * Retrieve query parameters from an uri
+     * @param string $uri Requested uri with parameters to retrieve
+     * @return array Array of query parameters
      */
-    private function formatedObject($object): APIResponse
+    private function retrieveQueryParameters(string $uri): array
     {
-        if ($this->config->getDefaultReturnType() === 'JSON') {
-            $decodedObject = json_decode($object, true);
-
-            if ($decodedObject === null) {
-                throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-            }
-
-            $data = [];
-
-            foreach ($decodedObject['data'] as $objectData) {
-                $data[] = new $this->responseModel($objectData);
-            }
-
-            $object = new APIResponse($data, $decodedObject['links'], $decodedObject['meta']);
-        }
-
-        if (!($object instanceof APIResponse)) {
-            throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-        }
-
-        return $object;
-    }
-
-    /**
-     * Guzzle request with custom uri for pagination
-     * @param string $requestedUri Requested pagination uri
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
-     * @throws ResourceException
-     */
-    public function requestForPaginate(string $requestedUri)
-    {
-        $response = $this->config->getClient()->get($requestedUri);
-
-        $responseContent = $response->getBody()->getContents();
-
-        $decodedContent = json_decode($responseContent, true);
-
-        $this->handleError($decodedContent, $response->getStatusCode());
-
-        if ($this->config->getDefaultReturnType() === 'OBJECT') {
-            $data = [];
-
-            foreach ($decodedContent['data'] as $objectData) {
-                $data[] = new $this->responseModel($objectData);
-            }
-
-            return new APIResponse($data, $decodedContent['links'], $decodedContent['meta']);
-        } else {
-            return $responseContent;
-        }
+        parse_str(parse_url($uri, PHP_URL_QUERY), $query);
+        return $query;
     }
 }
