@@ -1,5 +1,9 @@
 <?php
 
+namespace Tests\Feature;
+
+use DateTime;
+use DateTimeZone;
 use Evoliz\Client\Config;
 use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\ResourceException;
@@ -7,6 +11,8 @@ use Evoliz\Client\Model\Clients\ContactClient;
 use Evoliz\Client\Repository\Clients\ContactClientRepository;
 use Evoliz\Client\Response\APIResponse;
 use Evoliz\Client\Response\ContactClient\ContactClientResponse;
+use Faker\Factory;
+use Faker\Generator;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -15,7 +21,7 @@ use PHPUnit\Framework\TestCase;
 class ContactClientTest extends TestCase
 {
     /**
-     * @var \Faker\Generator
+     * @var Generator
      */
     private $faker;
 
@@ -35,13 +41,13 @@ class ContactClientTest extends TestCase
     private $expirationDate;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function setUp()
     {
         parent::setUp();
 
-        $this->faker = Faker\Factory::create();
+        $this->faker = Factory::create();
         $this->companyId = $this->faker->randomNumber(5);
         $this->contactId = $this->faker->randomNumber(5);
         $this->accessToken = $this->faker->uuid;
@@ -56,7 +62,7 @@ class ContactClientTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception|ResourceException
      */
     public function testContactClientListShouldReturnAPIResponseObject()
     {
@@ -88,7 +94,7 @@ class ContactClientTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception
      */
     public function testContactClientDetailShouldReturnContactClientResponseObject()
     {
@@ -111,7 +117,7 @@ class ContactClientTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception
      */
     public function testContactClientCreateShouldReturnContactClientResponseObject()
     {
@@ -133,7 +139,7 @@ class ContactClientTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception
      */
     public function testContactClientShouldThrowResourceException()
     {
