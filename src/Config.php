@@ -131,14 +131,16 @@ class Config
      */
     public function authenticate(): Config
     {
-        if (!$this->hasValidAccessToken()) {
+        if ($this->hasValidAccessToken()) {
+            if ($this->hasValidCookieAccessToken() && !$this->hasValidConfigAccessToken()) {
+                $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
+                $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
+            }
+        } else {
             $this->accessToken = $this->login();
-        } elseif ($this->hasValidCookieAccessToken() && $this->accessToken === null) {
-            $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
-            $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
         }
 
-        if ($this->client === null || $this->client->getConfig()['headers']['Authorization'] !== 'Bearer ' . $this->accessToken->getToken()) {
+        if (!$this->activeClientIsValid()) {
             $clientConfig = $this->defaultClientConfig;
             $clientConfig['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
             $this->client = new Client($clientConfig);
@@ -220,13 +222,31 @@ class Config
     }
 
     /**
+     * Check if there is a valid access token stored in the config
+     */
+    private function hasValidConfigAccessToken(): bool
+    {
+        return isset($this->accessToken)
+            && !$this->accessToken->isExpired();
+    }
+
+    /**
      * Check if there is a valid access token stored in the cookies or the config
      * @throws \Exception
      */
     private function hasValidAccessToken(): bool
     {
         return $this->hasValidCookieAccessToken()
-            || (isset($this->accessToken)
-                && !$this->accessToken->isExpired());
+            || $this->hasValidConfigAccessToken();
+    }
+
+    /**
+     * Check if there is a valid guzzle client
+     */
+    private function activeClientIsValid(): bool
+    {
+        return isset($this->client)
+            && $this->client->getConfig()['headers']['Authorization'] === 'Bearer ' . $this->accessToken->getToken()
+            && !$this->accessToken->isExpired();
     }
 }
