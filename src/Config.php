@@ -125,7 +125,7 @@ class Config
     }
 
     /**
-     * Check if the user is already identified and restarts the process if this is not the case
+     * Authenticate the user
      * @return Config
      * @throws \Exception|ConfigException
      */

@@ -72,7 +72,7 @@ class ContactClient extends BaseModel
     public $tel_tertiary;
 
     /**
-     * @param array $data array to build the object
+     * @param array $data Array to build the object
      */
     public function __construct(array $data)
     {
@@ -93,8 +93,8 @@ class ContactClient extends BaseModel
 
     /**
      * Extract the clientid field with the correct information
-     * @param array $data array to build the object
-     * @return string|null
+     * @param array $data Array to build the object
+     * @return integer|null
      */
     private function extractClientId(array $data)
     {

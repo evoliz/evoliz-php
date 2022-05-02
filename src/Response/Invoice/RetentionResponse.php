@@ -25,7 +25,7 @@ class RetentionResponse
     public $date;
 
     /**
-     * @param array $data response array to build the object
+     * @param array $data Response array to build the object
      */
     public function __construct(array $data)
     {

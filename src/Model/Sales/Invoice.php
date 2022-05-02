@@ -75,7 +75,7 @@ class Invoice extends BaseModel
     public $items = [];
 
     /**
-     * @param array $data array to build the object
+     * @param array $data Array to build the object
      * @throws InvalidTypeException
      */
     public function __construct(array $data)
@@ -110,7 +110,7 @@ class Invoice extends BaseModel
 
     /**
      * Extract the clientid field with the correct information
-     * @param array $data array to build the object
+     * @param array $data Array to build the object
      * @return integer|null
      */
     private function extractClientId(array $data)
@@ -126,7 +126,7 @@ class Invoice extends BaseModel
 
     /**
      * Extract the analyticid field with the correct information
-     * @param array $data array to build the object
+     * @param array $data Array to build the object
      * @return integer|null
      */
     private function extractAnalyticId(array $data)
@@ -142,7 +142,7 @@ class Invoice extends BaseModel
 
     /**
      * Extract the global_rebate field with the correct information
-     * @param array $data array to build the object
+     * @param array $data Array to build the object
      * @return float|null
      */
     private function extractGlobalRebate(array $data)
