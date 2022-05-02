@@ -1,13 +1,12 @@
 <?php
 
-namespace Evoliz\Client\Repository\Clients;
+namespace Evoliz\Client\Repository\Sales;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Model\Clients\Client\Client;
 use Evoliz\Client\Repository\BaseRepository;
-use Evoliz\Client\Response\Client\ClientResponse;
+use Evoliz\Client\Response\Sales\SaleOrder\SaleOrderResponse;
 
-class ClientRepository extends BaseRepository
+class SaleOrderRepository extends BaseRepository
 {
     /**
      * Set up the different parameters for the API requests
@@ -16,6 +15,6 @@ class ClientRepository extends BaseRepository
      */
     public function __construct(Config $config)
     {
-        parent::__construct($config, 'clients', ClientResponse::class);
+        parent::__construct($config, 'sale-orders', SaleOrderResponse::class);
     }
 }

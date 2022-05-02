@@ -1,8 +1,8 @@
 <?php
 
-namespace Evoliz\Client\Response\Invoice;
+namespace Evoliz\Client\Response\Common;
 
-class SaleClassificationResponse
+class ClassificationResponse
 {
     /**
      * @var integer Classification id

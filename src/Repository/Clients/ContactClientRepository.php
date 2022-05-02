@@ -10,12 +10,12 @@ use Evoliz\Client\Response\ContactClient\ContactClientResponse;
 class ContactClientRepository extends BaseRepository
 {
     /**
-     * Setup the different parameters for the API requests
+     * Set up the different parameters for the API requests
      * @param Config $config Configuration for API usage
      * @throws \Exception
      */
     public function __construct(Config $config)
     {
-        parent::__construct($config, ContactClient::class, 'contacts-clients', ContactClientResponse::class);
+        parent::__construct($config, 'contacts-clients', ContactClientResponse::class);
     }
 }

@@ -1,8 +1,11 @@
 <?php
 
-namespace Evoliz\Client\Response\Invoice;
+namespace Evoliz\Client\Response\Sales\SaleOrder;
 
-class SellDocTotalResponse
+use Evoliz\Client\Response\Sales\RebateResponse;
+use Evoliz\Client\Response\Sales\SaleDocumentMarginResponse;
+
+class SaleOrderTotalResponse
 {
     /**
      * @var RebateResponse Document amount rebate
@@ -25,14 +28,9 @@ class SellDocTotalResponse
     public $vat_include;
 
     /**
-     * @var float Total amount of advance on this document
+     * @var SaleDocumentMarginResponse Total sale margin information
      */
-    public $advance;
-
-    /**
-     * @var float Paid amount on document
-     */
-    public $paid;
+    public $margin = null;
 
     /**
      * @var float Total amount remaining on this document
@@ -48,9 +46,9 @@ class SellDocTotalResponse
         $this->vat_exclude = $data['vat_exclude'] ?? null;
         $this->vat = $data['vat'] ?? null;
         $this->vat_include = $data['vat_include'] ?? null;
-        $this->advance = $data['advance'] ?? null;
-        $this->paid = $data['paid'] ?? null;
+        $this->margin = isset($data['margin']) ? new SaleDocumentMarginResponse($data['margin']) : null;
         $this->net_to_pay = $data['net_to_pay'] ?? null;
     }
+
 
 }
