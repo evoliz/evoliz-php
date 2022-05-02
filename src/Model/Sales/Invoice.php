@@ -5,7 +5,7 @@ namespace Evoliz\Client\Model\Sales;
 use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Model\Item;
-use Evoliz\Client\Response\Invoice\SellDocItemResponse;
+use Evoliz\Client\Response\Sales\SellDocItemResponse;
 
 class Invoice extends BaseModel
 {
