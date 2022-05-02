@@ -1,5 +1,9 @@
 <?php
 
+namespace Tests\Feature;
+
+use DateTime;
+use DateTimeZone;
 use Evoliz\Client\Config;
 use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\ResourceException;
@@ -7,6 +11,7 @@ use Evoliz\Client\Model\Clients\ContactClient;
 use Evoliz\Client\Repository\Clients\ContactClientRepository;
 use Evoliz\Client\Response\APIResponse;
 use Evoliz\Client\Response\Clients\ContactClientResponse;
+use Faker\Factory;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
@@ -15,54 +20,42 @@ use PHPUnit\Framework\TestCase;
 class ContactClientTest extends TestCase
 {
     /**
-     * @var \Faker\Generator
-     */
-    private $faker;
-
-    /**
      * @var integer
      */
     private $companyId;
 
-    /**
-     * @var string
-     */
-    private $accessToken;
+    private $faker;
 
     /**
-     * @var string
-     */
-    private $expirationDate;
-
-    /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function setUp()
     {
         parent::setUp();
 
-        $this->faker = Faker\Factory::create();
+        $this->faker = Factory::create();
         $this->companyId = $this->faker->randomNumber(5);
-        $this->accessToken = $this->faker->uuid;
+        $this->contactId = $this->faker->randomNumber(5);
+        $accessToken = $this->faker->uuid;
 
         $tomorrow = new DateTime('tomorrow', new DateTimeZone('Europe/Paris'));
-        $this->expirationDate = str_replace('+01:00', '.000000Z', $tomorrow->format(DateTime::ATOM));
+        $expirationDate = str_replace('+01:00', '.000000Z', $tomorrow->format(DateTime::ATOM));
 
         $_COOKIE['evoliz_token_' . $this->companyId] = json_encode([
-            'access_token' => $this->accessToken,
-            'expires_at' => $this->expirationDate
+            'access_token' => $accessToken,
+            'expires_at' => $expirationDate
         ]);
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception|ResourceException
      */
     public function testContactClientListShouldReturnAPIResponseObject()
     {
         $response = json_encode([
             'data' => [
                 0 => [
-                    'contactid' => 8568,
+                    'contactid' => $this->contactId,
                 ],
             ],
             'links' => [],
@@ -83,15 +76,16 @@ class ContactClientTest extends TestCase
 
         $firstContactClient = $contactClients->data[0];
         $this->assertInstanceOf(ContactClientResponse::class, $firstContactClient);
+        $this->assertEquals($this->contactId, $contactClients->data[0]->contactid);
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception
      */
     public function testContactClientDetailShouldReturnContactClientResponseObject()
     {
         $response = json_encode([
-            'contactid' => 8568,
+            'contactid' => $this->contactId,
         ]);
 
         $guzzleMock = new MockHandler([
@@ -105,15 +99,16 @@ class ContactClientTest extends TestCase
 
         $contactClient = $contactClientRepository->detail(1);
         $this->assertInstanceOf(ContactClientResponse::class, $contactClient);
+        $this->assertEquals($this->contactId, $contactClient->contactid);
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception
      */
     public function testContactClientCreateShouldReturnContactClientResponseObject()
     {
         $response = json_encode([
-            'contactid' => 8568,
+            'contactid' => $this->contactId,
         ]);
 
         $guzzleMock = new MockHandler([
@@ -130,13 +125,13 @@ class ContactClientTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception
      */
     public function testContactClientShouldThrowResourceException()
     {
-        $errorCode = 400;
-        $errorLabel = 'Gandalf';
-        $errorMessage = 'You Shall Not Pass!';
+        $errorCode = $this->faker->randomElement([400, 401, 403, 404, 405, 422, 424, 429, 500]);
+        $errorLabel = $this->faker->word();
+        $errorMessage = $this->faker->sentence;
 
         $guzzleMock = new MockHandler([
             new Response($errorCode, [], json_encode([
