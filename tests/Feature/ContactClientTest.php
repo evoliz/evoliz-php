@@ -12,10 +12,8 @@ use Evoliz\Client\Repository\Clients\ContactClientRepository;
 use Evoliz\Client\Response\APIResponse;
 use Evoliz\Client\Response\ContactClient\ContactClientResponse;
 use Faker\Factory;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ContactClientTest extends TestCase
 {
@@ -62,13 +60,11 @@ class ContactClientTest extends TestCase
             'meta' => [],
         ]);
 
-        $guzzleMock = new MockHandler([
+        $this->mockGuzzle([
             new Response(200, [], $response),
         ]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
         $contactClientRepository = new ContactClientRepository($config);
 
         $contactClients = $contactClientRepository->list();
@@ -88,13 +84,11 @@ class ContactClientTest extends TestCase
             'contactid' => $this->contactId,
         ]);
 
-        $guzzleMock = new MockHandler([
+        $this->mockGuzzle([
             new Response(200, [], $response),
         ]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
         $contactClientRepository = new ContactClientRepository($config);
 
         $contactClient = $contactClientRepository->detail(1);
@@ -111,13 +105,11 @@ class ContactClientTest extends TestCase
             'contactid' => $this->contactId,
         ]);
 
-        $guzzleMock = new MockHandler([
+        $this->mockGuzzle([
             new Response(200, [], $response),
         ]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
         $contactClientRepository = new ContactClientRepository($config);
 
         $contactClient = $contactClientRepository->create(new ContactClient([]));
@@ -133,16 +125,14 @@ class ContactClientTest extends TestCase
         $errorLabel = $this->faker->word();
         $errorMessage = $this->faker->sentence;
 
-        $guzzleMock = new MockHandler([
+        $this->mockGuzzle([
             new Response($errorCode, [], json_encode([
                 'error' => $errorLabel,
                 'message' => $errorMessage
             ])),
         ]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
         $contactClientRepository = new ContactClientRepository($config);
 
         $this->expectException(ResourceException::class);
