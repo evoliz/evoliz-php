@@ -17,4 +17,27 @@ class InvoiceRepository extends BaseRepository
     {
         parent::__construct($config, 'invoices', InvoiceResponse::class);
     }
+
+    /**
+     * Save a draft invoice
+     *
+     * @return InvoiceResponse|string
+     */
+    public function save(int $invoiceid)
+    {
+        $response = $this->config->getClient()
+            ->post($this->baseEndpoint . '/' . $invoiceid . '/create', []);
+
+        $responseContent = $response->getBody()->getContents();
+
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
+
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            return new InvoiceResponse($decodedContent);
+        } else {
+            return $responseContent;
+        }
+    }
 }
