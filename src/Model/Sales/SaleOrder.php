@@ -69,13 +69,13 @@ class SaleOrder extends BaseModel
      */
     public function __construct(array $data)
     {
-        $this->external_document_number = $data['external_document_number'] ?? null;
-        $this->documentdate = $data['documentdate'] ?? null;
+        $this->external_document_number = $data['external_document_number'];
+        $this->documentdate = $data['documentdate'];
 
         $this->clientid = $this->extractClientId($data);
 
-        $this->contactid = $data['contactid'] ?? null; //@Todo : Handle this when the resource is updated
-        $this->object = $data['object'] ?? null;
+        $this->contactid = $data['contactid']; //@Todo : Handle this when the resource is updated
+        $this->object = $data['object'];
 
         $this->term = isset($data['term']) ? new Term((array) $data['term']) : null;
 
@@ -85,8 +85,8 @@ class SaleOrder extends BaseModel
 
         $this->analyticid = $this->extractAnalyticId($data);
 
-        $this->retract = $data['retract'] ?? null;
-        $this->delivery_date = $data['delivery_date'] ?? null;
+        $this->retract = $data['retract'];
+        $this->delivery_date = $data['delivery_date'];
 
         $this->global_rebate = $this->extractGlobalRebate($data);
 
