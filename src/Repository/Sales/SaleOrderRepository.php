@@ -3,6 +3,7 @@
 namespace Evoliz\Client\Repository\Sales;
 
 use Evoliz\Client\Config;
+use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Repository\BaseRepository;
 use Evoliz\Client\Response\Sales\InvoiceResponse;
 use Evoliz\Client\Response\Sales\SaleOrderResponse;
@@ -25,11 +26,13 @@ class SaleOrderRepository extends BaseRepository
      * @param int $orderid The sale order id to invoice
      *
      * @return InvoiceResponse|string
+     *
+     * @throws ResourceException
      */
     public function invoice(int $orderid, bool $save = false)
     {
         $response = $this->config->getClient()
-            ->post($this->baseEndpoint . '/' . $orderid . '/invoice', []);
+            ->post($this->baseEndpoint . '/' . $orderid . '/invoice');
 
         $responseContent = $response->getBody()->getContents();
 

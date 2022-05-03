@@ -20,6 +20,9 @@ class SaleOrderRepositoryTest extends TestCase
      */
     private $companyId;
 
+    /**
+     * @var Factory
+     */
     private $faker;
 
     /**
@@ -45,13 +48,7 @@ class SaleOrderRepositoryTest extends TestCase
     public function testSuccessfulInvoicingMustReturnInvoice()
     {
         $response = json_encode([
-            'data' => [
-                0 => [
-                    'invoiceid' => $this->faker->randomNumber(5),
-                ],
-            ],
-            'links' => [],
-            'meta' => [],
+            'invoiceid' => $this->faker->randomNumber(5),
         ]);
 
         $saleOrderId = $this->faker->randomNumber(5);
