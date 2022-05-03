@@ -14,12 +14,12 @@ abstract class BaseRepository
     /**
      * @var Config Configuration for API usage
      */
-    private $config;
+    protected $config;
 
     /**
      * @var string Model's base endpoint
      */
-    private $baseEndpoint;
+    protected $baseEndpoint;
 
     /**
      * @var string Associated response model
@@ -232,7 +232,7 @@ abstract class BaseRepository
      * @param int $statusCode HTTP Status code
      * @throws ResourceException
      */
-    private function handleError(array $responseBody, int $statusCode)
+    protected function handleError(array $responseBody, int $statusCode)
     {
         if (!($statusCode >= 200 && $statusCode < 300))
         {

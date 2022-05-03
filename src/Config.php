@@ -8,7 +8,7 @@ use GuzzleHttp\HandlerStack;
 
 class Config
 {
-    const BASE_URI = "https://www.api.evoliz.net/"; // @Todo : Change it in production
+    const BASE_URI = "https://evoliz.io"; // @Todo : Change it in production
     const OBJECT_RETURN_TYPE = "OBJECT";
     const JSON_RETURN_TYPE = "JSON";
 
