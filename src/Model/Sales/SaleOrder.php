@@ -69,20 +69,20 @@ class SaleOrder extends BaseModel
      */
     public function __construct(array $data)
     {
-        $this->external_document_number = $data['external_document_number'] ?? null;
-        $this->documentdate = $data['documentdate'] ?? null;
-        $this->clientid = $data['clientid'] ?? null;
-        $this->contactid = $data['contactid'] ?? null;
-        $this->object = $data['object'] ?? null;
+        $this->external_document_number = $data['external_document_number'];
+        $this->documentdate = $data['documentdate'];
+        $this->clientid = $data['clientid'];
+        $this->contactid = $data['contactid'];
+        $this->object = $data['object'];
         $this->term = isset($data['term']) ? new Term((array) $data['term']) : null;
 
         if (isset($data['comment']) && $data['comment'] !== "") {
             $this->comment = $data['comment'];
         }
-        $this->analyticid = $data['analyticid'] ?? null;
-        $this->retract = $data['retract'] ?? null;
-        $this->delivery_date = $data['delivery_date'] ?? null;
-        $this->global_rebate = $data['global_rebate'] ?? null;
+        $this->analyticid = $data['analyticid'];
+        $this->retract = $data['retract'];
+        $this->delivery_date = $data['delivery_date'];
+        $this->global_rebate = $data['global_rebate'];
         $this->include_sale_general_conditions = $data['include_sale_general_conditions'];
 
         if (isset($data['items'])) {
