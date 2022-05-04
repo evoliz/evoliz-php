@@ -20,6 +20,9 @@ class InvoiceRepositoryTest extends TestCase
      */
     private $companyId;
 
+    /**
+     * @var Factory
+     */
     private $faker;
 
     /**

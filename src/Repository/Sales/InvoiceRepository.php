@@ -3,6 +3,7 @@
 namespace Evoliz\Client\Repository\Sales;
 
 use Evoliz\Client\Config;
+use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Repository\BaseRepository;
 use Evoliz\Client\Response\Sales\InvoiceResponse;
 
@@ -22,11 +23,13 @@ class InvoiceRepository extends BaseRepository
      * Save a draft invoice
      *
      * @return InvoiceResponse|string
+     *
+     * @throws ResourceException
      */
     public function save(int $invoiceid)
     {
         $response = $this->config->getClient()
-            ->post($this->baseEndpoint . '/' . $invoiceid . '/create', []);
+            ->post($this->baseEndpoint . '/' . $invoiceid . '/create');
 
         $responseContent = $response->getBody()->getContents();
 
