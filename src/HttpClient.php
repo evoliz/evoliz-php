@@ -9,14 +9,12 @@ class HttpClient extends Client
     const BASE_URI = "https://www.evoliz.io/";
 
     /**
-     * @var HttpClient
+     * @var HttpClient The SDK global HttpClient instance
      */
     private static $instance = null;
 
     /**
      * Get the current HttpClient instance
-     *
-     * @param  array $config If set, a new client will be created with new config
      */
     public static function getInstance(): self
     {
@@ -31,14 +29,20 @@ class HttpClient extends Client
      * Set the current HttpClient instance
      *
      * @param  array $config add or override default config
+     * @param  array $headers add or override default headers
      */
-    public static function setInstance(array $config = [])
+    public static function setInstance(array $config = [], array $headers = [])
     {
         $currentConfig = self::$instance !== null ? self::$instance->getConfig() : self::defaultConfig();
+
+        $currentConfig['headers'] = array_merge($headers, $currentConfig['headers']);
 
         self::$instance = new static(array_merge($currentConfig, $config));
     }
 
+    /**
+     * Default configuration for guzzle client
+     */
     private static function defaultConfig(): array
     {
         return [

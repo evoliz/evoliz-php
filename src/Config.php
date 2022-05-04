@@ -38,10 +38,10 @@ class Config
 
     /**
      * Setup the configuration for API usage
+     *
      * @param int $companyId User's companyid
      * @param string $publicKey User's public key given in the app
-     * @param string $secretKey User's secret key given when the API credentials are created in the app
-     * @param bool $verifySSL Param to setup Guzzle options for SSL verification
+     *
      * @throws \Exception|ConfigException
      */
     public function __construct(int $companyId, string $publicKey, string $secretKey)
@@ -93,6 +93,11 @@ class Config
         } else {
             $this->accessToken = $this->login();
         }
+
+        HttpClient::setInstance(
+            [],
+            ['Authorization' => 'Bearer ' . $this->accessToken->getToken()]
+        );
 
         return $this;
     }
@@ -153,10 +158,6 @@ class Config
         } else {
             throw new ConfigException('The access token has not been recovered', 422);
         }
-
-        HttpClient::setInstance([
-            'Authroization' => 'Bearer' . $accessToken->getToken(),
-        ]);
 
         return $accessToken;
     }
