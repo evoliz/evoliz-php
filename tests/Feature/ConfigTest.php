@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Feature;
 
 use DateTime;
 use DateTimeZone;
@@ -79,6 +79,7 @@ class ConfigTest extends TestCase
         $handlerStack = HandlerStack::create($guzzleMock);
 
         $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config->authenticate();
         $this->assertTrue($config->getAccessToken()->isExpired());
 
         $config = $config->authenticate();
@@ -107,6 +108,7 @@ class ConfigTest extends TestCase
         $handlerStack = HandlerStack::create($guzzleMock);
 
         $baseConfig = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $baseConfig->authenticate();
         $this->assertFalse($baseConfig->getAccessToken()->isExpired());
 
         $config = $baseConfig->authenticate();
@@ -128,6 +130,7 @@ class ConfigTest extends TestCase
         ]);
 
         $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
+        $config->authenticate();
         $this->assertFalse($config->getAccessToken()->isExpired());
 
         $config = $config->authenticate();
@@ -137,20 +140,9 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
-     */
-    public function testLoginWithInvalidCredentials()
-    {
-        $this->expectException(ConfigException::class);
-        new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
-    }
-
-    /**
      * @runInSeparateProcess
-     * @return void
-     * @throws ConfigException
      */
-    public function testSetDefaultReturnType()
+    public function testSuccessfulAuthenticateMustSetCookie()
     {
         $validToken = json_encode([
             'access_token' => $this->accessToken,
@@ -164,12 +156,11 @@ class ConfigTest extends TestCase
         $handlerStack = HandlerStack::create($guzzleMock);
 
         $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
-        $this->assertEquals($config::OBJECT_RETURN_TYPE, $config->getDefaultReturnType());
 
-        $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
-        $this->assertEquals($config::JSON_RETURN_TYPE, $config->getDefaultReturnType());
+        $config->authenticate();
 
-        $this->expectException(ConfigException::class);
-        $config->setDefaultReturnType('EVZ');
+        $setCookieHeader = urldecode(xdebug_get_headers()[0]);
+
+        $this->assertEquals('Set-Cookie: evoliz_token_' .  $this->companyId . '=' . $validToken, $setCookieHeader);
     }
 }
