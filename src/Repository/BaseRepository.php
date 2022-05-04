@@ -100,14 +100,14 @@ abstract class BaseRepository
 
     /**
      * Create a new object with given data
-     * @param BaseModel $object Object to create
+     * @param array $requestBody Array to create the object
      * @return mixed|string Response in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
-    public function create(BaseModel $object)
+    public function create(array $requestBody)
     {
         $response = $this->config->getClient()->post($this->baseEndpoint, [
-            'body' => json_encode($this->buildPayload($object))
+            'body' => json_encode($requestBody)
         ]);
 
         $responseContent = $response->getBody()->getContents();
@@ -246,24 +246,6 @@ abstract class BaseRepository
             }
             throw new ResourceException($errorMessage, $statusCode);
         }
-    }
-
-    /**
-     * Mapping of the request payload to create the entry
-     * @param \stdClass|array $object Object to create
-     * @return array
-     */
-    private function buildPayload($object): array
-    {
-        $payload = [];
-        foreach ($object as $attribute => $value) {
-            if (is_object($value) || is_array($value)) {
-                $payload[$attribute] = $this->buildPayload($value);
-            } elseif ($value !== null) {
-                $payload[$attribute] = $value;
-            }
-        }
-        return $payload;
     }
 
     /**

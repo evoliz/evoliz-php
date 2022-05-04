@@ -4,5 +4,5 @@ namespace Evoliz\Client\Response;
 
 interface ResponseInterface
 {
-    public function createFromResponse();
+    public function toRequestBody(): array;
 }

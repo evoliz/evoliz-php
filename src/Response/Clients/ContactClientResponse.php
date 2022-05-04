@@ -9,11 +9,11 @@ use Evoliz\Client\Response\ResponseInterface;
 class ContactClientResponse extends BaseResponse implements ResponseInterface
 {
     /**
-     * Build ContactClient from ContactClientResponse
-     * @return ContactClient
+     * Transform the model in the RequestBody array
+     * @return array RequestBody
      */
-    public function createFromResponse(): ContactClient
+    public function toRequestBody(): array
     {
-        return new ContactClient((array) $this);
+        // TODO: Implement toRequestBody() method.
     }
 }

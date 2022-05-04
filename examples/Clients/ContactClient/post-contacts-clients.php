@@ -12,8 +12,8 @@ $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY
 // Use $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
 
 $contactClientRepository = new ContactClientRepository($config);
-$newContactClient = $contactClientRepository->create(new ContactClient([
+$newContactClient = $contactClientRepository->create([
     'clientid' => 1,
     'lastname' => 'Doe',
     'email' => 'contact@johndoe.com',
-]));
+]);

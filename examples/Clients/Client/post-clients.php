@@ -12,7 +12,7 @@ $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY
 // Use $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
 
 $clientRepository = new ClientRepository($config);
-$newClient = $clientRepository->create(new Client([
+$newClient = $clientRepository->create([
     'name' => 'Doe',
     'type' => 'Particulier',
     'address' => [
@@ -20,4 +20,4 @@ $newClient = $clientRepository->create(new Client([
         'town' => 'La Garde',
         'iso2' => 'FR'
     ]
-]));
+]);

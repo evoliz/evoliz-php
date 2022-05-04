@@ -12,7 +12,7 @@ $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY
 // Use $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
 
 $articleRepository = new ArticleRepository($config);
-$newArticle = $articleRepository->create(new Article([
+$newArticle = $articleRepository->create([
     'reference' => 'evz42',
     'designation' => 'Mug banana'
-]));
+]);

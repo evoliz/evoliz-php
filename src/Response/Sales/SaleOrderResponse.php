@@ -8,8 +8,12 @@ use Evoliz\Client\Response\ResponseInterface;
 
 class SaleOrderResponse extends BaseResponse implements ResponseInterface
 {
-    public function createFromResponse(): SaleOrder
+    /**
+     * Transform the model in the RequestBody array
+     * @return array RequestBody
+     */
+    public function toRequestBody(): array
     {
-        return new SaleOrder((array) $this);
+        // TODO: Implement toRequestBody() method.
     }
 }

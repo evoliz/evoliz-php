@@ -2,18 +2,18 @@
 
 namespace Evoliz\Client\Response\Sales;
 
-use Evoliz\Client\Model\Sales\Invoice;
+use Evoliz\Client\Mapper\Sales\InvoiceMapper;
 use Evoliz\Client\Response\BaseResponse;
 use Evoliz\Client\Response\ResponseInterface;
 
 class InvoiceResponse extends BaseResponse implements ResponseInterface
 {
     /**
-     * Build Invoice from InvoiceResponse
-     * @return Invoice
+     * Transform the model in the RequestBody array
+     * @return array RequestBody
      */
-    public function createFromResponse(): Invoice
+    public function toRequestBody(): array
     {
-        return new Invoice((array) $this);
+        return InvoiceMapper::mapIntoRequestBody($this);
     }
 }

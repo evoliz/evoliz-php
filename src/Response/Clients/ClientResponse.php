@@ -9,11 +9,11 @@ use Evoliz\Client\Response\ResponseInterface;
 class ClientResponse extends BaseResponse implements ResponseInterface
 {
     /**
-     * Build Client from ClientResponse
-     * @return Client
+     * Transform the model in the RequestBody array
+     * @return array RequestBody
      */
-    public function createFromResponse(): Client
+    public function toRequestBody(): array
     {
-        return new Client((array) $this);
+        // TODO: Implement toRequestBody() method.
     }
 }

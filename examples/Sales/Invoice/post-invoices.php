@@ -13,7 +13,7 @@ $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY
 // Use $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
 
 $invoiceRepository = new InvoiceRepository($config);
-$newInvoice = $invoiceRepository->create(new Invoice([
+$newInvoice = $invoiceRepository->create([
     'external_document_number' => 'evz42',
     'documentdate' => '2022-03-14',
     'clientid' => 1,
@@ -21,13 +21,13 @@ $newInvoice = $invoiceRepository->create(new Invoice([
         'paytermid' => 1,
     ],
     'items' => [
-        new Item([
+        [
             'articleid' => 1,
-        ]),
-        new Item([
+        ],
+        [
             'designation' => 'Banana',
             'quantity' => '42',
             'unit_price_vat_exclude' => 1
-        ])
+        ]
     ]
-]));
+]);
