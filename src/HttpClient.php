@@ -41,6 +41,16 @@ class HttpClient extends Client
     }
 
     /**
+     * Set the authorization header for the current instance
+     */
+    public static function setAuthorizationHeader(string $token)
+    {
+        self::setInstance([], [
+            'Authorization' => 'Bearer ' . $token,
+        ]);
+    }
+
+    /**
      * Default configuration for guzzle client
      */
     private static function defaultConfig(): array

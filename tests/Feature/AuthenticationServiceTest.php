@@ -5,13 +5,14 @@ namespace Tests\Feature;
 use DateTime;
 use DateTimeZone;
 use Evoliz\Client\Config;
-use Evoliz\Client\Exception\ConfigException;
+use Evoliz\Client\Exception\AuthenticationException;
+use Evoliz\Client\Services\AuthenticationService;
 use Faker\Factory;
 use Faker\Generator;
 use GuzzleHttp\Psr7\Response;
 use Tests\TestCase;
 
-class ConfigTest extends TestCase
+class AuthenticationServiceTest extends TestCase
 {
     /**
      * @var Generator
@@ -50,7 +51,7 @@ class ConfigTest extends TestCase
 
     /**
      * @runInSeparateProcess
-     * @throws ConfigException
+     * @throws AuthenticationException
      * @throws Exception
      */
     public function testAuthenticateWithoutValidToken()
@@ -75,10 +76,11 @@ class ConfigTest extends TestCase
         ]);
 
         $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
-        $config->authenticate();
+        $authenticationService = new AuthenticationService($config);
+        $authenticationService->authenticate();
         $this->assertTrue($config->getAccessToken()->isExpired());
 
-        $config = $config->authenticate();
+        $authenticationService->authenticate();
         $this->assertFalse($config->getAccessToken()->isExpired());
 
         $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
@@ -87,7 +89,7 @@ class ConfigTest extends TestCase
 
     /**
      * @runInSeparateProcess
-     * @throws ConfigException
+     * @throws AuthenticationException
      * @throws Exception
      */
     public function testAuthenticateWithValidToken()
@@ -102,18 +104,19 @@ class ConfigTest extends TestCase
         ]);
 
         $baseConfig = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
-        $baseConfig->authenticate();
+        $authenticationService = new AuthenticationService($baseConfig);
+        $authenticationService->authenticate();
         $this->assertFalse($baseConfig->getAccessToken()->isExpired());
 
-        $config = $baseConfig->authenticate();
-        $this->assertEquals($baseConfig->getAccessToken()->getToken(), $config->getAccessToken()->getToken());
+        $authenticationService->authenticate();
+        $this->assertEquals($baseConfig->getAccessToken()->getToken(), $baseConfig->getAccessToken()->getToken());
 
-        $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
-        $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
+        $this->assertEquals($baseConfig->getAccessToken()->getToken(), $this->accessToken);
+        $this->assertEquals($baseConfig->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
     }
 
     /**
-     * @throws ConfigException
+     * @throws AuthenticationException
      * @throws Exception
      */
     public function testAuthenticateWithValidCookieToken()
@@ -124,10 +127,11 @@ class ConfigTest extends TestCase
         ]);
 
         $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
-        $config->authenticate();
+        $authenticationService = new AuthenticationService($config);
+        $authenticationService->authenticate();
         $this->assertFalse($config->getAccessToken()->isExpired());
 
-        $config = $config->authenticate();
+        $authenticationService->authenticate();
 
         $this->assertEquals($config->getAccessToken()->getToken(), $this->accessToken);
         $this->assertEquals($config->getAccessToken()->getExpiresAt(), new DateTime($this->expirationDate));
@@ -149,7 +153,7 @@ class ConfigTest extends TestCase
 
         $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
 
-        $config->authenticate();
+        (new AuthenticationService($config))->authenticate();
 
         $setCookieHeader = urldecode(xdebug_get_headers()[0]);
 
@@ -157,7 +161,7 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws AuthenticationException|Exception
      */
     public function testLoginWithInvalidCredentials()
     {
@@ -165,8 +169,8 @@ class ConfigTest extends TestCase
             new Response(401, [], 'Unauthenticated'),
         ]);
 
-        $this->expectException(ConfigException::class);
-        (new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false))
-            ->authenticate();
+        $this->expectException(AuthenticationException::class);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
+        (new AuthenticationService($config))->authenticate();
     }
 }

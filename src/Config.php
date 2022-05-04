@@ -61,45 +61,45 @@ class Config
     }
 
     /**
+     * Get user's secret key
+     */
+    public function getSecretKey(): string
+    {
+        return $this->secretKey;
+    }
+
+    /**
+     * Get user's public key
+     */
+    public function getPublicKey(): string
+    {
+        return $this->publicKey;
+    }
+
+    /**
+     * Get the Access Token linked to the connection
+     * @return AccessToken|null
+     */
+    public function getAccessToken()
+    {
+        return $this->accessToken;
+    }
+
+    /**
+     * Set the access token
+     */
+    public function setAccessToken(AccessToken $accessToken)
+    {
+        $this->accessToken = $accessToken;
+    }
+
+    /**
      * Set user's companyid
      * @param int $companyId
      */
     public function setCompanyId(int $companyId)
     {
         $this->companyId = $companyId;
-    }
-
-    /**
-     * Get the Access Token linked to the connection
-     * @return AccessToken
-     */
-    public function getAccessToken(): AccessToken
-    {
-        return $this->accessToken;
-    }
-
-    /**
-     * Authenticate the user
-     * @return Config
-     * @throws \Exception|ConfigException
-     */
-    public function authenticate(): Config
-    {
-        if ($this->hasValidAccessToken()) {
-            if ($this->hasValidCookieAccessToken() && !$this->hasValidConfigAccessToken()) {
-                $decodedToken = json_decode($_COOKIE['evoliz_token_' . $this->companyId]);
-                $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
-            }
-        } else {
-            $this->accessToken = $this->login();
-        }
-
-        HttpClient::setInstance(
-            [],
-            ['Authorization' => 'Bearer ' . $this->accessToken->getToken()]
-        );
-
-        return $this;
     }
 
     /**
@@ -127,68 +127,11 @@ class Config
     }
 
     /**
-     * Login the user with given public and secret keys
-     * @return AccessToken
-     * @throws ConfigException|\Exception
-     */
-    private function login(): AccessToken
-    {
-        $loginResponse = HttpClient::getInstance()->post('api/login', [
-            'body' => json_encode([
-                'public_key' => $this->publicKey,
-                'secret_key' => $this->secretKey
-            ])
-        ]);
-
-        $responseBody = json_decode($loginResponse->getBody()->getContents());
-
-        if ($loginResponse->getStatusCode() !== 200) {
-            $errorMessage = $responseBody->error . ' : ' . $responseBody->message;
-            throw new ConfigException($errorMessage, $loginResponse->getStatusCode());
-        }
-
-        if (isset($responseBody->access_token)) {
-            // Cookie Storage
-            setcookie('evoliz_token_' . $this->companyId, json_encode([
-                'access_token' => $responseBody->access_token,
-                'expires_at' => $responseBody->expires_at
-            ]));
-
-            $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
-        } else {
-            throw new ConfigException('The access token has not been recovered', 422);
-        }
-
-        return $accessToken;
-    }
-
-    /**
-     * Check if there is a valid access token stored in the cookies
-     * @throws \Exception
-     */
-    private function hasValidCookieAccessToken(): bool
-    {
-        return isset($_COOKIE['evoliz_token_' . $this->companyId])
-            && new \DateTime(json_decode($_COOKIE['evoliz_token_' . $this->companyId])->expires_at)
-            > new \DateTime('now');
-    }
-
-    /**
      * Check if there is a valid access token stored in the config
      */
-    private function hasValidConfigAccessToken(): bool
+    public function hasValidAccessToken(): bool
     {
         return isset($this->accessToken)
             && !$this->accessToken->isExpired();
-    }
-
-    /**
-     * Check if there is a valid access token stored in the cookies or the config
-     * @throws \Exception
-     */
-    private function hasValidAccessToken(): bool
-    {
-        return $this->hasValidCookieAccessToken()
-            || $this->hasValidConfigAccessToken();
     }
 }
