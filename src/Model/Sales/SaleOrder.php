@@ -46,8 +46,15 @@ class SaleOrder extends BaseModel
      */
     public $analyticid;
 
-    public $retract;
-    public $delivery_date;
+    /**
+     * @var string Delivery date of the document
+     */
+    public $delivery_date = null;
+
+    /**
+     * @var boolean Withdrawal period
+     */
+    public $retract = null;
 
     /**
      * @var float|string Invoice rebate in amount|percent
