@@ -26,7 +26,7 @@ $newInvoice = $invoiceRepository->create(new Invoice([
         ]),
         new Item([
             'designation' => 'Banana',
-            'quantity' => '42',
+            'quantity' => 42,
             'unit_price_vat_exclude' => 1
         ])
     ]

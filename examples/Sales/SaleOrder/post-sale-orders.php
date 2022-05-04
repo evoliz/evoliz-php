@@ -13,7 +13,7 @@ $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY
 // Use $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
 
 $saleOrderRepository = new SaleOrderRepository($config);
-$newInvoice = $saleOrderRepository->create(new SaleOrder([
+$newSaleOrder = $saleOrderRepository->create(new SaleOrder([
     'external_document_number' => 'evz42',
     'documentdate' => '2022-03-14',
     'clientid' => 1,
@@ -26,7 +26,7 @@ $newInvoice = $saleOrderRepository->create(new SaleOrder([
         ]),
         new Item([
             'designation' => 'Banana',
-            'quantity' => '42',
+            'quantity' => 42,
             'unit_price_vat_exclude' => 1
         ])
     ]
