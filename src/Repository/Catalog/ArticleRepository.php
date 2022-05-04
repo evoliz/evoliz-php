@@ -4,7 +4,7 @@ namespace Evoliz\Client\Repository\Catalog;
 
 use Evoliz\Client\Config;
 use Evoliz\Client\Repository\BaseRepository;
-use Evoliz\Client\Response\Article\ArticleResponse;
+use Evoliz\Client\Response\Catalog\ArticleResponse;
 
 class ArticleRepository extends BaseRepository
 {
