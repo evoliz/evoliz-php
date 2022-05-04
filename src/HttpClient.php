@@ -28,8 +28,8 @@ class HttpClient extends Client
     /**
      * Set the current HttpClient instance
      *
-     * @param  array $config add or override default config
-     * @param  array $headers add or override default headers
+     * @param array $config Add or override default config
+     * @param array $headers Add or override default headers
      */
     public static function setInstance(array $config = [], array $headers = [])
     {
