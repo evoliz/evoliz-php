@@ -65,8 +65,11 @@ class Term
     public function __construct(array $data)
     {
         $this->paytermid = $this->extractPaytermId($data);
+
         $this->penalty = $data['penalty'] ?? null;
-        $this->no_penalty = $data['no_penalty'] ?? null;
+
+        $this->no_penalty = $this->extractNoPenalty($data);
+
         $this->recovery_indemnity = $data['recovery_indemnity'] ?? null;
         $this->discount_term = $data['discount_term'] ?? null;
         $this->no_discount_term = $data['no_discount_term'] ?? null;
@@ -74,7 +77,8 @@ class Term
         $this->paydelay = $data['paydelay'] ?? null;
         $this->endmonth = $data['endmonth'] ?? null;
         $this->payday = $data['payday'] ?? null;
-        $this->paytypeid = $data['paytypeid'] ?? null;
+
+        $this->paytypeid = $this->extractPaytypeId($data);
     }
 
     /**
@@ -91,5 +95,37 @@ class Term
         }
 
         return $paytermid ?? null;
+    }
+
+    /**
+     * Extract the paytypeid field with the correct information
+     * @param array $data Array to build the object
+     * @return integer|null
+     */
+    private function extractPaytypeId(array $data)
+    {
+        if (isset($data['paytype'])) {
+            $paytypeid = $data['paytype']->paytypeid;
+        } elseif (isset($data['paytypeid'])) {
+            $paytypeid = $data['paytypeid'];
+        }
+
+        return $paytypeid ?? null;
+    }
+
+    /**
+     * Extract the no_penalty field with the correct information
+     * @param array $data Array to build the object
+     * @return integer|null
+     */
+    private function extractNoPenalty(array $data)
+    {
+        if (isset($data['no_penalty'])) {
+            $no_penalty = $data['no_penalty'];
+        } elseif (isset($data['nopenalty'])) {
+            $no_penalty = $data['nopenalty'];
+        }
+
+        return $no_penalty ?? null;
     }
 }

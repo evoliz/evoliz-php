@@ -78,18 +78,25 @@ class SaleOrder extends BaseModel
     {
         $this->external_document_number = $data['external_document_number'];
         $this->documentdate = $data['documentdate'];
-        $this->clientid = $data['clientid'];
-        $this->contactid = $data['contactid'];
+
+        $this->clientid = $this->extractClientId($data);
+
+        $this->contactid = $data['contactid']; //@Todo : Handle this when the resource is updated
         $this->object = $data['object'];
+
         $this->term = isset($data['term']) ? new Term((array) $data['term']) : null;
 
         if (isset($data['comment']) && $data['comment'] !== "") {
             $this->comment = $data['comment'];
         }
-        $this->analyticid = $data['analyticid'];
+
+        $this->analyticid = $this->extractAnalyticId($data);
+
         $this->retract = $data['retract'];
         $this->delivery_date = $data['delivery_date'];
-        $this->global_rebate = $data['global_rebate'];
+
+        $this->global_rebate = $this->extractGlobalRebate($data);
+
         $this->include_sale_general_conditions = $data['include_sale_general_conditions'];
 
         if (isset($data['items'])) {
@@ -97,5 +104,53 @@ class SaleOrder extends BaseModel
                 $this->items[] = $item;
             }
         }
+    }
+
+    /**
+     * Extract the clientid field with the correct information
+     * @param array $data Array to build the object
+     * @return integer|null
+     */
+    private function extractClientId(array $data)
+    {
+        if (isset($data['client'])) {
+            $clientid = $data['client']->clientid;
+        } elseif (isset($data['clientid'])) {
+            $clientid = $data['clientid'];
+        }
+
+        return $clientid ?? null;
+    }
+
+    /**
+     * Extract the analyticid field with the correct information
+     * @param array $data Array to build the object
+     * @return integer|null
+     */
+    private function extractAnalyticId(array $data)
+    {
+        if (isset($data['analytic'])) {
+            $analyticid = $data['analytic']->id;
+        } elseif (isset($data['analyticid'])) {
+            $analyticid = $data['analyticid'];
+        }
+
+        return $analyticid ?? null;
+    }
+
+    /**
+     * Extract the global_rebate field with the correct information
+     * @param array $data Array to build the object
+     * @return float|null
+     */
+    private function extractGlobalRebate(array $data)
+    {
+        if (isset($data['total'])) {
+            $global_rebate = $data['total']->rebate->amount_vat_exclude;
+        } elseif (isset($data['global_rebate'])) {
+            $global_rebate = $data['global_rebate'];
+        }
+
+        return $global_rebate ?? null;
     }
 }
