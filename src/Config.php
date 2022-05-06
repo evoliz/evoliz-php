@@ -3,34 +3,12 @@
 namespace Evoliz\Client;
 
 use Evoliz\Client\Exception\ConfigException;
-use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
 
 class Config
 {
-    const BASE_URI = "https://evoliz.io"; // @Todo : Change it in production
+    const VERSION = "dev";
     const OBJECT_RETURN_TYPE = "OBJECT";
     const JSON_RETURN_TYPE = "JSON";
-
-    /**
-     * @var Client Guzzle active client
-     */
-    private $client;
-
-    /**
-     * @var array Guzzle client default configuration
-     */
-    private $defaultClientConfig;
-
-    /**
-     * @var bool Setup Guzzle Client verify parameter for SSL verification
-     */
-    private $verifySSL;
-
-    /**
-     * @var HandlerStack Guzzle Handler stack
-     */
-    private $handlerStack;
 
     /**
      * @var integer User's companyid
@@ -60,41 +38,17 @@ class Config
 
     /**
      * Setup the configuration for API usage
+     *
      * @param int $companyId User's companyid
      * @param string $publicKey User's public key given in the app
-     * @param string $secretKey User's secret key given when the API credentials are created in the app
-     * @param bool $verifySSL Param to setup Guzzle options for SSL verification
+     *
      * @throws \Exception|ConfigException
      */
-    public function __construct(int $companyId, string $publicKey, string $secretKey, bool $verifySSL = true, HandlerStack $handlerStack = null)
+    public function __construct(int $companyId, string $publicKey, string $secretKey)
     {
         $this->companyId = $companyId;
         $this->publicKey = $publicKey;
         $this->secretKey = $secretKey;
-        $this->verifySSL = $verifySSL;
-        $this->handlerStack = $handlerStack;
-
-        $this->defaultClientConfig = [
-            'base_uri' => self::BASE_URI,
-            'http_errors' => false,
-            'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json'
-            ],
-            'verify' => $this->verifySSL,
-            'handler' => $this->handlerStack
-        ];
-
-        $this->authenticate();
-    }
-
-    /**
-     * Get the active Guzzle client
-     * @return Client
-     */
-    public function getClient(): Client
-    {
-        return $this->client;
     }
 
     /**
@@ -140,11 +94,10 @@ class Config
             $this->accessToken = $this->login();
         }
 
-        if (!$this->activeClientIsValid()) {
-            $clientConfig = $this->defaultClientConfig;
-            $clientConfig['headers']['Authorization'] = 'Bearer ' . $this->accessToken->getToken();
-            $this->client = new Client($clientConfig);
-        }
+        HttpClient::setInstance(
+            [],
+            ['Authorization' => 'Bearer ' . $this->accessToken->getToken()]
+        );
 
         return $this;
     }
@@ -180,8 +133,7 @@ class Config
      */
     private function login(): AccessToken
     {
-        $tempClient = new Client($this->defaultClientConfig);
-        $loginResponse = $tempClient->post('api/login', [
+        $loginResponse = HttpClient::getInstance()->post('api/login', [
             'body' => json_encode([
                 'public_key' => $this->publicKey,
                 'secret_key' => $this->secretKey
@@ -238,15 +190,5 @@ class Config
     {
         return $this->hasValidCookieAccessToken()
             || $this->hasValidConfigAccessToken();
-    }
-
-    /**
-     * Check if there is a valid guzzle client
-     */
-    private function activeClientIsValid(): bool
-    {
-        return isset($this->client)
-            && $this->client->getConfig()['headers']['Authorization'] === 'Bearer ' . $this->accessToken->getToken()
-            && !$this->accessToken->isExpired();
     }
 }

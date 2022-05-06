@@ -9,10 +9,8 @@ use Evoliz\Client\Repository\Sales\InvoiceRepository;
 use Evoliz\Client\Response\Sales\InvoiceResponse;
 use Evoliz\Client\Response\Sales\PaymentResponse;
 use Faker\Factory;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class InvoiceRepositoryTest extends TestCase
 {
@@ -54,13 +52,9 @@ class InvoiceRepositoryTest extends TestCase
 
         $invoiceId = $this->faker->randomNumber(5);
 
-        $guzzleMock = new MockHandler([
-            new Response(201, [], $response),
-        ]);
+        $this->mockGuzzle([new Response(201, [], $response)]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
 
         $invoiceRepository = new InvoiceRepository($config);
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests;
+namespace Tests\Feature;
 
 use DateTime;
 use DateTimeZone;
@@ -8,10 +8,8 @@ use Evoliz\Client\Config;
 use Evoliz\Client\Exception\ConfigException;
 use Faker\Factory;
 use Faker\Generator;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ConfigTest extends TestCase
 {
@@ -71,14 +69,13 @@ class ConfigTest extends TestCase
             'expires_at' => $this->expirationDate
         ]);
 
-        $guzzleMock = new MockHandler([
+        $this->mockGuzzle([
             new Response(200, [], $expiredToken),
             new Response(200, [], $validToken),
         ]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
+        $config->authenticate();
         $this->assertTrue($config->getAccessToken()->isExpired());
 
         $config = $config->authenticate();
@@ -100,13 +97,12 @@ class ConfigTest extends TestCase
             'expires_at' => $this->expirationDate
         ]);
 
-        $guzzleMock = new MockHandler([
+        $this->mockGuzzle([
             new Response(200, [], $validToken),
         ]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $baseConfig = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $baseConfig = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
+        $baseConfig->authenticate();
         $this->assertFalse($baseConfig->getAccessToken()->isExpired());
 
         $config = $baseConfig->authenticate();
@@ -127,7 +123,8 @@ class ConfigTest extends TestCase
             'expires_at' => $this->expirationDate
         ]);
 
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
+        $config->authenticate();
         $this->assertFalse($config->getAccessToken()->isExpired());
 
         $config = $config->authenticate();
@@ -137,39 +134,42 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
-     */
-    public function testLoginWithInvalidCredentials()
-    {
-        $this->expectException(ConfigException::class);
-        new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
-    }
-
-    /**
      * @runInSeparateProcess
-     * @return void
-     * @throws ConfigException
      */
-    public function testSetDefaultReturnType()
+    public function testSuccessfulAuthenticateMustSetCookie()
     {
         $validToken = json_encode([
             'access_token' => $this->accessToken,
             'expires_at' => $this->expirationDate
         ]);
 
-        $guzzleMock = new MockHandler([
+        $this->mockGuzzle([
             new Response(200, [], $validToken),
         ]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
 
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
-        $this->assertEquals($config::OBJECT_RETURN_TYPE, $config->getDefaultReturnType());
+        $config->authenticate();
 
-        $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
-        $this->assertEquals($config::JSON_RETURN_TYPE, $config->getDefaultReturnType());
+        $setCookieHeader = urldecode(xdebug_get_headers()[0]);
+
+        $this->assertEquals('Set-Cookie: evoliz_token_' .  $this->companyId . '=' . $validToken, $setCookieHeader);
+    }
+
+    /**
+     * @throws ConfigException|Exception
+     */
+    public function testLoginWithInvalidCredentials()
+    {
+        $this->mockGuzzle([
+            new Response(401, [], json_encode([
+                'error' => 'Unauthenticated',
+                'message' => 'You are not authenticated',
+            ])),
+        ]);
 
         $this->expectException(ConfigException::class);
-        $config->setDefaultReturnType('EVZ');
+        (new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY'))
+            ->authenticate();
     }
 }

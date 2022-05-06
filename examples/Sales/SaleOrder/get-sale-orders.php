@@ -16,13 +16,13 @@ $saleOrders = $saleOrderRepository->list();
 
 $saleOrderPages[] = $saleOrders;
 
-while ($saleOrders = $saleOrderRepository->nextPage($saleOrders)) {
+while ($saleOrders = $saleOrderRepository->nextPage()) {
     $saleOrderPages[] = $saleOrders;
 }
 
-$saleOrdersPreviousPage = $saleOrderRepository->previousPage($saleOrders);
-$saleOrdersLastPage = $saleOrderRepository->lastPage($saleOrdersPreviousPage);
-$saleOrdersFirstPage = $saleOrderRepository->firstPage($saleOrdersLastPage);
-$saleOrderPage42 = $saleOrderRepository->page($saleOrdersFirstPage, 42);
+$saleOrdersPreviousPage = $saleOrderRepository->previousPage();
+$saleOrdersLastPage = $saleOrderRepository->lastPage();
+$saleOrdersFirstPage = $saleOrderRepository->firstPage();
+$saleOrdersPage42 = $saleOrderRepository->page(42);
 
-$saleOrder = $saleOrderRepository->detail(1); // Get InvoiceResponse resource wth Id 1
+$saleOrder = $saleOrderRepository->detail(1); // Get SaleOrderResponse resource wth Id 1

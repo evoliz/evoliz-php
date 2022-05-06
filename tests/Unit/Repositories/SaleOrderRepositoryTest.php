@@ -8,10 +8,8 @@ use Evoliz\Client\Config;
 use Evoliz\Client\Repository\Sales\SaleOrderRepository;
 use Evoliz\Client\Response\Sales\InvoiceResponse;
 use Faker\Factory;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class SaleOrderRepositoryTest extends TestCase
 {
@@ -20,6 +18,9 @@ class SaleOrderRepositoryTest extends TestCase
      */
     private $companyId;
 
+    /**
+     * @var Factory
+     */
     private $faker;
 
     /**
@@ -50,15 +51,13 @@ class SaleOrderRepositoryTest extends TestCase
 
         $saleOrderId = $this->faker->randomNumber(5);
 
-        $guzzleMock = new MockHandler([
+        $this->mockGuzzle([
             new Response(201, [], $response),
             new Response(201, [], $response),
             new Response(201, [], $response),
         ]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
 
         $saleOrderRepository = new SaleOrderRepository($config);
 
