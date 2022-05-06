@@ -6,6 +6,7 @@ use Evoliz\Client\Config;
 use Evoliz\Client\Exception\ConfigException;
 use Evoliz\Client\Exception\PaginationException;
 use Evoliz\Client\Exception\ResourceException;
+use Evoliz\Client\HttpClient;
 use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Response\APIResponse;
 
@@ -53,7 +54,7 @@ abstract class BaseRepository
      */
     public function list(array $query = [])
     {
-        $response = $this->config->getClient()->get($this->baseEndpoint, [
+        $response = HttpClient::getInstance()->get($this->baseEndpoint, [
             'query' => $query
         ]);
 
@@ -83,7 +84,7 @@ abstract class BaseRepository
      */
     public function detail(int $objectid)
     {
-        $response = $this->config->getClient()->get($this->baseEndpoint . '/' . $objectid);
+        $response = HttpClient::getInstance()->get($this->baseEndpoint . '/' . $objectid);
 
         $responseContent = $response->getBody()->getContents();
 
@@ -106,7 +107,7 @@ abstract class BaseRepository
      */
     public function create(BaseModel $object)
     {
-        $response = $this->config->getClient()->post($this->baseEndpoint, [
+        $response = HttpClient::getInstance()->post($this->baseEndpoint, [
             'body' => json_encode($this->buildPayload($object))
         ]);
 
