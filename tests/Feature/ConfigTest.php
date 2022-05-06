@@ -123,7 +123,7 @@ class ConfigTest extends TestCase
             'expires_at' => $this->expirationDate
         ]);
 
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
         $config->authenticate();
         $this->assertFalse($config->getAccessToken()->isExpired());
 
@@ -162,11 +162,14 @@ class ConfigTest extends TestCase
     public function testLoginWithInvalidCredentials()
     {
         $this->mockGuzzle([
-            new Response(401, [], 'Unauthenticated'),
+            new Response(401, [], json_encode([
+                'error' => 'Unauthenticated',
+                'message' => 'You are not authenticated',
+            ])),
         ]);
 
         $this->expectException(ConfigException::class);
-        (new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false))
+        (new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY'))
             ->authenticate();
     }
 }
