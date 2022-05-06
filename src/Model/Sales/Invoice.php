@@ -47,7 +47,7 @@ class Invoice extends BaseModel
     public $analyticid;
 
     /**
-     * @var float Invoice rebate in amount
+     * @var float|string Invoice rebate in amount|percent
      */
     public $global_rebate;
 
@@ -67,7 +67,7 @@ class Invoice extends BaseModel
     public $include_sale_general_conditions = false;
 
     /**
-     * @var array Invoice items
+     * @var array Array of Items without articleid or Items with articleid
      */
     public $items = [];
 
