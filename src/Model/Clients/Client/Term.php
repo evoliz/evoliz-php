@@ -55,7 +55,7 @@ class Term
         $this->validity = $data['validity'] ?? null;
         $this->penalty = $data['penalty'] ?? null;
         $this->discount_term = $data['discount_term'] ?? null;
-        $this->no_penalty = $data['no_penalty'] ?? null;
+        $this->no_penalty = $data['no_penalty'] ?? null; // @Todo : Check for naming variation on no_penalty
         $this->recovery_indemnity = $data['recovery_indemnity'] ?? null;
         $this->no_discount_term = $data['no_discount_term'] ?? null;
     }
