@@ -11,7 +11,7 @@ use Faker\Factory;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class SaleOrderRepositoryTest extends TestCase
 {
@@ -53,13 +53,9 @@ class SaleOrderRepositoryTest extends TestCase
 
         $saleOrderId = $this->faker->randomNumber(5);
 
-        $guzzleMock = new MockHandler([
-            new Response(201, [], $response),
-        ]);
+        $this->mockGuzzle([new Response(200, [], $response)]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
 
         $saleOrderRepository = new SaleOrderRepository($config);
 
