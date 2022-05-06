@@ -15,8 +15,8 @@ $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY
 $invoiceRepository = new InvoiceRepository($config);
 
 $payment = $invoiceRepository
-    ->pay(1, '2022-05-01', 'Payment with the SDK', 1, 1, 'Partially pay the invoice');
+    ->pay(1, 'Payment with the SDK', 1, 1);
 
 // If you want to fully pay the invoice you can do
 $invoice = $invoice = $invoiceRepository->detail(1);
-$payment = $invoiceRepository->pay($invoice->invoiceid,'2022-05-01', 'Payment with the SDK', 1, $invoice->total->net_to_pay, 'Full payment of the invoice');
+$payment = $invoiceRepository->pay($invoice->invoiceid, 'Payment with the SDK', 1, $invoice->total->net_to_pay);

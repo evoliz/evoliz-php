@@ -47,26 +47,37 @@ class InvoiceRepository extends BaseRepository
     }
 
     /**
-     * Create a new payment with given data
+     * Create a payment on the given invoice
+     *
+     * @param int $invoiceid Invoice to pay
+     * @param string $label Label of the payment
+     * @param int $paytypeid PaytypeID of the payment
+     * @param float $amount Amount of the payment
+     * @param \DateTime|null $paydate Paydate of the payment
+     * @param string|null $comment Comment on the payment
      *
      * @return PaymentResponse|string
      *
      * @throws ResourceException
      */
-    public function pay(int $invoiceid, string $paydate, string $label, int $paytypeid, float $amount, string $comment = null)
+    public function pay(int $invoiceid, string $label, int $paytypeid, float $amount,  \DateTime $paydate = null, string $comment = null)
     {
         $requestBody = [
-            'paydate' => $paydate,
             'label' => $label,
             'paytypeid' => $paytypeid,
             'amount' => $amount,
         ];
 
+        if (!isset($paydate)) {
+            $paydate = new \DateTime('now');
+        }
+        $requestBody['paydate'] = $paydate->format('Y-m-d');
+
         if (isset($comment)) {
             $requestBody['comment'] = $comment;
         }
 
-        $response = $this->config->getClient()
+        $response = HttpClient::getInstance()
             ->post($this->baseEndpoint . '/' . $invoiceid . '/payments', [
                 'body' => json_encode($requestBody)
             ]);

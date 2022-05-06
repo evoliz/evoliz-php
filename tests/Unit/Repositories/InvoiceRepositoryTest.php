@@ -71,17 +71,13 @@ class InvoiceRepositoryTest extends TestCase
 
         $invoiceId = $this->faker->randomNumber(5);
 
-        $guzzleMock = new MockHandler([
-            new Response(201, [], $response),
-        ]);
+        $this->mockGuzzle([new Response(201, [], $response)]);
 
-        $handlerStack = HandlerStack::create($guzzleMock);
-
-        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false, $handlerStack);
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
 
         $invoiceRepository = new InvoiceRepository($config);
 
-        $payment = $invoiceRepository->pay($invoiceId, '2022-05-01', 'Payment with the SDK', 1, 10, 'Partially pay the invoice');
+        $payment = $invoiceRepository->pay($invoiceId, 'Payment with the SDK', 1, 10);
 
         $this->assertInstanceOf(PaymentResponse::class, $payment);
     }
