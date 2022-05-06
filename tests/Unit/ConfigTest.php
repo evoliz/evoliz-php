@@ -31,16 +31,6 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
-     */
-    public function testLoginWithInvalidCredentials()
-    {
-        $this->expectException(ConfigException::class);
-        (new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY', false))
-            ->authenticate();
-    }
-
-    /**
      * @runInSeparateProcess
      * @return void
      * @throws ConfigException
