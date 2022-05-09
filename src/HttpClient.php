@@ -6,7 +6,10 @@ use GuzzleHttp\Client;
 
 class HttpClient extends Client
 {
-    const BASE_URI = "https://www.evoliz.io/";
+    const PRODUCTION_URI = "https://www.evoliz.io/";
+    const STAGING_URI = "https://www.api.evoliz.net/";
+
+    private static $baseUri = self::PRODUCTION_URI;
 
     /**
      * @var HttpClient The SDK global HttpClient instance
@@ -30,9 +33,14 @@ class HttpClient extends Client
      *
      * @param array $config Add or override default config
      * @param array $headers Add or override default headers
+     * @param boolean $staging Precise if you want to work in staging mode
      */
-    public static function setInstance(array $config = [], array $headers = [])
+    public static function setInstance(array $config = [], array $headers = [], bool $staging = false)
     {
+        if ($staging) {
+            self::$baseUri = self::STAGING_URI;
+        }
+
         $currentConfig = self::$instance !== null ? self::$instance->getConfig() : self::defaultConfig();
 
         $currentConfig['headers'] = array_merge($headers, $currentConfig['headers']);
@@ -46,7 +54,7 @@ class HttpClient extends Client
     private static function defaultConfig(): array
     {
         return [
-            'base_uri' => self::BASE_URI,
+            'base_uri' => self::$baseUri,
             'http_errors' => false,
             'headers' => [
                 'Accept' => 'application/json',
