@@ -68,12 +68,12 @@ class InvoiceRepository extends BaseRepository
             'amount' => $amount,
         ];
 
-        if (!isset($paydate)) {
+        if ($paydate === null) {
             $paydate = new \DateTime('now');
         }
         $requestBody['paydate'] = $paydate->format('Y-m-d');
 
-        if (isset($comment)) {
+        if ($comment) {
             $requestBody['comment'] = $comment;
         }
 
