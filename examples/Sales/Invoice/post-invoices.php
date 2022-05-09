@@ -13,7 +13,8 @@ $config = new Config('EVOLIZ_COMPANYID', 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY
 // Use $config->setDefaultReturnType($config::JSON_RETURN_TYPE);
 
 $invoiceRepository = new InvoiceRepository($config);
-$newInvoice = $invoiceRepository->create(new Invoice([
+// The next line will create a draft invoice
+$draftInvoice = $invoiceRepository->create(new Invoice([
     'external_document_number' => 'evz42',
     'documentdate' => '2022-03-14',
     'clientid' => 1,
@@ -31,3 +32,6 @@ $newInvoice = $invoiceRepository->create(new Invoice([
         ])
     ]
 ]));
+
+// To save the invoice you can use the save method
+$invoiceRepository->save($draftInvoice->invoiceid);

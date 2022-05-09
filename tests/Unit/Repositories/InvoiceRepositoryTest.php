@@ -5,13 +5,13 @@ namespace Tests\Unit\Repositories;
 use DateTime;
 use DateTimeZone;
 use Evoliz\Client\Config;
-use Evoliz\Client\Repository\Sales\SaleOrderRepository;
+use Evoliz\Client\Repository\Sales\InvoiceRepository;
 use Evoliz\Client\Response\Sales\InvoiceResponse;
 use Faker\Factory;
 use GuzzleHttp\Psr7\Response;
 use Tests\TestCase;
 
-class SaleOrderRepositoryTest extends TestCase
+class InvoiceRepositoryTest extends TestCase
 {
     /**
      * @var integer
@@ -43,29 +43,21 @@ class SaleOrderRepositoryTest extends TestCase
         ]);
     }
 
-    public function testSuccessfulInvoicingMustReturnInvoice()
+    public function testSuccessfulSavingMustReturnInvoice()
     {
         $response = json_encode([
             'invoiceid' => $this->faker->randomNumber(5),
         ]);
 
-        $saleOrderId = $this->faker->randomNumber(5);
+        $invoiceId = $this->faker->randomNumber(5);
 
-        $this->mockGuzzle([
-            new Response(201, [], $response),
-            new Response(201, [], $response),
-            new Response(201, [], $response),
-        ]);
+        $this->mockGuzzle([new Response(201, [], $response)]);
 
         $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
 
-        $saleOrderRepository = new SaleOrderRepository($config);
+        $invoiceRepository = new InvoiceRepository($config);
 
-        $invoice = $saleOrderRepository->invoice($saleOrderId);
-
-        $this->assertInstanceOf(InvoiceResponse::class, $invoice);
-
-        $invoice = $saleOrderRepository->invoice($saleOrderId, true);
+        $invoice = $invoiceRepository->save($invoiceId);
 
         $this->assertInstanceOf(InvoiceResponse::class, $invoice);
     }

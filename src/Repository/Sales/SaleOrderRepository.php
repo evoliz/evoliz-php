@@ -41,7 +41,10 @@ class SaleOrderRepository extends BaseRepository
 
         $this->handleError($decodedContent, $response->getStatusCode());
 
-        // @TODO : save if $save is true
+        if ($save) {
+            return (new InvoiceRepository($this->config))->save($decodedContent['invoiceid']);
+        }
+
         if ($this->config->getDefaultReturnType() === 'OBJECT') {
             return new InvoiceResponse($decodedContent);
         } else {

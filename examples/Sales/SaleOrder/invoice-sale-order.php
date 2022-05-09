@@ -12,4 +12,7 @@ $saleOrderRepository = new SaleOrderRepository($config);
 $saleOrders = $saleOrderRepository->list();
 
 // Return a draft invoice
-$invoice = $saleOrderRepository->invoice($saleOrders->data[0]->orderid);
+$draftInvoice = $saleOrderRepository->invoice($saleOrders->data[0]->orderid);
+
+// The invoice method takes a 2nd argument to precise whether to save the invoice or to keep it as draft
+$savedInvoice = $saleOrderRepository->invoice($saleOrders->data[0]->orderid, true);
