@@ -7,6 +7,7 @@ use DateTimeZone;
 use Evoliz\Client\Config;
 use Evoliz\Client\Repository\Sales\InvoiceRepository;
 use Evoliz\Client\Response\Sales\InvoiceResponse;
+use Evoliz\Client\Response\Sales\PaymentResponse;
 use Faker\Factory;
 use GuzzleHttp\Psr7\Response;
 use Tests\TestCase;
@@ -60,5 +61,24 @@ class InvoiceRepositoryTest extends TestCase
         $invoice = $invoiceRepository->save($invoiceId);
 
         $this->assertInstanceOf(InvoiceResponse::class, $invoice);
+    }
+
+    public function testSuccessfulPayMustReturnPayment()
+    {
+        $response = json_encode([
+            'paymentid' => $this->faker->randomNumber(5),
+        ]);
+
+        $invoiceId = $this->faker->randomNumber(5);
+
+        $this->mockGuzzle([new Response(201, [], $response)]);
+
+        $config = new Config($this->companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
+
+        $invoiceRepository = new InvoiceRepository($config);
+
+        $payment = $invoiceRepository->pay($invoiceId, 'Payment with the SDK', 1, 10);
+
+        $this->assertInstanceOf(PaymentResponse::class, $payment);
     }
 }
