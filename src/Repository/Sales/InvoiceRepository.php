@@ -3,8 +3,10 @@
 namespace Evoliz\Client\Repository\Sales;
 
 use Evoliz\Client\Config;
+use Evoliz\Client\Exception\ResourceException;
+use Evoliz\Client\HttpClient;
 use Evoliz\Client\Repository\BaseRepository;
-use Evoliz\Client\Response\Sales\Invoice\InvoiceResponse;
+use Evoliz\Client\Response\Sales\InvoiceResponse;
 
 class InvoiceRepository extends BaseRepository
 {
@@ -16,5 +18,30 @@ class InvoiceRepository extends BaseRepository
     public function __construct(Config $config)
     {
         parent::__construct($config, 'invoices', InvoiceResponse::class);
+    }
+
+    /**
+     * Save a draft invoice
+     *
+     * @return InvoiceResponse|string
+     *
+     * @throws ResourceException
+     */
+    public function save(int $invoiceid)
+    {
+        $response = HttpClient::getInstance()
+            ->post($this->baseEndpoint . '/' . $invoiceid . '/create');
+
+        $responseContent = $response->getBody()->getContents();
+
+        $decodedContent = json_decode($responseContent, true);
+
+        $this->handleError($decodedContent, $response->getStatusCode());
+
+        if ($this->config->getDefaultReturnType() === 'OBJECT') {
+            return new InvoiceResponse($decodedContent);
+        } else {
+            return $responseContent;
+        }
     }
 }

@@ -166,7 +166,10 @@ class AuthenticationServiceTest extends TestCase
     public function testLoginWithInvalidCredentials()
     {
         $this->mockGuzzle([
-            new Response(401, [], 'Unauthenticated'),
+            new Response(401, [], json_encode([
+                'error' => 'Unauthenticated',
+                'message' => 'You are not authenticated',
+            ])),
         ]);
 
         $this->expectException(AuthenticationException::class);

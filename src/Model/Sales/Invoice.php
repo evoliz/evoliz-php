@@ -2,10 +2,7 @@
 
 namespace Evoliz\Client\Model\Sales;
 
-use Evoliz\Client\Exception\InvalidTypeException;
 use Evoliz\Client\Model\BaseModel;
-use Evoliz\Client\Model\Item;
-use Evoliz\Client\Response\Sales\SellDocItemResponse;
 
 class Invoice extends BaseModel
 {
@@ -50,7 +47,7 @@ class Invoice extends BaseModel
     public $analyticid;
 
     /**
-     * @var float Invoice rebate in amount
+     * @var float|string Invoice rebate in amount|percent
      */
     public $global_rebate;
 
@@ -70,13 +67,12 @@ class Invoice extends BaseModel
     public $include_sale_general_conditions = false;
 
     /**
-     * @var array Invoice items
+     * @var array Array of Items without articleid or Items with articleid
      */
     public $items = [];
 
     /**
      * @param array $data Array to build the object
-     * @throws InvalidTypeException
      */
     public function __construct(array $data)
     {
@@ -100,9 +96,6 @@ class Invoice extends BaseModel
 
         if (isset($data['items'])) {
             foreach ($data['items'] as $item) {
-                if (!($item instanceof Item) && !($item instanceof SellDocItemResponse)) {
-                    throw new InvalidTypeException('Error : The given object is not of the right type', 401);
-                }
                 $this->items[] = $item;
             }
         }

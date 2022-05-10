@@ -3,9 +3,8 @@
 namespace Evoliz\Client\Repository\Clients;
 
 use Evoliz\Client\Config;
-use Evoliz\Client\Model\Clients\Client\Client;
 use Evoliz\Client\Repository\BaseRepository;
-use Evoliz\Client\Response\Client\ClientResponse;
+use Evoliz\Client\Response\Clients\ClientResponse;
 
 class ClientRepository extends BaseRepository
 {
