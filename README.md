@@ -1,6 +1,10 @@
 # Evoliz PHP
 
 [//]: # (@Todo : Put some badges : https://poser.pugx.org/)
+[![PHP Version Require](http://poser.pugx.org/evoliz/evoliz-php/require/php)](https://packagist.org/packages/evoliz/evoliz-php)
+[![Latest Stable Version](http://poser.pugx.org/evoliz/evoliz-php/v)](https://packagist.org/packages/evoliz/evoliz-php)
+[![Total Downloads](http://poser.pugx.org/evoliz/evoliz-php/downloads)](https://packagist.org/packages/evoliz/evoliz-php)
+[![License](http://poser.pugx.org/evoliz/evoliz-php/license)](https://packagist.org/packages/evoliz/evoliz-php)
 
 The Evoliz PHP library provides convenient access to the Evoliz API from
 applications written in the PHP language. It includes a pre-defined set of
