@@ -5,6 +5,8 @@ namespace Tests\Unit\Repositories;
 use DateTime;
 use DateTimeZone;
 use Evoliz\Client\Config;
+use Evoliz\Client\Exception\ConfigException;
+use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Repository\Sales\InvoiceRepository;
 use Evoliz\Client\Response\Sales\InvoiceResponse;
 use Evoliz\Client\Response\Sales\PaymentResponse;
@@ -44,6 +46,9 @@ class InvoiceRepositoryTest extends TestCase
         ]);
     }
 
+    /**
+     * @throws ResourceException|ConfigException|\Exception
+     */
     public function testSuccessfulSavingMustReturnInvoice()
     {
         $response = json_encode([
@@ -63,6 +68,9 @@ class InvoiceRepositoryTest extends TestCase
         $this->assertInstanceOf(InvoiceResponse::class, $invoice);
     }
 
+    /**
+     * @throws ResourceException|ConfigException|\Exception
+     */
     public function testSuccessfulPayMustReturnPayment()
     {
         $response = json_encode([

@@ -5,6 +5,8 @@ namespace Tests\Unit\Repositories;
 use DateTime;
 use DateTimeZone;
 use Evoliz\Client\Config;
+use Evoliz\Client\Exception\ConfigException;
+use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Repository\Sales\SaleOrderRepository;
 use Evoliz\Client\Response\Sales\InvoiceResponse;
 use Faker\Factory;
@@ -43,6 +45,9 @@ class SaleOrderRepositoryTest extends TestCase
         ]);
     }
 
+    /**
+     * @throws ConfigException|ResourceException|\Exception
+     */
     public function testSuccessfulInvoicingMustReturnInvoice()
     {
         $response = json_encode([
