@@ -34,7 +34,7 @@ class ConfigTest extends TestCase
     private $expirationDate;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function setUp()
     {
@@ -51,7 +51,7 @@ class ConfigTest extends TestCase
     /**
      * @runInSeparateProcess
      * @throws ConfigException
-     * @throws Exception
+     * @throws \Exception
      */
     public function testAuthenticateWithoutValidToken()
     {
@@ -88,7 +88,7 @@ class ConfigTest extends TestCase
     /**
      * @runInSeparateProcess
      * @throws ConfigException
-     * @throws Exception
+     * @throws \Exception
      */
     public function testAuthenticateWithValidToken()
     {
@@ -114,7 +114,7 @@ class ConfigTest extends TestCase
 
     /**
      * @throws ConfigException
-     * @throws Exception
+     * @throws \Exception
      */
     public function testAuthenticateWithValidCookieToken()
     {
@@ -135,6 +135,7 @@ class ConfigTest extends TestCase
 
     /**
      * @runInSeparateProcess
+     * @throws ConfigException
      */
     public function testSuccessfulAuthenticateMustSetCookie()
     {
@@ -157,7 +158,7 @@ class ConfigTest extends TestCase
     }
 
     /**
-     * @throws ConfigException|Exception
+     * @throws ConfigException|\Exception
      */
     public function testLoginWithInvalidCredentials()
     {
