@@ -133,4 +133,27 @@ class BaseRepositoryTest extends TestCase
         $this->expectExceptionMessage($errorLabel . ' : ' . $errorMessage);
         $this->anonymousRepository->create(new class() extends BaseModel {});
     }
+
+    /**
+     * @throws ResourceException
+     */
+    public function testGetNumberOfPages()
+    {
+        $lastPage = $this->faker->randomNumber();
+
+        $response = json_encode([
+            'data' => [],
+            'links' => [],
+            'meta' => [
+                'last_page' => $lastPage
+            ],
+        ]);
+
+        $this->mockGuzzle([
+            new Response(200, [], $response),
+        ]);
+
+        $numberOfPages = $this->anonymousRepository->getNumberOfPages();
+        $this->assertEquals($numberOfPages, $lastPage);
+    }
 }
