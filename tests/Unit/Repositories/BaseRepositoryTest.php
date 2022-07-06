@@ -41,7 +41,7 @@ class BaseRepositoryTest extends TestCase
         ]);
 
         $config = new Config($companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
-        $this->anonymousRepository = new class($config, $this->faker->word(), get_class(new class([]) extends BaseResponse {})) extends BaseRepository {};
+        $this->anonymousRepository = new class($config, 'anonymous', get_class(new class([]) extends BaseResponse {})) extends BaseRepository {};
     }
 
     /**
@@ -155,5 +155,40 @@ class BaseRepositoryTest extends TestCase
 
         $numberOfPages = $this->anonymousRepository->getNumberOfPages();
         $this->assertEquals($numberOfPages, $lastPage);
+    }
+
+    /**
+     * @throws ResourceException
+     */
+    public function testPaginationKeepQueryParameters()
+    {
+        $uriWithQueryParams = 'https://www.evoliz.io/api/v1/anonymous?period=currentmonth&per_page=10';
+
+        $response = json_encode([
+            'data' => [
+                0 => [
+                    'anonymousid' => $this->faker->randomNumber(),
+                ],
+            ],
+            'links' => [
+                'first' => $uriWithQueryParams . '&page=1',
+            ],
+            'meta' => [],
+        ]);
+
+        $mockHandler = $this->mockGuzzle([
+            new Response(200, [], $response),
+            new Response(200, [], $response),
+        ]);
+
+        $requestedPage = $this->faker->randomNumber();
+
+        $this->anonymousRepository->page($requestedPage);
+
+        $mockHandlerUri = $mockHandler->getLastRequest()->getUri();
+        $requestedUri = $mockHandlerUri->getScheme() . '://' . $mockHandlerUri->getHost()
+            . $mockHandlerUri->getPath() . '?' . $mockHandlerUri->getQuery();
+
+        $this->assertEquals($requestedUri, $uriWithQueryParams . '&page=' . $requestedPage);
     }
 }
