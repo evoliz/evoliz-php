@@ -9,6 +9,11 @@ use Evoliz\Client\Exception\PaginationException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Repository\BaseRepository;
+use Evoliz\Client\Repository\Catalog\ArticleRepository;
+use Evoliz\Client\Repository\Clients\ClientRepository;
+use Evoliz\Client\Repository\Clients\ContactClientRepository;
+use Evoliz\Client\Repository\Sales\InvoiceRepository;
+use Evoliz\Client\Repository\Sales\SaleOrderRepository;
 use Evoliz\Client\Response\APIResponse;
 use Evoliz\Client\Response\BaseResponse;
 use Faker\Factory;
@@ -21,6 +26,16 @@ class BaseRepositoryTest extends TestCase
      * @var Factory
      */
     private $faker;
+
+    /**
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * @var BaseRepository
+     */
+    private $anonymousRepository;
 
     /**
      * @throws \Exception
@@ -41,8 +56,8 @@ class BaseRepositoryTest extends TestCase
             'expires_at' => $expirationDate
         ]);
 
-        $config = new Config($companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
-        $this->anonymousRepository = new class($config, 'anonymous', get_class(new class([]) extends BaseResponse {})) extends BaseRepository {};
+        $this->config = new Config($companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
+        $this->anonymousRepository = new class($this->config, 'anonymous', get_class(new class([]) extends BaseResponse {})) extends BaseRepository {};
     }
 
     /**
@@ -134,6 +149,18 @@ class BaseRepositoryTest extends TestCase
         $this->expectExceptionMessage($errorLabel . ' : ' . $errorMessage);
         $this->anonymousRepository->create(new class() extends BaseModel {});
     }
+
+    /**
+     * @dataProvider provideChildRepository
+     * @throws \Exception
+     */
+    public function testBaseRepositoryInheritance($repositoryClass)
+    {
+        $repository = new $repositoryClass($this->config);
+
+        $this->assertEquals(BaseRepository::class, get_parent_class($repository));
+    }
+
 
     /**
      * @throws ResourceException
@@ -232,5 +259,26 @@ class BaseRepositoryTest extends TestCase
             . $mockHandler->getLastRequest()->getRequestTarget();
 
         $this->assertEquals($requestedUri, $uriWithQueryParams . '&page=' . $requestedPage);
+    }
+
+    public function provideChildRepository(): array
+    {
+        return [
+            'ArticleRepository' => [
+                ArticleRepository::class,
+            ],
+            'ClientRepository' => [
+                ClientRepository::class,
+            ],
+            'ContactClientRepository' => [
+                ContactClientRepository::class,
+            ],
+            'InvoiceRepository' => [
+                InvoiceRepository::class,
+            ],
+            'SaleOrderRepository' => [
+                SaleOrderRepository::class,
+            ],
+        ];
     }
 }
