@@ -5,6 +5,7 @@ namespace Tests\Unit\Repositories;
 use DateTime;
 use DateTimeZone;
 use Evoliz\Client\Config;
+use Evoliz\Client\Exception\PaginationException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Repository\BaseRepository;
@@ -158,6 +159,47 @@ class BaseRepositoryTest extends TestCase
     }
 
     /**
+     * @throws PaginationException|ResourceException
+     */
+    public function testPaginateShouldReturnNullOnNonExistingLastResponse()
+    {
+        $this->assertNull($this->anonymousRepository->nextPage());
+        $this->assertNull($this->anonymousRepository->previousPage());
+    }
+
+    /**
+     * @throws PaginationException|ResourceException
+     */
+    public function testPaginateShouldReturnNullOnRequestedPageNullLink()
+    {
+        $response = json_encode([
+            'data' => [
+                0 => [
+                    'anonymousid' => $this->faker->randomNumber(),
+                ],
+            ],
+            'links' => [
+                'first' => null,
+                'last' => null,
+                'next' => null,
+                'prev' => null,
+            ],
+            'meta' => [],
+        ]);
+
+        $this->mockGuzzle([
+            new Response(200, [], $response),
+        ]);
+
+        $this->anonymousRepository->list();
+
+        $this->assertNull($this->anonymousRepository->firstPage());
+        $this->assertNull($this->anonymousRepository->lastPage());
+        $this->assertNull($this->anonymousRepository->nextPage());
+        $this->assertNull($this->anonymousRepository->previousPage());
+    }
+
+    /**
      * @throws ResourceException
      */
     public function testPaginationKeepQueryParameters()
@@ -187,7 +229,7 @@ class BaseRepositoryTest extends TestCase
 
         $mockHandlerUri = $mockHandler->getLastRequest()->getUri();
         $requestedUri = $mockHandlerUri->getScheme() . '://' . $mockHandlerUri->getHost()
-            . $mockHandlerUri->getPath() . '?' . $mockHandlerUri->getQuery();
+            . $mockHandler->getLastRequest()->getRequestTarget();
 
         $this->assertEquals($requestedUri, $uriWithQueryParams . '&page=' . $requestedPage);
     }
