@@ -56,7 +56,10 @@ class BaseRepositoryTest extends TestCase
         ]);
 
         $this->config = new Config($companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
-        $this->anonymousRepository = new class($this->config, $this->faker->word(), get_class(new class([]) extends BaseResponse {})) extends BaseRepository {};
+        $anonymousResponse = new class([]) extends BaseResponse {};
+        $responseModel = get_class($anonymousResponse);
+
+        $this->anonymousRepository = new class($this->config, 'anonymous', $responseModel) extends BaseRepository {};
     }
 
     /**
@@ -64,10 +67,12 @@ class BaseRepositoryTest extends TestCase
      */
     public function testSuccessfulListingMustReturnAPIResponse()
     {
+        $anonymousId = $this->faker->randomNumber();
+
         $response = json_encode([
             'data' => [
                 0 => [
-                    'anonymousid' => $this->faker->randomNumber(),
+                    'anonymousid' => $anonymousId,
                 ],
             ],
             'links' => [],
@@ -83,6 +88,8 @@ class BaseRepositoryTest extends TestCase
 
         $firstAnonymousObject = $anonymousObjects->data[0];
         $this->assertInstanceOf(BaseResponse::class, $firstAnonymousObject);
+
+        $this->assertEquals($anonymousId, $anonymousObjects->data[0]->anonymousid);
     }
 
     /**
@@ -156,8 +163,9 @@ class BaseRepositoryTest extends TestCase
     public function testBaseRepositoryInheritance($repositoryClass)
     {
         $repository = new $repositoryClass($this->config);
+        $parentClass = get_parent_class($repository);
 
-        $this->assertEquals(BaseRepository::class, get_parent_class($repository));
+        $this->assertEquals(BaseRepository::class, $parentClass);
     }
 
     public function provideChildRepository(): array
