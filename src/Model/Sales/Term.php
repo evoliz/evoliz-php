@@ -17,7 +17,7 @@ class Term
     /**
      * @var boolean Define the display of legal mention about penalty rate on the created document (prohibited if a penalty is given)
      */
-    public $no_penalty;
+    public $nopenalty;
 
     /**
      * @var boolean Use legal mention about recovery indemnity
@@ -68,7 +68,7 @@ class Term
 
         $this->penalty = $data['penalty'] ?? null;
 
-        $this->no_penalty = $this->extractNoPenalty($data);
+        $this->nopenalty = $this->extractNoPenalty($data);
 
         $this->recovery_indemnity = $data['recovery_indemnity'] ?? null;
         $this->discount_term = $data['discount_term'] ?? null;
@@ -121,11 +121,11 @@ class Term
     private function extractNoPenalty(array $data)
     {
         if (isset($data['no_penalty'])) {
-            $no_penalty = $data['no_penalty'];
+            $nopenalty = $data['no_penalty'];
         } elseif (isset($data['nopenalty'])) {
-            $no_penalty = $data['nopenalty'];
+            $nopenalty = $data['nopenalty'];
         }
 
-        return $no_penalty ?? null;
+        return $nopenalty ?? null;
     }
 }
