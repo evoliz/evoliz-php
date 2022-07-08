@@ -9,6 +9,7 @@ use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\HttpClient;
 use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Response\APIResponse;
+use Evoliz\Client\Services\AuthenticationService;
 
 abstract class BaseRepository
 {
@@ -41,7 +42,8 @@ abstract class BaseRepository
      */
     public function __construct(Config $config, string $baseEndpoint, string $responseModel)
     {
-        $this->config = $config->authenticate();
+        (new AuthenticationService($config))->authenticate();
+        $this->config = $config;
         $this->baseEndpoint = 'api/v1/' . $baseEndpoint;
         $this->responseModel = $responseModel;
     }
