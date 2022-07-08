@@ -177,12 +177,15 @@ class BaseRepositoryTest extends TestCase
             ],
         ]);
 
-        $this->mockGuzzle([
+        $mockHandler = $this->mockGuzzle([
             new Response(200, [], $response),
         ]);
 
         $numberOfPages = $this->anonymousRepository->getNumberOfPages();
         $this->assertEquals($numberOfPages, $lastPage);
+
+        // Asserting that guzzle is called 1 time, so there is no item left in the queue
+        $this->assertEquals(0, $mockHandler->count());
     }
 
     /**
@@ -214,7 +217,7 @@ class BaseRepositoryTest extends TestCase
             'meta' => [],
         ]);
 
-        $this->mockGuzzle([
+        $mockHandler = $this->mockGuzzle([
             new Response(200, [], $response),
         ]);
 
@@ -224,6 +227,9 @@ class BaseRepositoryTest extends TestCase
         $this->assertNull($this->anonymousRepository->lastPage());
         $this->assertNull($this->anonymousRepository->nextPage());
         $this->assertNull($this->anonymousRepository->previousPage());
+
+        // Asserting that guzzle is called 1 time, so there is no item left in the queue
+        $this->assertEquals(0, $mockHandler->count());
     }
 
     /**
@@ -259,6 +265,9 @@ class BaseRepositoryTest extends TestCase
             . $mockHandler->getLastRequest()->getRequestTarget();
 
         $this->assertEquals($requestedUri, $uriWithQueryParams . '&page=' . $requestedPage);
+
+        // Asserting that guzzle is called 2 times, so there is no item left in the queue
+        $this->assertEquals(0, $mockHandler->count());
     }
 
     public function provideChildRepository(): array
