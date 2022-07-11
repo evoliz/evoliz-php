@@ -5,6 +5,7 @@ namespace Tests\Unit\Repositories;
 use DateTime;
 use DateTimeZone;
 use Evoliz\Client\Config;
+use Evoliz\Client\Exception\PaginationException;
 use Evoliz\Client\Exception\ResourceException;
 use Evoliz\Client\Model\BaseModel;
 use Evoliz\Client\Repository\BaseRepository;
@@ -166,6 +167,114 @@ class BaseRepositoryTest extends TestCase
         $parentClass = get_parent_class($repository);
 
         $this->assertEquals(BaseRepository::class, $parentClass);
+    }
+
+    /**
+     * @throws ResourceException
+     */
+    public function testGetNumberOfPages()
+    {
+        $lastPage = $this->faker->randomNumber();
+
+        $response = json_encode([
+            'data' => [],
+            'links' => [],
+            'meta' => [
+                'last_page' => $lastPage
+            ],
+        ]);
+
+        $mockHandler = $this->mockGuzzle([
+            new Response(200, [], $response),
+        ]);
+
+        $numberOfPages = $this->anonymousRepository->getNumberOfPages();
+        $this->assertEquals($numberOfPages, $lastPage);
+
+        // Asserting that guzzle is called 1 time, so there is no item left in the queue
+        $this->assertEquals(0, $mockHandler->count());
+    }
+
+    /**
+     * @throws PaginationException|ResourceException
+     */
+    public function testPaginateShouldReturnNullOnNonExistingLastResponse()
+    {
+        $this->assertNull($this->anonymousRepository->nextPage());
+        $this->assertNull($this->anonymousRepository->previousPage());
+    }
+
+    /**
+     * @throws PaginationException|ResourceException
+     */
+    public function testPaginateShouldReturnNullOnRequestedPageNullLink()
+    {
+        $response = json_encode([
+            'data' => [
+                0 => [
+                    'anonymousid' => $this->faker->randomNumber(),
+                ],
+            ],
+            'links' => [
+                'first' => null,
+                'last' => null,
+                'next' => null,
+                'prev' => null,
+            ],
+            'meta' => [],
+        ]);
+
+        $mockHandler = $this->mockGuzzle([
+            new Response(200, [], $response),
+        ]);
+
+        $this->anonymousRepository->list();
+
+        $this->assertNull($this->anonymousRepository->firstPage());
+        $this->assertNull($this->anonymousRepository->lastPage());
+        $this->assertNull($this->anonymousRepository->nextPage());
+        $this->assertNull($this->anonymousRepository->previousPage());
+
+        // Asserting that guzzle is called 1 time, so there is no item left in the queue
+        $this->assertEquals(0, $mockHandler->count());
+    }
+
+    /**
+     * @throws ResourceException
+     */
+    public function testPaginationKeepQueryParameters()
+    {
+        $uriWithQueryParams = 'https://www.evoliz.io/api/v1/anonymous?period=currentmonth&per_page=10';
+
+        $response = json_encode([
+            'data' => [
+                0 => [
+                    'anonymousid' => $this->faker->randomNumber(),
+                ],
+            ],
+            'links' => [
+                'first' => $uriWithQueryParams . '&page=1',
+            ],
+            'meta' => [],
+        ]);
+
+        $mockHandler = $this->mockGuzzle([
+            new Response(200, [], $response),
+            new Response(200, [], $response),
+        ]);
+
+        $requestedPage = $this->faker->randomNumber();
+
+        $this->anonymousRepository->page($requestedPage);
+
+        $mockHandlerUri = $mockHandler->getLastRequest()->getUri();
+        $requestedUri = $mockHandlerUri->getScheme() . '://' . $mockHandlerUri->getHost()
+            . $mockHandler->getLastRequest()->getRequestTarget();
+
+        $this->assertEquals($requestedUri, $uriWithQueryParams . '&page=' . $requestedPage);
+
+        // Asserting that guzzle is called 2 times, so there is no item left in the queue
+        $this->assertEquals(0, $mockHandler->count());
     }
 
     public function provideChildRepository(): array

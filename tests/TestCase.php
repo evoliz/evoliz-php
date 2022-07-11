@@ -9,12 +9,14 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    protected function mockGuzzle(array $mocks)
+    protected function mockGuzzle(array $mocks): MockHandler
     {
         $guzzleMock = new MockHandler($mocks);
 
         $handlerStack = HandlerStack::create($guzzleMock);
 
         HttpClient::setInstance(['verify' => false, 'handler' => $handlerStack]);
+
+        return $guzzleMock;
     }
 }
