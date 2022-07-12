@@ -13,3 +13,10 @@ jobs:
         uses: docker://oskarstark/phpcs-ga:3.4.2
         with:
           args: src/ --standard=psr12 --exclude=Generic.Files.LineEndings
+  PHPUnit:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: phpunit
+        uses: php-actions/phpunit@v2
