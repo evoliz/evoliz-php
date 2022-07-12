@@ -87,7 +87,9 @@ class InvoiceRepository extends BaseRepository
         $response = HttpClient::getInstance()
             ->post(
                 $this->baseEndpoint . '/' . $invoiceid . '/payments',
-                ['body' => json_encode($requestBody)]
+                [
+                    'body' => json_encode($requestBody)
+                ]
             );
 
 

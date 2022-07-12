@@ -1,10 +1,10 @@
-name: CI - PHP Code Sniffer
+name: CI
 on: [push, pull_request]
+  workflow_dispatch:
 jobs:
   PHP_CodeSniffer:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
       - name: php-cs
         uses: docker://oskarstark/phpcs-ga:3.4.2
         with:
