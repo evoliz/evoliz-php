@@ -9,4 +9,5 @@ jobs:
       - name: PHP_CodeSniffer
         uses: docker://oskarstark/phpcs-ga:3.4.2
         with:
+          path: src
           args: --standard=psr12 --exclude=Generic.Files.LineEndings
