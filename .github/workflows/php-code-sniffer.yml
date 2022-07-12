@@ -5,6 +5,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PHP Code Sniffer
-        run: ./vendor/bin/phpcs
+        run: vendor/bin/phpcs
 #        with:
 #          args: --standar=psr12 --exclude=Generic.Files.LineEndings
