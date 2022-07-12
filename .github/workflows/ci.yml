@@ -5,6 +5,7 @@ on:
   pull_request:
 jobs:
   PHP_CodeSniffer:
+    name: Linter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
