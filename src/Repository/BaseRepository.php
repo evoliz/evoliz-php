@@ -235,8 +235,7 @@ abstract class BaseRepository
      */
     protected function handleError(array $responseBody, int $statusCode)
     {
-        if (!($statusCode >= 200 && $statusCode < 300))
-        {
+        if (!($statusCode >= 200 && $statusCode < 300)) {
             $errorMessage = $responseBody['error'] . ' : ';
             if (is_array($responseBody['message'])) {
                 foreach ($responseBody['message'] as $error) {

@@ -2,4 +2,6 @@
 
 namespace Evoliz\Client\Exception;
 
-class InvalidTypeException extends \Exception {}
+class InvalidTypeException extends \Exception
+{
+}

@@ -20,8 +20,8 @@ abstract class BaseResponse
      */
     public function assignAttribute($object, array $array)
     {
-        foreach ($array as $key => $value){
-            if(is_array($value)) {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
                 $object->$key = new \stdClass();
                 $this->assignAttribute($object->$key, $value);
             } else {

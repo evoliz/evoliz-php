@@ -60,7 +60,7 @@ class InvoiceRepository extends BaseRepository
      *
      * @throws ResourceException
      */
-    public function pay(int $invoiceid, string $label, int $paytypeid, float $amount,  \DateTime $paydate = null, string $comment = null)
+    public function pay(int $invoiceid, string $label, int $paytypeid, float $amount, \DateTime $paydate = null, string $comment = null)
     {
         $requestBody = [
             'label' => $label,

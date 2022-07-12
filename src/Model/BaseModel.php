@@ -2,4 +2,6 @@
 
 namespace Evoliz\Client\Model;
 
-abstract class BaseModel {}
+abstract class BaseModel
+{
+}
