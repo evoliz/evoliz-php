@@ -1,0 +1,10 @@
+name: CI - PHP Code Sniffer
+on: [push, pull_request]
+jobs:
+  php-cs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PHP Code Sniffer
+        run: ./vendor/bin/phpcs
+        with:
+          args: --standar=psr12 --exclude=Generic.Files.LineEndings
