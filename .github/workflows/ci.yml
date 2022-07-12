@@ -21,4 +21,5 @@ jobs:
       - name: phpunit
         uses: php-actions/phpunit@v2
         with:
+          bootstrap: vendor/autoload.php
           configuration: phpunit.xml
