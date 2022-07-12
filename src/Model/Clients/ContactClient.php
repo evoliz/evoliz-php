@@ -93,7 +93,8 @@ class ContactClient extends BaseModel
 
     /**
      * Extract the clientid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractClientId(array $data)

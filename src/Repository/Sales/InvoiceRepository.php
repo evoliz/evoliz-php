@@ -13,7 +13,8 @@ class InvoiceRepository extends BaseRepository
 {
     /**
      * Set up the different parameters for the API requests
-     * @param Config $config Configuration for API usage
+     *
+     * @param  Config $config Configuration for API usage
      * @throws \Exception
      */
     public function __construct(Config $config)
@@ -49,12 +50,12 @@ class InvoiceRepository extends BaseRepository
     /**
      * Create a payment on the given invoice
      *
-     * @param int $invoiceid Invoice to pay
-     * @param string $label Label of the payment
-     * @param int $paytypeid PaytypeID of the payment
-     * @param float $amount Amount of the payment
-     * @param \DateTime|null $paydate Paydate of the payment
-     * @param string|null $comment Comment on the payment
+     * @param int            $invoiceid Invoice to pay
+     * @param string         $label     Label of the payment
+     * @param int            $paytypeid PaytypeID of the payment
+     * @param float          $amount    Amount of the payment
+     * @param \DateTime|null $paydate   Paydate of the payment
+     * @param string|null    $comment   Comment on the payment
      *
      * @return PaymentResponse|string
      *
@@ -84,9 +85,11 @@ class InvoiceRepository extends BaseRepository
         }
 
         $response = HttpClient::getInstance()
-            ->post($this->baseEndpoint . '/' . $invoiceid . '/payments', [
+            ->post(
+                $this->baseEndpoint . '/' . $invoiceid . '/payments', [
                 'body' => json_encode($requestBody)
-            ]);
+                ]
+            );
 
 
         $responseContent = $response->getBody()->getContents();

@@ -86,7 +86,8 @@ class Term
 
     /**
      * Extract the paytermid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractPaytermId(array $data)
@@ -102,7 +103,8 @@ class Term
 
     /**
      * Extract the paytypeid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractPaytypeId(array $data)
@@ -118,7 +120,8 @@ class Term
 
     /**
      * Extract the no_penalty field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractNoPenalty(array $data)

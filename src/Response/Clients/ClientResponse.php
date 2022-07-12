@@ -10,6 +10,7 @@ class ClientResponse extends BaseResponse implements ResponseInterface
 {
     /**
      * Build Client from ClientResponse
+     *
      * @return Client
      */
     public function createFromResponse(): Client

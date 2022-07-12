@@ -115,7 +115,8 @@ class Article extends BaseModel
 
     /**
      * Extract the sale_classificationid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractSaleClassificationId(array $data)
@@ -131,7 +132,8 @@ class Article extends BaseModel
 
     /**
      * Extract the unit_price field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return float|null
      */
     private function extractUnitPrice(array $data)
@@ -147,7 +149,8 @@ class Article extends BaseModel
 
     /**
      * Extract the vat_rate field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return float|null
      */
     private function extractVatRate(array $data)
@@ -163,7 +166,8 @@ class Article extends BaseModel
 
     /**
      * Extract the purchase_unit_price_vat_exclude field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return float|null
      */
     private function extractPurchaseUnitPriceVatExclude(array $data)
@@ -179,7 +183,8 @@ class Article extends BaseModel
 
     /**
      * Extract the purchase_classificationid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractPurchaseClassificationId(array $data)
@@ -195,7 +200,8 @@ class Article extends BaseModel
 
     /**
      * Extract the supplierid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractSupplierId(array $data)
