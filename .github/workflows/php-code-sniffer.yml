@@ -17,5 +17,5 @@ jobs:
         with:
           files: "**.php" # you may customize glob as needed
           phpcs_path: php phpcs.phar
-          standard: psr12
+          standard: PSR12
 #          args: --standard=psr12 --exclude=Generic.Files.LineEndings
