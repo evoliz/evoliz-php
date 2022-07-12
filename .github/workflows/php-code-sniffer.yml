@@ -4,11 +4,14 @@ jobs:
   php-cs:
     runs-on: ubuntu-latest
     steps:
-      - name: PHP Code Sniffer
-        uses: thenabeel/action-phpcs@v8
-        with:
+      - name: Install PHP_CodeSniffer
+        run: |
+          curl -OL https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
+          php phpcs.phar --version
 
+      - uses: thenabeel/action-phpcs@v8
+        with:
           files: "**.php" # you may customize glob as needed
-          phpcs_path: ../../vendor/bin/phpcs
+          phpcs_path: php phpcs.phar
           standard: psr12
-#          args: --standar=psr12 --exclude=Generic.Files.LineEndings
+#          args: --standard=psr12 --exclude=Generic.Files.LineEndings
