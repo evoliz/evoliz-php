@@ -141,13 +141,14 @@ class Config
     private function login(): AccessToken
     {
         $loginResponse = HttpClient::getInstance()->post(
-            'api/login', [
-            'body' => json_encode(
-                [
-                'public_key' => $this->publicKey,
-                'secret_key' => $this->secretKey
-                ]
-            )
+            'api/login',
+            [
+                'body' => json_encode(
+                    [
+                    'public_key' => $this->publicKey,
+                    'secret_key' => $this->secretKey
+                    ]
+                )
             ]
         );
 
@@ -161,10 +162,11 @@ class Config
         if (isset($responseBody->access_token)) {
             // Cookie Storage
             setcookie(
-                'evoliz_token_' . $this->companyId, json_encode(
+                'evoliz_token_' . $this->companyId,
+                json_encode(
                     [
-                    'access_token' => $responseBody->access_token,
-                    'expires_at' => $responseBody->expires_at
+                        'access_token' => $responseBody->access_token,
+                        'expires_at' => $responseBody->expires_at
                     ]
                 )
             );

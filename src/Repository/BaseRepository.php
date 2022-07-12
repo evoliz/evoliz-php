@@ -58,8 +58,9 @@ abstract class BaseRepository
     public function list(array $query = [])
     {
         $response = HttpClient::getInstance()->get(
-            $this->baseEndpoint, [
-            'query' => $query
+            $this->baseEndpoint,
+            [
+                'query' => $query
             ]
         );
 
@@ -115,8 +116,9 @@ abstract class BaseRepository
     public function create(BaseModel $object)
     {
         $response = HttpClient::getInstance()->post(
-            $this->baseEndpoint, [
-            'body' => json_encode($this->buildPayload($object))
+            $this->baseEndpoint,
+            [
+                'body' => json_encode($this->buildPayload($object))
             ]
         );
 
