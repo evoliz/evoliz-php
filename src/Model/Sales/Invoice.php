@@ -42,7 +42,8 @@ class Invoice extends BaseModel
     public $comment;
 
     /**
-     * @var integer Analytic axis id, this field is accepted only when analytic option is enabled, required if invoice is checked in analytic configuration
+     * @var integer Analytic axis id, this field is accepted only when analytic option is enabled
+     * Required if invoice is checked in analytic configuration
      */
     public $analyticid;
 

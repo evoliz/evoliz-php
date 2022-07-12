@@ -45,7 +45,8 @@ class Item
     public $rebate;
 
     /**
-     * @var integer Item sell classfication id, only accepted when sell classification are enabled (overrided if articleid is set)
+     * @var integer Item sell classfication id, only accepted when sell classification are enabled
+     * Overrided if articleid is set
      */
     public $sale_classificationid;
 

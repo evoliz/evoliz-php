@@ -47,7 +47,8 @@ abstract class BaseRepository
     }
 
     /**
-     * Return a list of requested object visible by the current User, according to visibility restriction set in user profile
+     * Return a list of requested object visible by the current User
+     * According to visibility restriction set in user profile
      * @param array $query Additional query parameters
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
@@ -141,7 +142,8 @@ abstract class BaseRepository
 
     /**
      * Move to the first page of the resource
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
     public function firstPage()
@@ -151,7 +153,8 @@ abstract class BaseRepository
 
     /**
      * Move to the last page of the resource
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
     public function lastPage()
@@ -161,7 +164,8 @@ abstract class BaseRepository
 
     /**
      * Move to the previous page of the resource
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
     public function previousPage()
@@ -171,7 +175,8 @@ abstract class BaseRepository
 
     /**
      * Move to the next page of the resource
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
     public function nextPage()
@@ -200,13 +205,15 @@ abstract class BaseRepository
     /**
      * Move to the requested page of the resource
      * @param string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested uri does not exist
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested uri does not exist
      * @throws PaginationException|ResourceException
      */
     private function paginate(string $requestedPage)
     {
         if (!in_array($requestedPage, ['first', 'last', 'prev', 'next'])) {
-            throw new PaginationException('Error : The requestedPage attribute must be one of first, last, prev or next', 401);
+            $errorMessage = 'Error : The requestedPage attribute must be one of first, last, prev or next';
+            throw new PaginationException($errorMessage, 401);
         }
 
         if (!isset($this->lastResponse)) {

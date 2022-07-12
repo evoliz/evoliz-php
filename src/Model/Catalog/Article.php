@@ -43,7 +43,9 @@ class Article extends BaseModel
     public $sale_classificationid;
 
     /**
-     * @var float Article unit price (excluding or including vat according to ttc field value or defaults to current company configuration if ttc is not filled)
+     * @var float Article unit price
+     * Excluding or including vat according to ttc field value
+     * Or defaults to current company configuration if ttc is not filled
      */
     public $unit_price;
 
