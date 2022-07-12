@@ -20,3 +20,5 @@ jobs:
       - uses: actions/checkout@master
       - name: phpunit
         uses: php-actions/phpunit@v2
+        with:
+          configuration: phpunit.xml
