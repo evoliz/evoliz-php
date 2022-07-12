@@ -1,13 +1,11 @@
 name: CI - PHP Code Sniffer
 on: [push, pull_request]
 jobs:
-  php-cs:
+  PHP_CodeSniffer:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-
-      - name: PHP_CodeSniffer
+      - name: php-cs
         uses: docker://oskarstark/phpcs-ga:3.4.2
         with:
-          path: src/
           args: src/ --standard=psr12 --exclude=Generic.Files.LineEndings
