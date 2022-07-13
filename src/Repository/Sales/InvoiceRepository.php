@@ -68,18 +68,11 @@ class InvoiceRepository extends BaseRepository
         float $amount,
         \DateTime $paydate = null,
         string $comment = null
-    )
-
-
-    {
-        $requestBody =
-            [
-            'label'=>
-                $label,
-            'paytypeid'=>
-                $paytypeid,
-            'amount'=>
-                $amount,
+    ) {
+        $requestBody = [
+            'label' => $label,
+            'paytypeid' => $paytypeid,
+            'amount' => $amount,
         ];
 
         if ($paydate === null) {
