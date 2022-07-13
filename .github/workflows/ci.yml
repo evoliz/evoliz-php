@@ -26,4 +26,3 @@ jobs:
         with:
           configuration: phpunit.xml
           version: 6.5
-          php_version: 7.0
