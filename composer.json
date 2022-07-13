@@ -38,5 +38,10 @@
   "scripts": {
     "tests": "phpunit",
     "phpunit-version" : "php -v"
+  },
+  "config": {
+    "platform": {
+      "php": "7.0"
+    }
   }
 }
