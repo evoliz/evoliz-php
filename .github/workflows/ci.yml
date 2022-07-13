@@ -16,8 +16,7 @@ jobs:
 #        with:
 #          args: src/ --standard=psr12 --exclude=Generic.Files.LineEndings
 
-  PHPUnit:
-    name: Tests
+  Build:
 
     runs-on: ubuntu-latest
 
