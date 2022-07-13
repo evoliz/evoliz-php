@@ -37,6 +37,6 @@
   },
   "scripts": {
     "tests": "phpunit",
-    "code-sniffer" : "phpcs --standard=psr12 --exclude=Generic.Files.LineEndings src/"
+    "code-sniffer" : "phpcs --standard=psr12 --exclude=Generic.Files.LineEndings --runtime-set ignore_warnings_on_exit 1 src/"
   }
 }
