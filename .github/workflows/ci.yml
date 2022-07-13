@@ -22,6 +22,7 @@ jobs:
         with:
           php_version: 7.0
       - name: phpunit
-        uses: php-actions/phpunit@v1
+        uses: php-actions/phpunit@v2
         with:
           configuration: phpunit.xml
+          php_version: 7.0
