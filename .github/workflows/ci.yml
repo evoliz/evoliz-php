@@ -3,20 +3,7 @@ name: CI
 on: [workflow_dispatch, push, pull_request]
 
 jobs:
-#  PHP_CodeSniffer:
-#    name: Linter
-#
-#    runs-on: ubuntu-latest
-#
-#    steps:
-#      - uses: actions/checkout@master
-#
-#      - name: php-cs
-#        uses: docker://oskarstark/phpcs-ga:3.4.2
-#        with:
-#          args: src/ --standard=psr12 --exclude=Generic.Files.LineEndings
-
-  Build:
+  build:
 
     runs-on: ubuntu-latest
 
@@ -43,18 +30,8 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist
 
-      - name: Linting code
+      - name: Run code sniffer
         run: composer run-script code-sniffer
 
       - name: Run test suite
         run: composer run-script tests
-
-#      - uses: php-actions/composer@master
-#        with:
-#          php_version: 7.0
-#      - name: phpunit
-#        uses: php-actions/phpunit@v2
-#        with:
-#          configuration: phpunit.xml
-#          version: 6.5
-#          php_version: 7.0
