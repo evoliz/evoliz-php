@@ -1,25 +1,32 @@
 name: CI
-on:
-  workflow_dispatch:
-  push:
-  pull_request:
+
+on: [workflow_dispatch, push, pull_request]
+
 jobs:
-#  PHP_CodeSniffer:
-#    name: Linter
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@master
-#      - name: php-cs
-#        uses: docker://oskarstark/phpcs-ga:3.4.2
-#        with:
-#          args: src/ --standard=psr12 --exclude=Generic.Files.LineEndings
-  PHPUnit:
-    name: Tests
+  PHP_CodeSniffer:
+    name: Linter
+
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@master
+
+      - name: php-cs
+        uses: docker://oskarstark/phpcs-ga:3.4.2
+        with:
+          args: src/ --standard=psr12 --exclude=Generic.Files.LineEndings
+
+  PHPUnit:
+    name: Tests
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+
       - name: Validate composer.json and composer.lock
         run: composer validate --strict
+
       - name: Cache Composer packages
         id: composer-cache
         uses: actions/cache@v3
@@ -28,10 +35,13 @@ jobs:
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-php-
-        - name: Install dependencies
-          run: composer install --prefer-dist --no-progress
-        - name: Run test suite
-          run: composer run-script test
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run test suite
+        run: composer run-script test
+
 #      - uses: php-actions/composer@master
 #        with:
 #          php_version: 7.0
