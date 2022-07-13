@@ -36,7 +36,8 @@
     "squizlabs/php_codesniffer": "^3.7"
   },
   "scripts": {
-    "test": "phpunit"
+    "tests": "phpunit",
+    "phpunit-version" : "phpunit --version"
   },
   "config": {
     "platform": {

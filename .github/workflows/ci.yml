@@ -44,7 +44,7 @@ jobs:
 #          php_version: 7.0
 
       - name: Run test suite
-        run: composer run-script test
+        run: composer run-script phpunit-version
 
 #      - uses: php-actions/composer@master
 #        with:
