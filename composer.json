@@ -15,7 +15,7 @@
     }
   ],
   "require": {
-    "php": ">=7.0.0",
+    "php": "^7.0.0",
     "guzzlehttp/guzzle": "^6.5.5",
     "ext-json": "*"
   },
@@ -38,10 +38,5 @@
   "scripts": {
     "tests": "phpunit",
     "phpunit-version" : "php -v"
-  },
-  "config": {
-    "platform": {
-      "php": "7.0.33"
-    }
   }
 }
