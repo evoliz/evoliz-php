@@ -17,10 +17,10 @@ jobs:
     name: Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@master
       - uses: php-actions/composer@v5
-#        with:
-#          php_version: 7.0
+        with:
+          php_version: 7.0
       - name: phpunit
         uses: php-actions/phpunit@v2
         with:
