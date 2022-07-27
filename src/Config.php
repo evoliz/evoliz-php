@@ -39,7 +39,7 @@ class Config
     /**
      * Setup the configuration for API usage
      *
-     * @param int $companyId User's companyid
+     * @param int    $companyId User's companyid
      * @param string $publicKey User's public key given in the app
      *
      * @throws \Exception|ConfigException
@@ -53,6 +53,7 @@ class Config
 
     /**
      * Get user's companyid
+     *
      * @return int
      */
     public function getCompanyId(): int
@@ -62,6 +63,7 @@ class Config
 
     /**
      * Set user's companyid
+     *
      * @param int $companyId
      */
     public function setCompanyId(int $companyId)
@@ -71,6 +73,7 @@ class Config
 
     /**
      * Get the Access Token linked to the connection
+     *
      * @return AccessToken
      */
     public function getAccessToken(): AccessToken
@@ -80,6 +83,7 @@ class Config
 
     /**
      * Authenticate the user
+     *
      * @return Config
      * @throws \Exception|ConfigException
      */
@@ -104,6 +108,7 @@ class Config
 
     /**
      * Get resources default return type
+     *
      * @return string
      */
     public function getDefaultReturnType(): string
@@ -113,7 +118,8 @@ class Config
 
     /**
      * Set resources default return type
-     * @param string $returnType Expected type of return (OBJECT or JSON)
+     *
+     * @param  string $returnType Expected type of return (OBJECT or JSON)
      * @return void
      * @throws ConfigException
      */
@@ -128,17 +134,21 @@ class Config
 
     /**
      * Login the user with given public and secret keys
+     *
      * @return AccessToken
      * @throws ConfigException|\Exception
      */
     private function login(): AccessToken
     {
-        $loginResponse = HttpClient::getInstance()->post('api/login', [
-            'body' => json_encode([
-                'public_key' => $this->publicKey,
-                'secret_key' => $this->secretKey
-            ])
-        ]);
+        $loginResponse = HttpClient::getInstance()->post(
+            'api/login',
+            [
+                'body' => json_encode([
+                    'public_key' => $this->publicKey,
+                    'secret_key' => $this->secretKey
+                ])
+            ]
+        );
 
         $responseBody = json_decode($loginResponse->getBody()->getContents());
 
@@ -149,10 +159,15 @@ class Config
 
         if (isset($responseBody->access_token)) {
             // Cookie Storage
-            setcookie('evoliz_token_' . $this->companyId, json_encode([
-                'access_token' => $responseBody->access_token,
-                'expires_at' => $responseBody->expires_at
-            ]));
+            setcookie(
+                'evoliz_token_' . $this->companyId,
+                json_encode(
+                    [
+                        'access_token' => $responseBody->access_token,
+                        'expires_at' => $responseBody->expires_at
+                    ]
+                )
+            );
 
             $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
         } else {
@@ -164,6 +179,7 @@ class Config
 
     /**
      * Check if there is a valid access token stored in the cookies
+     *
      * @throws \Exception
      */
     private function hasValidCookieAccessToken(): bool
@@ -184,6 +200,7 @@ class Config
 
     /**
      * Check if there is a valid access token stored in the cookies or the config
+     *
      * @throws \Exception
      */
     private function hasValidAccessToken(): bool

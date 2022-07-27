@@ -31,8 +31,8 @@ class HttpClient extends Client
     /**
      * Set the current HttpClient instance
      *
-     * @param array $config Add or override default config
-     * @param array $headers Add or override default headers
+     * @param array   $config  Add or override default config
+     * @param array   $headers Add or override default headers
      * @param boolean $staging Precise if you want to work in staging mode
      */
     public static function setInstance(array $config = [], array $headers = [], bool $staging = false)

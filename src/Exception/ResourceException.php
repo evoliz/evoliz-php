@@ -2,4 +2,6 @@
 
 namespace Evoliz\Client\Exception;
 
-class ResourceException extends \Exception {}
+class ResourceException extends \Exception
+{
+}

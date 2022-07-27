@@ -43,7 +43,9 @@ class Article extends BaseModel
     public $sale_classificationid;
 
     /**
-     * @var float Article unit price (excluding or including vat according to ttc field value or defaults to current company configuration if ttc is not filled)
+     * @var float Article unit price
+     * Excluding or including vat according to ttc field value
+     * Or defaults to current company configuration if ttc is not filled
      */
     public $unit_price;
 
@@ -113,7 +115,8 @@ class Article extends BaseModel
 
     /**
      * Extract the sale_classificationid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractSaleClassificationId(array $data)
@@ -129,7 +132,8 @@ class Article extends BaseModel
 
     /**
      * Extract the unit_price field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return float|null
      */
     private function extractUnitPrice(array $data)
@@ -145,7 +149,8 @@ class Article extends BaseModel
 
     /**
      * Extract the vat_rate field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return float|null
      */
     private function extractVatRate(array $data)
@@ -161,7 +166,8 @@ class Article extends BaseModel
 
     /**
      * Extract the purchase_unit_price_vat_exclude field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return float|null
      */
     private function extractPurchaseUnitPriceVatExclude(array $data)
@@ -177,7 +183,8 @@ class Article extends BaseModel
 
     /**
      * Extract the purchase_classificationid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractPurchaseClassificationId(array $data)
@@ -193,7 +200,8 @@ class Article extends BaseModel
 
     /**
      * Extract the supplierid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractSupplierId(array $data)

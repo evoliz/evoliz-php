@@ -44,7 +44,8 @@ class Address
 
     /**
      * Extract the iso2 field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return string|null
      */
     private function extractIso2(array $data)
