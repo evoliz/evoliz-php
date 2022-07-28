@@ -116,10 +116,8 @@ class Client extends BaseModel
         $this->legalform = $data['legalform'] ?? null;
         $this->activity_number = $data['activity_number'] ?? null;
         $this->immat_number = $data['immat_number'] ?? null;
-        $this->bank_information = isset($data['bank_information'])
-            ? new BankInformation((array) $data['bank_information']) : null;
-        $this->delivery_address = isset($data['delivery_address'])
-            ? new Address((array) $data['delivery_address']) : null;
+        $this->bank_information = isset($data['bank_information']) ? new BankInformation((array) $data['bank_information']) : null;
+        $this->delivery_address = isset($data['delivery_address']) ? new Address((array) $data['delivery_address']) : null;
         $this->phone = $data['phone'] ?? null;
         $this->mobile = $data['mobile'] ?? null;
         $this->fax = $data['fax'] ?? null;

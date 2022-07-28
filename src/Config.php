@@ -143,12 +143,10 @@ class Config
         $loginResponse = HttpClient::getInstance()->post(
             'api/login',
             [
-                'body' => json_encode(
-                    [
+                'body' => json_encode([
                     'public_key' => $this->publicKey,
                     'secret_key' => $this->secretKey
-                    ]
-                )
+                ])
             ]
         );
 

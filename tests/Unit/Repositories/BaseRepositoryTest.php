@@ -57,12 +57,10 @@ class BaseRepositoryTest extends TestCase
         ]);
 
         $this->config = new Config($companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
-        $anonymousResponse = new class ([]) extends BaseResponse {
-        };
+        $anonymousResponse = new class ([]) extends BaseResponse {};
         $responseModel = get_class($anonymousResponse);
 
-        $this->anonymousRepository = new class ($this->config, 'anonymous', $responseModel) extends BaseRepository {
-        };
+        $this->anonymousRepository = new class ($this->config, 'anonymous', $responseModel) extends BaseRepository {};
     }
 
     /**
