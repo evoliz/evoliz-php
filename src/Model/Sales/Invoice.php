@@ -42,7 +42,8 @@ class Invoice extends BaseModel
     public $comment;
 
     /**
-     * @var integer Analytic axis id, this field is accepted only when analytic option is enabled, required if invoice is checked in analytic configuration
+     * @var integer Analytic axis id, this field is accepted only when analytic option is enabled
+     * Required if invoice is checked in analytic configuration
      */
     public $analyticid;
 
@@ -103,7 +104,8 @@ class Invoice extends BaseModel
 
     /**
      * Extract the clientid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractClientId(array $data)
@@ -119,7 +121,8 @@ class Invoice extends BaseModel
 
     /**
      * Extract the analyticid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractAnalyticId(array $data)
@@ -135,7 +138,8 @@ class Invoice extends BaseModel
 
     /**
      * Extract the global_rebate field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return float|null
      */
     private function extractGlobalRebate(array $data)

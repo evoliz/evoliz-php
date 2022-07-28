@@ -34,6 +34,4 @@ class BankInformation
         $this->iban = $data['iban'] ?? null;
         $this->bank_identification_code = $data['bank_identification_code'] ?? null;
     }
-
-
 }

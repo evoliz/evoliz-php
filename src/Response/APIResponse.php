@@ -21,9 +21,10 @@ class APIResponse
 
     /**
      * Construction of the API Response Resource
-     * @param array $data Requested resource array
+     *
+     * @param array $data  Requested resource array
      * @param array $links Links to the different pages for pagination
-     * @param array $meta Various meta tags
+     * @param array $meta  Various meta tags
      */
     public function __construct(array $data, array $links, array $meta)
     {

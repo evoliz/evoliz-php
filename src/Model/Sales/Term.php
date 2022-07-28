@@ -15,7 +15,8 @@ class Term
     public $penalty;
 
     /**
-     * @var boolean Define the display of legal mention about penalty rate on the created document (prohibited if a penalty is given)
+     * @var boolean Define the display of legal mention about penalty rate on the created document
+     * Prohibited if a penalty is given
      */
     public $nopenalty;
 
@@ -30,12 +31,14 @@ class Term
     public $discount_term;
 
     /**
-     * @var boolean Define the display of the no discount applicable legal mention (prohibited if a discount_term is given)
+     * @var boolean Define the display of the no discount applicable legal mention
+     * Prohibited if a discount_term is given
      */
     public $no_discount_term;
 
     /**
-     * @var string Payment due date, required if paytermid is 18 (Saisir une date), must be after or equal to documentdate
+     * @var string Payment due date, required if paytermid is 18 (Saisir une date)
+     * Must be after or equal to documentdate
      */
     public $duedate;
 
@@ -83,7 +86,8 @@ class Term
 
     /**
      * Extract the paytermid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractPaytermId(array $data)
@@ -99,7 +103,8 @@ class Term
 
     /**
      * Extract the paytypeid field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractPaytypeId(array $data)
@@ -115,7 +120,8 @@ class Term
 
     /**
      * Extract the no_penalty field with the correct information
-     * @param array $data Array to build the object
+     *
+     * @param  array $data Array to build the object
      * @return integer|null
      */
     private function extractNoPenalty(array $data)

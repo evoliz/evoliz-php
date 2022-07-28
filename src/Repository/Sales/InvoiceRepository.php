@@ -13,7 +13,8 @@ class InvoiceRepository extends BaseRepository
 {
     /**
      * Set up the different parameters for the API requests
-     * @param Config $config Configuration for API usage
+     *
+     * @param  Config $config Configuration for API usage
      * @throws \Exception
      */
     public function __construct(Config $config)
@@ -49,19 +50,25 @@ class InvoiceRepository extends BaseRepository
     /**
      * Create a payment on the given invoice
      *
-     * @param int $invoiceid Invoice to pay
-     * @param string $label Label of the payment
-     * @param int $paytypeid PaytypeID of the payment
-     * @param float $amount Amount of the payment
-     * @param \DateTime|null $paydate Paydate of the payment
-     * @param string|null $comment Comment on the payment
+     * @param int            $invoiceid Invoice to pay
+     * @param string         $label     Label of the payment
+     * @param int            $paytypeid PaytypeID of the payment
+     * @param float          $amount    Amount of the payment
+     * @param \DateTime|null $paydate   Paydate of the payment
+     * @param string|null    $comment   Comment on the payment
      *
      * @return PaymentResponse|string
      *
      * @throws ResourceException
      */
-    public function pay(int $invoiceid, string $label, int $paytypeid, float $amount,  \DateTime $paydate = null, string $comment = null)
-    {
+    public function pay(
+        int $invoiceid,
+        string $label,
+        int $paytypeid,
+        float $amount,
+        \DateTime $paydate = null,
+        string $comment = null
+    ) {
         $requestBody = [
             'label' => $label,
             'paytypeid' => $paytypeid,
@@ -78,9 +85,10 @@ class InvoiceRepository extends BaseRepository
         }
 
         $response = HttpClient::getInstance()
-            ->post($this->baseEndpoint . '/' . $invoiceid . '/payments', [
-                'body' => json_encode($requestBody)
-            ]);
+            ->post(
+                $this->baseEndpoint . '/' . $invoiceid . '/payments',
+                ['body' => json_encode($requestBody)]
+            );
 
 
         $responseContent = $response->getBody()->getContents();

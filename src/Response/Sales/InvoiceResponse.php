@@ -10,6 +10,7 @@ class InvoiceResponse extends BaseResponse implements ResponseInterface
 {
     /**
      * Build Invoice from InvoiceResponse
+     *
      * @return Invoice
      */
     public function createFromResponse(): Invoice

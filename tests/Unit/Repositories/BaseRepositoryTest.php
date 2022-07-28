@@ -57,10 +57,10 @@ class BaseRepositoryTest extends TestCase
         ]);
 
         $this->config = new Config($companyId, 'EVOLIZ_PUBLIC_KEY', 'EVOLIZ_SECRET_KEY');
-        $anonymousResponse = new class([]) extends BaseResponse {};
+        $anonymousResponse = new class ([]) extends BaseResponse {};
         $responseModel = get_class($anonymousResponse);
 
-        $this->anonymousRepository = new class($this->config, 'anonymous', $responseModel) extends BaseRepository {};
+        $this->anonymousRepository = new class ($this->config, 'anonymous', $responseModel) extends BaseRepository {};
     }
 
     /**
@@ -127,7 +127,8 @@ class BaseRepositoryTest extends TestCase
             new Response(200, [], $response),
         ]);
 
-        $anonymousObject = $this->anonymousRepository->create(new class() extends BaseModel {});
+        $anonymousObject = $this->anonymousRepository->create(new class () extends BaseModel {
+        });
         $this->assertInstanceOf(BaseResponse::class, $anonymousObject);
     }
 
@@ -154,7 +155,8 @@ class BaseRepositoryTest extends TestCase
 
         $this->expectException(ResourceException::class);
         $this->expectExceptionMessage($errorLabel . ' : ' . $errorMessage);
-        $this->anonymousRepository->create(new class() extends BaseModel {});
+        $this->anonymousRepository->create(new class () extends BaseModel {
+        });
     }
 
     /**

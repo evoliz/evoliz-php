@@ -10,10 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigTest extends TestCase
 {
-    /**
-     * @var Generator
-     */
-    private $faker;
 
     /**
      * @var integer
@@ -21,13 +17,13 @@ class ConfigTest extends TestCase
     private $companyId;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function setUp()
     {
         parent::setUp();
-        $this->faker = Factory::create();
-        $this->companyId = $this->faker->randomNumber(5);
+        $faker = Factory::create();
+        $this->companyId = $faker->randomNumber(5);
     }
 
     /**

@@ -34,9 +34,10 @@ abstract class BaseRepository
 
     /**
      * Setup the different parameters for the API requests
-     * @param Config $config Configuration for API usage
-     * @param string $baseEndpoint Base endpoint
-     * @param string $responseModel Response model
+     *
+     * @param  Config $config        Configuration for API usage
+     * @param  string $baseEndpoint  Base endpoint
+     * @param  string $responseModel Response model
      * @throws ConfigException
      */
     public function __construct(Config $config, string $baseEndpoint, string $responseModel)
@@ -47,16 +48,21 @@ abstract class BaseRepository
     }
 
     /**
-     * Return a list of requested object visible by the current User, according to visibility restriction set in user profile
-     * @param array $query Additional query parameters
+     * Return a list of requested object visible by the current User
+     * According to visibility restriction set in user profile
+     *
+     * @param  array $query Additional query parameters
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
     public function list(array $query = [])
     {
-        $response = HttpClient::getInstance()->get($this->baseEndpoint, [
-            'query' => $query
-        ]);
+        $response = HttpClient::getInstance()->get(
+            $this->baseEndpoint,
+            [
+                'query' => $query
+            ]
+        );
 
         $responseContent = $response->getBody()->getContents();
         $this->lastResponse = json_decode($responseContent, true);
@@ -78,7 +84,8 @@ abstract class BaseRepository
 
     /**
      * Return an object by its speficied id
-     * @param int $objectid Object id
+     *
+     * @param  int $objectid Object id
      * @return mixed|string Response in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
@@ -101,15 +108,19 @@ abstract class BaseRepository
 
     /**
      * Create a new object with given data
-     * @param BaseModel $object Object to create
+     *
+     * @param  BaseModel $object Object to create
      * @return mixed|string Response in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
     public function create(BaseModel $object)
     {
-        $response = HttpClient::getInstance()->post($this->baseEndpoint, [
-            'body' => json_encode($this->buildPayload($object))
-        ]);
+        $response = HttpClient::getInstance()->post(
+            $this->baseEndpoint,
+            [
+                'body' => json_encode($this->buildPayload($object))
+            ]
+        );
 
         $responseContent = $response->getBody()->getContents();
 
@@ -126,6 +137,7 @@ abstract class BaseRepository
 
     /**
      * Accessor for the number of pages of the resource
+     *
      * @return int Number of pages
      * @throws ResourceException
      */
@@ -141,7 +153,9 @@ abstract class BaseRepository
 
     /**
      * Move to the first page of the resource
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     *
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
     public function firstPage()
@@ -151,7 +165,9 @@ abstract class BaseRepository
 
     /**
      * Move to the last page of the resource
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     *
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
     public function lastPage()
@@ -161,7 +177,9 @@ abstract class BaseRepository
 
     /**
      * Move to the previous page of the resource
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     *
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
     public function previousPage()
@@ -171,7 +189,9 @@ abstract class BaseRepository
 
     /**
      * Move to the next page of the resource
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested page does not exist
+     *
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
     public function nextPage()
@@ -181,7 +201,8 @@ abstract class BaseRepository
 
     /**
      * Move to the requested page of the resource
-     * @param int $pageNumber Requested page number
+     *
+     * @param  int $pageNumber Requested page number
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
@@ -199,14 +220,17 @@ abstract class BaseRepository
 
     /**
      * Move to the requested page of the resource
-     * @param string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
-     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON) or null if the requested uri does not exist
+     *
+     * @param  string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
+     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return null Return null if the requested uri does not exist
      * @throws PaginationException|ResourceException
      */
     private function paginate(string $requestedPage)
     {
         if (!in_array($requestedPage, ['first', 'last', 'prev', 'next'])) {
-            throw new PaginationException('Error : The requestedPage attribute must be one of first, last, prev or next', 401);
+            $errorMessage = 'Error : The requestedPage attribute must be one of first, last, prev or next';
+            throw new PaginationException($errorMessage, 401);
         }
 
         if (!isset($this->lastResponse)) {
@@ -227,16 +251,15 @@ abstract class BaseRepository
     }
 
     /**
-     * @Todo : Think about a design pattern for error handling
+     * @Todo   : Think about a design pattern for error handling
      * Handle response error returned by the API
-     * @param array $responseBody Array of response error and message
-     * @param int $statusCode HTTP Status code
+     * @param  array $responseBody Array of response error and message
+     * @param  int   $statusCode   HTTP Status code
      * @throws ResourceException
      */
     protected function handleError(array $responseBody, int $statusCode)
     {
-        if (!($statusCode >= 200 && $statusCode < 300))
-        {
+        if (!($statusCode >= 200 && $statusCode < 300)) {
             $errorMessage = $responseBody['error'] . ' : ';
             if (is_array($responseBody['message'])) {
                 foreach ($responseBody['message'] as $error) {
@@ -251,7 +274,8 @@ abstract class BaseRepository
 
     /**
      * Mapping of the request payload to create the entry
-     * @param \stdClass|array $object Object to create
+     *
+     * @param  \stdClass|array $object Object to create
      * @return array
      */
     private function buildPayload($object): array
@@ -269,7 +293,8 @@ abstract class BaseRepository
 
     /**
      * Retrieve query parameters from an uri
-     * @param string $uri Requested uri with parameters to retrieve
+     *
+     * @param  string $uri Requested uri with parameters to retrieve
      * @return array Array of query parameters
      */
     private function retrieveQueryParameters(string $uri): array

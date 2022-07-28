@@ -16,8 +16,9 @@ class AccessToken
 
     /**
      * Setup the Access Token parameters
-     * @param string $token Token that should be used for authentication as a Bearer Authorization Token
-     * @param string $expires_at Session's token duration. Set by default to 20 minutes
+     *
+     * @param  string $token      Token that should be used for authentication as a Bearer Authorization Token
+     * @param  string $expires_at Session's token duration. Set by default to 20 minutes
      * @throws \Exception
      */
     public function __construct(string $token, string $expires_at)
@@ -28,6 +29,7 @@ class AccessToken
 
     /**
      * Get token value
+     *
      * @return string
      */
     public function getToken(): string
@@ -37,6 +39,7 @@ class AccessToken
 
     /**
      * Get token expiration date
+     *
      * @return \DateTime
      */
     public function getExpiresAt(): \DateTime
@@ -46,11 +49,11 @@ class AccessToken
 
     /**
      * Check if the token is expired or not
+     *
      * @return bool
      */
     public function isExpired(): bool
     {
         return $this->expires_at < new \DateTime('now');
     }
-
 }

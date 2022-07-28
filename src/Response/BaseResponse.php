@@ -14,14 +14,15 @@ abstract class BaseResponse
 
     /**
      * Assign response attributes retrieved from the API
-     * @param BaseResponse|\stdClass $object Object to assign
-     * @param array $array Value to assign to the object
+     *
+     * @param  BaseResponse|\stdClass $object Object to assign
+     * @param  array                  $array  Value to assign to the object
      * @return void
      */
     public function assignAttribute($object, array $array)
     {
-        foreach ($array as $key => $value){
-            if(is_array($value)) {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
                 $object->$key = new \stdClass();
                 $this->assignAttribute($object->$key, $value);
             } else {
