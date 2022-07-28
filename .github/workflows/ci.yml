@@ -12,7 +12,7 @@ on:
     branches:
       - master
       - hotfix/**
-      - develop
+#      - develop
       - feature/**
       - release/**
   workflow_dispatch:
