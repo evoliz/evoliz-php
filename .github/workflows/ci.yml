@@ -5,7 +5,7 @@ on: [workflow_dispatch, push, pull_request]
 jobs:
   build:
 
-    runs-on: [self-hosted , webdevops/php-apache-dev:7.0]
+    runs-on: [self-hosted , webdevops/php-apache-dev]
 
     steps:
       - uses: actions/checkout@master
