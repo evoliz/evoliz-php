@@ -1,6 +1,6 @@
 # Evoliz PHP
 
-[//]: # (@Todo : Put some badges : https://poser.pugx.org/)
+[//]: # (@Todo : Put some badges : https://poser.pugx.org/ test)
 
 The Evoliz PHP library provides convenient access to the Evoliz API from
 applications written in the PHP language. It includes a pre-defined set of
