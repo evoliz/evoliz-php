@@ -208,4 +208,18 @@ class Config
         return $this->hasValidCookieAccessToken()
             || $this->hasValidConfigAccessToken();
     }
+
+
+    /**
+     * Check if the company id is valid
+     *
+     * @return bool
+     */
+    public function hasValidCompanyId(): bool
+    {
+        $companyResponse = HttpClient::getInstance()
+            ->get('api/companies/' . $this->companyId);
+
+        return $companyResponse->getStatusCode() === 200;
+    }
 }
