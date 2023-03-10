@@ -10,7 +10,7 @@ class Term
     public $validity;
 
     /**
-     * @var float Penalty rate, prohibited if no_penalty is true
+     * @var float Penalty rate, prohibited if nopenalty is true
      */
     public $penalty;
 
@@ -22,7 +22,7 @@ class Term
     /**
      * @var boolean Use legal mention about penalty rate
      */
-    public $no_penalty;
+    public $nopenalty;
 
     /**
      * @var boolean Use legal collection cost
@@ -55,7 +55,7 @@ class Term
         $this->validity = $data['validity'] ?? null;
         $this->penalty = $data['penalty'] ?? null;
         $this->discount_term = $data['discount_term'] ?? null;
-        $this->no_penalty = $data['no_penalty'] ?? null; // @Todo : Check for naming variation on no_penalty
+        $this->nopenalty = $this->extractNoPenalty($data);
         $this->recovery_indemnity = $data['recovery_indemnity'] ?? null;
         $this->no_discount_term = $data['no_discount_term'] ?? null;
     }
@@ -92,5 +92,17 @@ class Term
         }
 
         return $paytypeid ?? null;
+    }
+
+
+    /**
+     * Extract the nopenalty field with the correct information
+     *
+     * @param  array $data Array to build the object
+     * @return integer|null
+     */
+    private function extractNoPenalty(array $data)
+    {
+        return $data['nopenalty'] ?? $data['no_penalty'] ?? null;
     }
 }
