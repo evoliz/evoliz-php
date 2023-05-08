@@ -126,12 +126,6 @@ class Term
      */
     private function extractNoPenalty(array $data)
     {
-        if (isset($data['no_penalty'])) {
-            $nopenalty = $data['no_penalty'];
-        } elseif (isset($data['nopenalty'])) {
-            $nopenalty = $data['nopenalty'];
-        }
-
-        return $nopenalty ?? null;
+        return $data['nopenalty'] ?? $data['no_penalty'] ?? null;
     }
 }
