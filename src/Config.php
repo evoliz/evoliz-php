@@ -6,7 +6,7 @@ use Evoliz\Client\Exception\ConfigException;
 
 class Config
 {
-    const VERSION = "dev";
+    const VERSION = "v0.7.0";
     const OBJECT_RETURN_TYPE = "OBJECT";
     const JSON_RETURN_TYPE = "JSON";
 
