@@ -5,7 +5,6 @@ namespace Evoliz\Client\Repository\Clients;
 use Evoliz\Client\Config;
 use Evoliz\Client\Repository\BaseRepository;
 use Evoliz\Client\Response\Clients\ClientDeliveryAddressResponse;
-use Evoliz\Client\Response\Clients\ClientResponse;
 
 class ClientDeliveryAddressRepository extends BaseRepository
 {
