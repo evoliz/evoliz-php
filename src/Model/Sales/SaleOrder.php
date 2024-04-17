@@ -72,6 +72,8 @@ class SaleOrder extends BaseModel
      */
     public $items = [];
 
+    public $delivery_addressid = null;
+
     /**
      * @param array $data Array to build the object
      */
@@ -99,6 +101,8 @@ class SaleOrder extends BaseModel
         $this->global_rebate = $this->extractGlobalRebate($data);
 
         $this->include_sale_general_conditions = $data['include_sale_general_conditions'];
+
+        $this->delivery_addressid = $data['delivery_addressid'];
 
         if (isset($data['items'])) {
             foreach ($data['items'] as $item) {

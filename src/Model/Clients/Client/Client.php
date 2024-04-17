@@ -7,6 +7,11 @@ use Evoliz\Client\Model\BaseModel;
 class Client extends BaseModel
 {
     /**
+     * @var string Client id
+     */
+    public $clientid;
+
+    /**
      * @var string Client name
      */
     public $name;
@@ -109,6 +114,7 @@ class Client extends BaseModel
      */
     public function __construct(array $data)
     {
+        $this->clientid = $data['clientid'] ?? null;
         $this->name = $data['name'] ?? null;
         $this->type = $data['type'] ?? null;
         $this->address = isset($data['address']) ? new Address((array) $data['address']) : null;
