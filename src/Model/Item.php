@@ -35,6 +35,11 @@ class Item
     public $unit_price_vat_exclude;
 
     /**
+     * @var float Item unit price excluding or including vat depending on prices_include_vat attr (overrided if articleid is set)
+     */
+    public $unit_price;
+
+    /**
      * @var float Item VAT rate (overrided if articleid is set)
      */
     public $vat_rate;
@@ -61,6 +66,7 @@ class Item
         $this->quantity = $data['quantity'] ?? null;
         $this->unit = $data['unit'] ?? null;
         $this->unit_price_vat_exclude = $data['unit_price_vat_exclude'] ?? null;
+        $this->unit_price = $data['unit_price'] ?? null;
         $this->vat_rate = $data['vat_rate'] ?? null;
         $this->rebate = $data['rebate'] ?? null;
         $this->sale_classificationid = $data['sale_classificationid'] ?? null;
