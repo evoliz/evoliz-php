@@ -65,8 +65,11 @@ class Item
         $this->designation = $data['designation'] ?? null;
         $this->quantity = $data['quantity'] ?? null;
         $this->unit = $data['unit'] ?? null;
-        $this->unit_price_vat_exclude = $data['unit_price_vat_exclude'] ?? null;
         $this->unit_price = $data['unit_price'] ?? null;
+        // Handling deprecated field unit_price_vat_exclude to prevent existing code break
+        if (!$this->unit_price && isset($data['unit_price_vat_exclude'])) {
+            $this->unit_price_vat_exclude = $data['unit_price_vat_exclude'];
+        }
         $this->vat_rate = $data['vat_rate'] ?? null;
         $this->rebate = $data['rebate'] ?? null;
         $this->sale_classificationid = $data['sale_classificationid'] ?? null;
