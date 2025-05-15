@@ -58,7 +58,7 @@ class Item
     /**
      * @param array $data Array to build the object
      */
-    public function __construct(array $data)
+    public function __construct(array $data, bool $prices_vat_include = false)
     {
         $this->articleid = $data['articleid'] ?? null;
         $this->reference = $data['reference'] ?? null;
@@ -67,7 +67,7 @@ class Item
         $this->unit = $data['unit'] ?? null;
         $this->unit_price = $data['unit_price'] ?? null;
         // Handling deprecated field unit_price_vat_exclude to prevent existing code break
-        if (!$this->unit_price && isset($data['unit_price_vat_exclude'])) {
+        if (!$this->unit_price && isset($data['unit_price_vat_exclude']) && !$prices_vat_include) {
             $this->unit_price_vat_exclude = $data['unit_price_vat_exclude'];
         }
         $this->vat_rate = $data['vat_rate'] ?? null;
