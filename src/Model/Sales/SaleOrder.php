@@ -75,6 +75,11 @@ class SaleOrder extends BaseModel
     public $delivery_addressid = null;
 
     /**
+     * @var bool Indicate whether the prices includes vat or not, this applies to fields
+     */
+    public $prices_include_vat = false;
+
+    /**
      * @param array $data Array to build the object
      */
     public function __construct(array $data)
@@ -103,6 +108,8 @@ class SaleOrder extends BaseModel
         $this->include_sale_general_conditions = $data['include_sale_general_conditions'];
 
         $this->delivery_addressid = $data['delivery_addressid'];
+
+        $this->prices_include_vat = $data['prices_include_vat'];
 
         if (isset($data['items'])) {
             foreach ($data['items'] as $item) {
