@@ -269,9 +269,9 @@ abstract class BaseRepository
     /**
      * Mapping of the request payload to create the entry
      *
-     * @param  \stdClass|array $object Object to create
+     * @param BaseModel $object Object to create
      */
-    private function buildPayload(\stdClass|array $object): array
+    private function buildPayload(BaseModel $object): array
     {
         $payload = [];
         foreach ($object as $attribute => $value) {
