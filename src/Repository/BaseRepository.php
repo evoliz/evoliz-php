@@ -148,11 +148,11 @@ abstract class BaseRepository
     /**
      * Move to the first page of the resource
      *
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function firstPage(): APIResponse|string
+    public function firstPage(): APIResponse|string|null
     {
         return $this->paginate('first');
     }
@@ -160,11 +160,11 @@ abstract class BaseRepository
     /**
      * Move to the last page of the resource
      *
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function lastPage(): APIResponse|string
+    public function lastPage(): APIResponse|string|null
     {
         return $this->paginate('last');
     }
@@ -172,11 +172,11 @@ abstract class BaseRepository
     /**
      * Move to the previous page of the resource
      *
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function previousPage(): APIResponse|string
+    public function previousPage(): APIResponse|string|null
     {
         return $this->paginate('prev');
     }
@@ -184,11 +184,11 @@ abstract class BaseRepository
     /**
      * Move to the next page of the resource
      *
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function nextPage(): APIResponse|string
+    public function nextPage(): APIResponse|string|null
     {
         return $this->paginate('next');
     }
