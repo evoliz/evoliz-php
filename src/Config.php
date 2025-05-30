@@ -36,8 +36,7 @@ class Config
          * @var string User's secret key given when the API credentials are created in the app
          */
         private string $secretKey
-    )
-    {
+    ) {
     }
 
     /**
