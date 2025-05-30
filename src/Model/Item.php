@@ -2,7 +2,7 @@
 
 namespace Evoliz\Client\Model;
 
-class Item
+class Item extends BaseModel
 {
     /**
      * @var integer Article unique identifier
