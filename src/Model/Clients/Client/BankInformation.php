@@ -2,7 +2,9 @@
 
 namespace Evoliz\Client\Model\Clients\Client;
 
-class BankInformation
+use Evoliz\Client\Model\BaseModel;
+
+class BankInformation extends BaseModel
 {
     /**
      * @var string Bank name

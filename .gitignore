@@ -12,3 +12,6 @@ composer.lock
 # Ignore IDE's configuration files
 .idea
 .vscode
+
+# Ignore rector config files
+rector.php

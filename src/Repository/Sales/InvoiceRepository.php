@@ -25,11 +25,10 @@ class InvoiceRepository extends BaseRepository
     /**
      * Save a draft invoice
      *
-     * @return InvoiceResponse|string
      *
      * @throws ResourceException
      */
-    public function save(int $invoiceid)
+    public function save(int $invoiceid): \Evoliz\Client\Response\Sales\InvoiceResponse|string
     {
         $response = HttpClient::getInstance()
             ->post($this->baseEndpoint . '/' . $invoiceid . '/create');
@@ -57,7 +56,6 @@ class InvoiceRepository extends BaseRepository
      * @param \DateTime|null $paydate   Paydate of the payment
      * @param string|null    $comment   Comment on the payment
      *
-     * @return PaymentResponse|string
      *
      * @throws ResourceException
      */
@@ -68,7 +66,7 @@ class InvoiceRepository extends BaseRepository
         float $amount,
         \DateTime $paydate = null,
         string $comment = null
-    ) {
+    ): \Evoliz\Client\Response\Sales\PaymentResponse|string {
         $requestBody = [
             'label' => $label,
             'paytypeid' => $paytypeid,

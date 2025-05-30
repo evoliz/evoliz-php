@@ -40,7 +40,7 @@ class BaseRepositoryTest extends TestCase
     /**
      * @throws \Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 

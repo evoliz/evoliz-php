@@ -2,7 +2,9 @@
 
 namespace Evoliz\Client\Model\Clients\Client;
 
-class Address
+use Evoliz\Client\Model\BaseModel;
+
+class Address extends BaseModel
 {
     /**
      * @var string Postcode
