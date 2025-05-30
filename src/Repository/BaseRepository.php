@@ -49,7 +49,7 @@ abstract class BaseRepository
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
-    public function list(array $query = []): \Evoliz\Client\Response\APIResponse|string
+    public function list(array $query = []): APIResponse|string
     {
         $response = HttpClient::getInstance()->get(
             $this->baseEndpoint,
@@ -152,7 +152,7 @@ abstract class BaseRepository
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function firstPage(): \Evoliz\Client\Response\APIResponse|string
+    public function firstPage(): APIResponse|string
     {
         return $this->paginate('first');
     }
@@ -164,7 +164,7 @@ abstract class BaseRepository
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function lastPage(): \Evoliz\Client\Response\APIResponse|string
+    public function lastPage(): APIResponse|string
     {
         return $this->paginate('last');
     }
@@ -176,7 +176,7 @@ abstract class BaseRepository
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function previousPage(): \Evoliz\Client\Response\APIResponse|string
+    public function previousPage(): APIResponse|string
     {
         return $this->paginate('prev');
     }
@@ -188,7 +188,7 @@ abstract class BaseRepository
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function nextPage(): \Evoliz\Client\Response\APIResponse|string
+    public function nextPage(): APIResponse|string
     {
         return $this->paginate('next');
     }
@@ -200,7 +200,7 @@ abstract class BaseRepository
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
-    public function page(int $pageNumber): \Evoliz\Client\Response\APIResponse|string
+    public function page(int $pageNumber): APIResponse|string
     {
         if (!isset($this->lastResponse)) {
             $this->list();
@@ -216,11 +216,11 @@ abstract class BaseRepository
      * Move to the requested page of the resource
      *
      * @param  string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested uri does not exist
      * @throws PaginationException|ResourceException
      */
-    private function paginate(string $requestedPage): \Evoliz\Client\Response\APIResponse|string
+    private function paginate(string $requestedPage): APIResponse|string|null
     {
         if (!in_array($requestedPage, ['first', 'last', 'prev', 'next'])) {
             $errorMessage = 'Error : The requestedPage attribute must be one of first, last, prev or next';
