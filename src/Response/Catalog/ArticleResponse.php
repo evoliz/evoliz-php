@@ -10,8 +10,6 @@ class ArticleResponse extends BaseResponse implements ResponseInterface
 {
     /**
      * Build Article from ArticleResponse
-     *
-     * @return Article
      */
     public function createFromResponse(): Article
     {

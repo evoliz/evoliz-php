@@ -27,11 +27,10 @@ class SaleOrderRepository extends BaseRepository
      *
      * @param int $orderid The sale order id to invoice
      *
-     * @return InvoiceResponse|string
      *
      * @throws ResourceException
      */
-    public function invoice(int $orderid, bool $save = false)
+    public function invoice(int $orderid, bool $save = false): \Evoliz\Client\Response\Sales\InvoiceResponse|string
     {
         $response = HttpClient::getInstance()
             ->post($this->baseEndpoint . '/' . $orderid . '/invoice');

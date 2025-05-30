@@ -11,21 +11,6 @@ class Config
     const JSON_RETURN_TYPE = "JSON";
 
     /**
-     * @var integer User's companyid
-     */
-    private $companyId;
-
-    /**
-     * @var string User's public key given in the app
-     */
-    private $publicKey;
-
-    /**
-     * @var string User's secret key given when the API credentials are created in the app
-     */
-    private $secretKey;
-
-    /**
      * @var AccessToken Token that should be used for authentication as a Bearer Authorization Token
      */
     private $accessToken;
@@ -44,17 +29,19 @@ class Config
      *
      * @throws \Exception|ConfigException
      */
-    public function __construct(int $companyId, string $publicKey, string $secretKey)
+    public function __construct(
+        private int $companyId,
+        private string $publicKey,
+        /**
+         * @var string User's secret key given when the API credentials are created in the app
+         */
+        private string $secretKey
+    )
     {
-        $this->companyId = $companyId;
-        $this->publicKey = $publicKey;
-        $this->secretKey = $secretKey;
     }
 
     /**
      * Get user's companyid
-     *
-     * @return int
      */
     public function getCompanyId(): int
     {
@@ -63,8 +50,6 @@ class Config
 
     /**
      * Set user's companyid
-     *
-     * @param int $companyId
      */
     public function setCompanyId(int $companyId)
     {
@@ -73,8 +58,6 @@ class Config
 
     /**
      * Get the Access Token linked to the connection
-     *
-     * @return AccessToken
      */
     public function getAccessToken(): AccessToken
     {
@@ -84,7 +67,6 @@ class Config
     /**
      * Authenticate the user
      *
-     * @return Config
      * @throws \Exception|ConfigException
      */
     public function authenticate(): Config
@@ -108,8 +90,6 @@ class Config
 
     /**
      * Get resources default return type
-     *
-     * @return string
      */
     public function getDefaultReturnType(): string
     {
@@ -135,7 +115,6 @@ class Config
     /**
      * Login the user with given public and secret keys
      *
-     * @return AccessToken
      * @throws ConfigException|\Exception
      */
     private function login(): AccessToken
@@ -212,8 +191,6 @@ class Config
 
     /**
      * Check if the company id is valid
-     *
-     * @return bool
      */
     public function hasValidCompanyId(): bool
     {
