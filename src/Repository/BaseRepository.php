@@ -23,11 +23,6 @@ abstract class BaseRepository
     protected $baseEndpoint;
 
     /**
-     * @var string Associated response model
-     */
-    private $responseModel;
-
-    /**
      * @var APIResponse|string Last query response
      */
     private $lastResponse;
@@ -40,11 +35,10 @@ abstract class BaseRepository
      * @param  string $responseModel Response model
      * @throws ConfigException
      */
-    public function __construct(Config $config, string $baseEndpoint, string $responseModel)
+    public function __construct(Config $config, string $baseEndpoint, private string $responseModel)
     {
         $this->config = $config->authenticate();
         $this->baseEndpoint = 'api/v1/' . $baseEndpoint;
-        $this->responseModel = $responseModel;
     }
 
     /**
@@ -55,7 +49,7 @@ abstract class BaseRepository
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
-    public function list(array $query = [])
+    public function list(array $query = []): APIResponse|string
     {
         $response = HttpClient::getInstance()->get(
             $this->baseEndpoint,
@@ -154,11 +148,11 @@ abstract class BaseRepository
     /**
      * Move to the first page of the resource
      *
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function firstPage()
+    public function firstPage(): APIResponse|string|null
     {
         return $this->paginate('first');
     }
@@ -166,11 +160,11 @@ abstract class BaseRepository
     /**
      * Move to the last page of the resource
      *
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function lastPage()
+    public function lastPage(): APIResponse|string|null
     {
         return $this->paginate('last');
     }
@@ -178,11 +172,11 @@ abstract class BaseRepository
     /**
      * Move to the previous page of the resource
      *
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function previousPage()
+    public function previousPage(): APIResponse|string|null
     {
         return $this->paginate('prev');
     }
@@ -190,11 +184,11 @@ abstract class BaseRepository
     /**
      * Move to the next page of the resource
      *
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested page does not exist
      * @throws PaginationException|ResourceException
      */
-    public function nextPage()
+    public function nextPage(): APIResponse|string|null
     {
         return $this->paginate('next');
     }
@@ -206,7 +200,7 @@ abstract class BaseRepository
      * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
      * @throws ResourceException
      */
-    public function page(int $pageNumber)
+    public function page(int $pageNumber): APIResponse|string
     {
         if (!isset($this->lastResponse)) {
             $this->list();
@@ -222,11 +216,11 @@ abstract class BaseRepository
      * Move to the requested page of the resource
      *
      * @param  string $requestedPage Requested page ('first', 'last', 'prev' or 'next')
-     * @return APIResponse|string Objects list in the expected format (OBJECT or JSON)
+     * @return APIResponse|string|null Objects list in the expected format (OBJECT or JSON)
      * @return null Return null if the requested uri does not exist
      * @throws PaginationException|ResourceException
      */
-    private function paginate(string $requestedPage)
+    private function paginate(string $requestedPage): APIResponse|string|null
     {
         if (!in_array($requestedPage, ['first', 'last', 'prev', 'next'])) {
             $errorMessage = 'Error : The requestedPage attribute must be one of first, last, prev or next';
@@ -275,10 +269,9 @@ abstract class BaseRepository
     /**
      * Mapping of the request payload to create the entry
      *
-     * @param  \stdClass|array $object Object to create
-     * @return array
+     * @param BaseModel|array $object Object to create
      */
-    private function buildPayload($object): array
+    private function buildPayload(BaseModel|array $object): array
     {
         $payload = [];
         foreach ($object as $attribute => $value) {

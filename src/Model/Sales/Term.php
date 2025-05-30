@@ -2,7 +2,9 @@
 
 namespace Evoliz\Client\Model\Sales;
 
-class Term
+use Evoliz\Client\Model\BaseModel;
+
+class Term extends BaseModel
 {
     /**
      * @var integer Payment term identifier

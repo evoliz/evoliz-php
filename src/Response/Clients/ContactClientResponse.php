@@ -10,8 +10,6 @@ class ContactClientResponse extends BaseResponse implements ResponseInterface
 {
     /**
      * Build ContactClient from ContactClientResponse
-     *
-     * @return ContactClient
      */
     public function createFromResponse(): ContactClient
     {

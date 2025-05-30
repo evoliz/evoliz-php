@@ -14,7 +14,7 @@ API.
 
 ## Requirements
 
-PHP 7.0.0 and later.
+PHP 8.0.0 and later.
 
 ## Composer
 
@@ -34,7 +34,7 @@ require_once('vendor/autoload.php');
 
 The package require the following extensions in order to work properly:
 
--   [`guzzlehttp/guzzle`](https://packagist.org/packages/guzzlehttp/guzzle), from release 6.5.5 to the latest release before 7.0.0
+-   [`guzzlehttp/guzzle`](https://packagist.org/packages/guzzlehttp/guzzle), from release 7.0
 -   [`json`](https://secure.php.net/manual/en/book.json.php)
 
 If you use Composer, these dependencies should be handled automatically.
@@ -70,9 +70,9 @@ See the [API changelog](https://evoliz.io/changelog) to see all the changes made
 
 ## Legacy Version Support
 
-### PHP < 7.0.0
+### PHP < 8.0.0
 
-If you are using a version earlier than PHP 7.0.0, you need to upgrade your environment to use Evoliz.
+If you are using a version earlier than PHP 8.0.0, you need to upgrade your environment to use Evoliz.
 
 ## Development
 

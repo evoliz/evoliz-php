@@ -48,6 +48,11 @@ class Invoice extends BaseModel
     public $analyticid;
 
     /**
+     * @var bool Indicate whether the prices includes vat or not, this applies to fields
+     */
+    public $prices_include_vat = false;
+
+    /**
      * @var float|string Invoice rebate in amount|percent
      */
     public $global_rebate;
@@ -81,6 +86,7 @@ class Invoice extends BaseModel
         $this->analyticid = $this->extractAnalyticId($data);
         $this->global_rebate = $this->extractGlobalRebate($data);
 
+        $this->prices_include_vat = $data['prices_include_vat'];
         $this->external_document_number = $data['external_document_number'] ?? null;
         $this->documentdate = $data['documentdate'] ?? null;
         $this->contactid = $data['contactid'] ?? null; //@Todo : Handle this when the resource is updated

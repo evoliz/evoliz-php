@@ -2,7 +2,9 @@
 
 namespace Evoliz\Client\Model\Clients\Client;
 
-class Term
+use Evoliz\Client\Model\BaseModel;
+
+class Term extends BaseModel
 {
     /**
      * @var integer Client's quote period of validity (in days)

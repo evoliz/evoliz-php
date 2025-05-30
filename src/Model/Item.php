@@ -2,7 +2,7 @@
 
 namespace Evoliz\Client\Model;
 
-class Item
+class Item extends BaseModel
 {
     /**
      * @var integer Article unique identifier
@@ -35,6 +35,11 @@ class Item
     public $unit_price_vat_exclude;
 
     /**
+     * @var float Item unit price excluding or including vat depending on prices_include_vat attr (overrided if articleid is set)
+     */
+    public $unit_price;
+
+    /**
      * @var float Item VAT rate (overrided if articleid is set)
      */
     public $vat_rate;
@@ -53,14 +58,18 @@ class Item
     /**
      * @param array $data Array to build the object
      */
-    public function __construct(array $data)
+    public function __construct(array $data, bool $prices_vat_include = false)
     {
         $this->articleid = $data['articleid'] ?? null;
         $this->reference = $data['reference'] ?? null;
         $this->designation = $data['designation'] ?? null;
         $this->quantity = $data['quantity'] ?? null;
         $this->unit = $data['unit'] ?? null;
-        $this->unit_price_vat_exclude = $data['unit_price_vat_exclude'] ?? null;
+        $this->unit_price = $data['unit_price'] ?? null;
+        // Handling deprecated field unit_price_vat_exclude to prevent existing code break
+        if (!$this->unit_price && isset($data['unit_price_vat_exclude']) && !$prices_vat_include) {
+            $this->unit_price_vat_exclude = $data['unit_price_vat_exclude'];
+        }
         $this->vat_rate = $data['vat_rate'] ?? null;
         $this->rebate = $data['rebate'] ?? null;
         $this->sale_classificationid = $data['sale_classificationid'] ?? null;

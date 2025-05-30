@@ -2,7 +2,9 @@
 
 namespace Evoliz\Client\Model\Sales;
 
-class Retention
+use Evoliz\Client\Model\BaseModel;
+
+class Retention extends BaseModel
 {
     /**
      * @var float Retention percent, this field is accepted only when retention option is enabled,
