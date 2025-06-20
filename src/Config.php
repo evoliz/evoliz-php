@@ -22,6 +22,11 @@ class Config
     private $defaultReturnType = self::OBJECT_RETURN_TYPE;
 
     /**
+     * @var array
+     */
+    private $scopes;
+
+    /**
      * Setup the configuration for API usage
      *
      * @param int    $companyId User's companyid
@@ -64,6 +69,14 @@ class Config
     }
 
     /**
+     * Get the scopes
+     */
+    public function getScopes(): array
+    {
+        return $this->scopes;
+    }
+
+    /**
      * Authenticate the user
      *
      * @throws \Exception|ConfigException
@@ -76,7 +89,7 @@ class Config
                 $this->accessToken = new AccessToken($decodedToken->access_token, $decodedToken->expires_at);
             }
         } else {
-            $this->accessToken = $this->login();
+            $this->login();
         }
 
         HttpClient::setInstance(
@@ -116,7 +129,7 @@ class Config
      *
      * @throws ConfigException|\Exception
      */
-    private function login(): AccessToken
+    private function login()
     {
         $loginResponse = HttpClient::getInstance()->post(
             'api/login',
@@ -147,12 +160,11 @@ class Config
                 )
             );
 
-            $accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
+            $this->accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
+            $this->scopes = $responseBody->scopes;
         } else {
             throw new ConfigException('The access token has not been recovered', 422);
         }
-
-        return $accessToken;
     }
 
     /**
