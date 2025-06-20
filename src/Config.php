@@ -164,7 +164,7 @@ class Config
         );
 
         $this->accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
-        $this->scopes = $responseBody->scopes;
+        $this->scopes = $responseBody->scopes ?? [];
     }
 
     /**
