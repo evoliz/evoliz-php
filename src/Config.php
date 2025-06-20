@@ -148,23 +148,23 @@ class Config
             throw new ConfigException($errorMessage, $loginResponse->getStatusCode());
         }
 
-        if (isset($responseBody->access_token)) {
-            // Cookie Storage
-            setcookie(
-                'evoliz_token_' . $this->companyId,
-                json_encode(
-                    [
-                        'access_token' => $responseBody->access_token,
-                        'expires_at' => $responseBody->expires_at
-                    ]
-                )
-            );
-
-            $this->accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
-            $this->scopes = $responseBody->scopes;
-        } else {
+        if (!isset($responseBody->access_token)) {
             throw new ConfigException('The access token has not been recovered', 422);
         }
+
+        // Cookie Storage
+        setcookie(
+            'evoliz_token_' . $this->companyId,
+            json_encode(
+                [
+                    'access_token' => $responseBody->access_token,
+                    'expires_at' => $responseBody->expires_at
+                ]
+            )
+        );
+
+        $this->accessToken = new AccessToken($responseBody->access_token, $responseBody->expires_at);
+        $this->scopes = $responseBody->scopes;
     }
 
     /**
