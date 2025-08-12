@@ -7,6 +7,11 @@ use Evoliz\Client\Model\BaseModel;
 class Article extends BaseModel
 {
     /**
+     * @var int
+     */
+    public $articleid;
+
+    /**
      * @var string Article reference
      */
     public $reference;
@@ -95,6 +100,7 @@ class Article extends BaseModel
      */
     public function __construct(array $data)
     {
+        $this->articleid = $data['articleid'] ?? null;
         $this->reference = $data['reference'] ?? null;
         $this->designation = $data['designation'] ?? null;
         $this->nature = $data['nature'] ?? null;
